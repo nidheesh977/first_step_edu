@@ -1,0 +1,44 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+{% load static %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Create Banner</h1>
+        <a href="banner-view.php" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i
+                    class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a>
+    </div>
+    <div class="p-4">
+        <div class="p-4">
+            <form class="user row">
+                <div class="form-group col-sm-6">
+                    <label>Title <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-user" required>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label>Main Title <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-user" required>
+                </div>
+                <div class="form-group col-12">
+                    <label>Descriptiom <span class="text-danger">*</span></label>
+                    <textarea rows="3" class="form-control form-control-user" required></textarea>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label>Button Name</label>
+                    <input type="text" class="form-control form-control-user">
+                </div>
+                <div class="form-group col-sm-6">
+                    <label>Button URL</label>
+                    <input type="text" class="form-control form-control-user">
+                </div>
+                <div class="form-group col-12">
+                    <label>Upload Image <span class="text-danger">*</span></label>
+                    <input class="form-control form-control-lg" type="file" required>
+                </div>
+                <div class="col-12 text-center pt-4">
+                    <input type="submit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

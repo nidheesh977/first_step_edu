@@ -1,0 +1,108 @@
+
+{% extends 'application_base.html' %}
+{% load static %}
+{% block content %}
+<section class="section_contact-banner bgs-lightblue">
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6  align-self-center ">
+            <p class="cl-blue   fs-14 "># Write Tests. Check Results. Build Your Knowledge</p>
+            <h2 class="test-bold fs-40 font-size cl-darkblue">Best Online Knowledge Building Platform</h2>
+            <p class="cl-blue-1  fs-15 pt-4 right-padding">Loreum Ipsum is simply dummy text of the printing and typesetting industry.</p>
+        </div>
+        <div class="col-lg-6 text-lg-right text-center">
+            <img src="{% static 'images/contact-banner.png' %}" alt="" class=" img-fluid">
+        </div>
+    </div>
+</div>
+</section>
+<section class="section_contact-keep-touch" id="section_contact-keep-touch">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8 m-auto">
+                <div class="row">
+                    <div class="col-12 text-center pb-md-5">
+                        <h2 class="pt-3 pb-4 fs-35 font-size test-bold">Keep in touch</h2>
+                        <ul class="list-unstyled  text-center d-flex justify-content-center icon-border pt-4 pb-4">
+                            <li>
+                            <a href="#" target="blank"  class="cl-black pl-lg-5 scl-icon-hover"><i class="fab fa-facebook-f fs-45  icon-size  padd-lef-rit br-right pt-sm-3 pt-1"></i></a>
+                            </li>
+                            <li>
+                            <a href="#" target="blank"class="cl-black scl-icon-hover" ><i class="fab fa-twitter fs-45 icon-size padd-lef-rit br-right pt-sm-3 pt-1"></i></a>
+                            </li>
+                            <li>
+                            <a href="#" target="blank"class="cl-black scl-icon-hover" ><i class="fab fa-linkedin-in fs-45 icon-size padd-lef-rit br-right pt-sm-3 pt-1"></i></a>
+                            </li>
+                            <li>
+                            <a href="#" target="blank"class="cl-black scl-icon-hover" ><i class="fab fa-instagram fs-45 icon-size padd-lef-rit br-right pt-sm-3 pt-1"></i></a>
+                            </li>
+                            <li>
+                            <a href="#" target="blank"class="cl-black scl-icon-hover" ><i class="fab fa-youtube fs-45 icon-size padd-lef-rit  pt-sm-3 pt-1"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row pb-md-4 pt-3">
+                    <div class="col-lg-4 icon-hover">
+                        <div class="mx-3 text-center  pt-3">
+                        <a href="https://www.google.com/maps/" target="blank" class="cl-blue " ><i class="fas fa-map-marker-alt fs-40  "></i></a>
+                        <p class="pt-3 fs-13">Loreum Ipsum is simply dummy text 0f printing-560043 </p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4  icon-hover">
+                        <div class="mx-3 text-center pt-3">
+                        <a href="tel:+91987654321" class="cl-blue " ><i class="fas fa-phone-alt fs-40"></i>
+                        <p class="cl-black decrt-none pt-3 fs-13">+91 987 654 321</p>
+                        </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 icon-hover">
+                        <div class="mx-3 text-center  pt-3">
+                        <a href="mailto:contact@companydomain.com" class="cl-blue " ><i class="fas fa-envelope fs-40"></i>
+                        <p class="cl-black decrt-none pt-3 fs-13">Contact@companydomain.com</p>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+              
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-form-contact  pt-2 pb-5" >
+    <div class="container">
+        <di class="row pb-sm-4 mx-0">
+            <form class="col-md-8.5  m-auto bgs-lightblue  form px-4 pt-4 pb-5 align-items-center" method="POST">
+                {% csrf_token %}
+                    <div class="row p-2">
+                        <div class="col-lg-5 mx-auto col-sm-12 px-0">
+                                <div class="form-group">
+                                    <label for="inputEmail4" class="fs-16 pt-3 cl-dark">Full Name</label>
+                                    <input type="text" class="form-control" id="inputEmail4" required name="full_name" maxlength="25">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail4" class="fs-16  cl-dark pt-lg-3" >Email ID</label>
+                                    <input type="email" class="form-control " id="inputEmail4" required name="email" maxlength="100">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail4" class="fs-16  cl-dark pt-lg-3">Phone Number</label>
+                                    <input type="text" class="form-control " id="inputEmail4" required name="mobile_number" maxlength="10">
+                                </div>
+                        </div>
+                        <div class="col-lg-5 mx-auto col-sm-12 px-0">
+                            <div class="form-group pl-0">
+                                <label for="inputPassword4" class="fs-17 cl-dark pt-3 w-100">Message</label>
+                                <textarea id="" cols="30" rows="10"  required name="message"></textarea>
+                            </div>
+                    </div>
+                    <div class="col-12 text-center mt-5 mb-3">
+                        <input type="submit"  class="bgs-black text-white arrow contact-button cursor fs-13 lh-16 decrt-none border-0">
+                    </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
