@@ -12,20 +12,26 @@
     <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
 </head>
 <body> 
     <!-- sweet alert -->
-    <script>
-        {% if messages %}
-            {% for message in messages %}
-              swal({
-                title: "{{message.tags|title}}",
-                text: "{{message|safe}}",
-                icon: "{{message.tags}}",
-            });
-            {% endfor %}
-        {% endif %}
-      </script>
+    {% block sweetalert %}
+
+        <script>
+            {% if messages %}
+                {% for message in messages %}
+                swal({
+                    title: "{{message.tags|title}}",
+                    text: "{{message|safe}}",
+                    icon: "{{message.tags}}",
+                });
+                {% endfor %}
+            {% endif %}
+        </script>
+
+    {% endblock sweetalert %}
 
 
     <!-- marquee -->
@@ -80,9 +86,9 @@
                                     <a href="{% url 'application:contact-us' %}" class="nav-link  cl-lightblue" id="id_contact">CONTACT US</a>
                                 </li>
                                  <div class="form-button bgs-blue d-flex align-items-center ml-lg-2 ml-xl-4">
-                                    <a href="sign-in.php" class="cl-white login-hover decrt-none fs-14 ">LOGIN </a>
+                                    <a href="{% url 'application:signin' %}" class="cl-white login-hover decrt-none fs-14 ">LOGIN </a>
                                     <span class="sign-bar cl-white ">  |  </span>
-                                    <a href="sign-up.php" class=" cl-white login-hover     decrt-none fs-14">  SIGN UP</a>
+                                    <a href="{% url 'application:signup' %}" class=" cl-white login-hover     decrt-none fs-14">  SIGN UP</a>
                                 </div>
                             </ul>
                         </div>
@@ -242,7 +248,12 @@
     <script src="{% static 'js/owl.carousel.min.js' %}"></script>
     <!-- <script src="js/popper.min.js"></script> -->
     <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'common_js/dj_common_scripts.js' %}"></script>
    
 </body>
+   {% block script %}
+    
+    
+   {% endblock script %}
    
 </html>

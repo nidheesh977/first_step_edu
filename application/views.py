@@ -1,10 +1,122 @@
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
-from django.views.generic import CreateView, UpdateView, View, TemplateView
-from . models  import *
 from django.contrib import messages
-from utils.constants import  TextConstants
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail.message import EmailMessage
+from django.http.response import JsonResponse
+from django.shortcuts import redirect, render
+from django.views.generic import TemplateView, View
+
+from utils.constants import EmailContents, TextConstants
+from utils.functions import OTP_Gen, is_ajax
+
+from .models import *
+
+
+class SignUpView(View):
+    def get(self,request, *args, **kwargs):
+        return render(request, "sign-up.html")
+    
+    def post(self,request, *args, **kwargs):
+        is_agreed = request.POST.get("flexCheckDefault2")
+        if is_agreed == "agreed":
+            user_obj = CustomUser.objects.create(
+                first_name = request.POST.get("first_name"),
+                last_name = request.POST.get("last_name"),
+                email = request.POST.get("email"),
+                mobile_number = request.POST.get("mobile_number"),
+                parent_name = request.POST.get("parent_name"),
+                class_name = request.POST.get("class"),
+                school_name = request.POST.get("school_name"),
+                state = request.POST.get("state"),
+                city = request.POST.get("city"),
+                gender = request.POST.get("gender"),
+            )
+            user_obj.set_password(request.POST.get("password"))
+            user_obj.save()
+            login(request, user_obj)
+            return redirect("application:account-dashboard")
+        else:
+            messages.warning(request,"please agree our terms & conditions to continue")
+            return redirect("application:signup")
+
+class SignInView(View):
+    def get(self,request, *args, **kwargs):
+        return render(request, "sign-in.html")
+    
+    def post(self,request, *args, **kwargs):
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect("application:account-dashboard")
+        else:
+            messages.error(request,"Invalid Credentials")
+            return redirect("application:signin")
+
+
+class ForgetPassword(View):
+    def get(self,request, *args, **kwargs):
+        return render(request, "forget-password.html")
+    
+    def post(self,request, *args, **kwargs):
+        if is_ajax(request):
+            if request.POST.get("action") == "sendOtp":
+                email = request.POST.get("emailId")
+                is_exists = CustomUser.objects.filter(email=email).exists()
+                if is_exists:
+                    # FIXME -> send OTP
+                    generated_otp = OTP_Gen()
+                    send_email = EmailMessage(
+                        EmailContents.forget_password_title,
+                        EmailContents.forget_password_subject.format(generated_otp),
+                        to=[email]
+                    )
+                    send_email.send(fail_silently=True)
+                    request.session[email]=generated_otp
+                    to_return = {
+                        "title":"OTP sent",
+                        "icon":"success",
+                    }
+                else:
+                    to_return = {
+                        "title":"Entered email id doesn't have any active account",
+                        "icon":"error",
+                    }
+                return JsonResponse(to_return,safe=True,)
+        else:
+            email = request.POST.get("email_id")
+            generated_otp = request.session.get(email)
+            submitted_otp =  request.POST.get("otp")
+            new_password = request.POST.get("new_password")
+            if generated_otp != None:
+                if generated_otp == submitted_otp:
+                    user = CustomUser.objects.get(email=email)
+                    user.set_password(new_password)
+                    user.save()
+                    del request.session[email]
+                    messages.success(request,"password has been changed")
+                    return redirect("application:signin")
+                else:
+                    messages.error(request,"Invalid OTP")
+            else:
+                messages.warning(request,"OTP is not generated for submitted email please click send OTP")
+            return redirect("application:forget-password")
+
+class LogoutView(View):
+    def get(self, request, *args, **kwargs):
+        user_type = request.user.is_superuser
+        logout(request)
+        if user_type:
+            return redirect("admin_dashboard:admin-login")
+        else:
+            return redirect("application:index-page")
+
+class AccountDashboard(View):
+    def get(self,request, *args, **kwargs):
+        return render(request, "account.html")
+
 class IndexView(View):
     def get(self,request, *args, **kwargs):
         return render(request, "index.html")

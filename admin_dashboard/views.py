@@ -1,7 +1,84 @@
-from django.shortcuts import render
-from django.views.generic import View, CreateView, UpdateView
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from application.models import  *
+from django.core.mail.message import EmailMessage
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.views.generic import CreateView, UpdateView, View
+
+from application.models import *
+from utils.constants import EmailContents
+from utils.functions import OTP_Gen, is_ajax
+
+
+class AdminLogin(View):
+    def get(self,request,*args, **kwargs):
+        admin_email = request.POST.get("admin_email")
+        admin_password = request.POST.get("admin_password")
+        user = authenticate(request, username=admin_email, password=admin_password)
+        if user is not None:
+            pass
+
+        return render(request,"login.html")
+    
+    def post(self,request,*args, **kwargs):
+        admin_email = request.POST.get("admin_email")
+        admin_password = request.POST.get("admin_password")
+        user = authenticate(request, username=admin_email, password=admin_password)
+        if user is not None and user.is_superuser:
+            return redirect("admin_dashboard:dashboard")
+        else:
+            messages.error(request,"Invalid Credentials")
+            return redirect("admin_dashboard:admin-login")
+
+
+class AdminForgetPassword(View):
+    def get(self,request, *args, **kwargs):
+        return render(request, "admin-forgot-password.html")
+    
+    def post(self,request, *args, **kwargs):
+        if is_ajax(request):
+            if request.POST.get("action") == "sendOtp":
+                email = request.POST.get("emailId")
+                is_exists = CustomUser.objects.filter(email=email, is_superuser=True).exists()
+                if is_exists:
+                    # FIXME -> send OTP
+                    generated_otp = OTP_Gen()
+                    send_email = EmailMessage(
+                        EmailContents.forget_password_title,
+                        EmailContents.forget_password_subject.format(generated_otp),
+                        to=[email]
+                    )
+                    send_email.send(fail_silently=True)
+                    request.session[email]=generated_otp
+                    to_return = {
+                        "title":"OTP sent",
+                        "icon":"success",
+                    }
+                else:
+                    to_return = {
+                        "title":"Entered email is not an admin account",
+                        "icon":"error",
+                    }
+                return JsonResponse(to_return,safe=True,)
+        else:
+            email = request.POST.get("email_id")
+            generated_otp = request.session.get(email)
+            submitted_otp =  request.POST.get("otp")
+            new_password = request.POST.get("new_password")
+            if generated_otp != None:
+                if generated_otp == submitted_otp:
+                    user = CustomUser.objects.get(email=email)
+                    user.set_password(new_password)
+                    user.save()
+                    del request.session[email]
+                    messages.success(request,"password has been changed")
+                    return redirect("admin_dashboard:admin-login")
+                else:
+                    messages.error(request,"Invalid OTP")
+            else:
+                messages.warning(request,"OTP is not generated for submitted email please click send OTP")
+            return redirect("admin_dashboard:admin-forget-password")
 
 class AdminDashboard(View):
     def get(self,request,*args, **kwargs):

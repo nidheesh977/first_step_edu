@@ -1,0 +1,83 @@
+{% extends 'application_base.html' %}
+{% load static %}
+{% block content %}
+<section class="sign-up-page-section pt-5 pb-4 py-sm-5 bgs-lightblue ">
+    <div class="container sign-form-box">
+        <div class="row align-items-center">
+            <div class="col-lg-8 col-xl-7">
+                <form method="POST">
+                    {% csrf_token %}
+                    <h1 class="fs-25 cl-black test-semibold  pb-2">Create your account</h1>
+                    <p>Grow your knowledge</p>
+                    <div class="sign-login-from row">
+                            <div class="form-groups col-md-6 pb-3 pt-1">
+                                <input type="text" name="first_name"  placeholder="First Name*"    class="form-control"  maxlength="10" required="">
+                            </div>
+                            <div class="form-groups col-md-6 pb-3 pt-1">
+                                <input type="text" name="last_name" placeholder="Last Name"    class="form-control"  maxlength="10">
+                            </div>
+                            <div class="form-groups col-md-6 pb-3 pt-1">
+                                <input type="email" name="email"  placeholder="Email ID*"    class="form-control"  maxlength="140" required="">
+                            </div>
+                            <div class="form-groups col-md-6 pb-3 pt-1">
+                                <input type="tel" name="mobile_number" placeholder="Mobile Number*"    class="form-control textToNumbers"  maxlength="10" required>
+                            </div>
+                            <div class="form-groups col-md-6 pb-3 pt-1">
+                                <input type="text" name="parent_name"  placeholder="Parent's Name"    class="form-control"  maxlength="40">
+                            </div>
+                            <div class="form-groups col-md-6 pb-3 pt-1">
+                                <input type="text" name="class" placeholder="Class*"    class="form-control"  maxlength="40" required="">
+                            </div>
+                            <div class="form-groups col-12 pb-3 pt-1">
+                                <input type="text" name="school_name" placeholder="School Name*"    class="form-control"  maxlength="80" required="">
+                            </div>
+                            <div class="form-groups col-md-6 pb-3 pt-1">
+                                <input type="text" name="state" placeholder="State"    class="form-control"  maxlength="35">
+                            </div>
+                            <div class="form-groups col-md-6 pb-3 pt-1">
+                                <input type="text" name="city" placeholder="City*"    class="form-control"  maxlength="90" required="">
+                            </div>
+                            <div class="form-groups col-md-6 pb-3 pt-1">
+                                <input type="password"  name="password" id="exampleInputPassword1"  maxlength="20"  placeholder="Password*"  required=""  class="form-control">
+                            </div>
+                            <div class="form-groups col-md-6 pb-3 pt-1">
+                                <label for="comment">Select Gender*:</label><br>
+                                <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="radio" name="gender" value="Male" class="form-check-input">Male
+                                    </label>
+                                    </div>
+                                    <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="radio" name="gender" value="Female" class="form-check-input">Female
+                                    </label>
+                                    </div>
+                                    <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="radio" name="gender" value="Others" class="form-check-input">Others
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-groups col-12 pb-3 pt-1 pl-4">
+                                <input class="form-check-input  sign-up-check br-0 mt-0 ml-0" type="checkbox" value="agreed" id="flexCheckDefault2" name="flexCheckDefault2" required="" aria-required="true">
+                                <label class="form-check-label pl-4 ml-2" for="flexCheckDefault2"> I agree to the
+                                   <a href="term-condition.php" class="cl-blue a-hover"> Terms & Conditions</a> 
+                                </label>
+                            </div>
+                            <div class="form-groups col-lg-6 pt-4">
+                                <input type="submit" value="REGISTER" class="mt-1  dash-login-btn-1 w-100 cursor">
+                            </div>
+                        <div class="py-4 col-lg-9 col-12 text-center mt-sm-4">
+                            <a class="account-regsiter" href="{% url 'application:signin' %}">Already have an account? Login</a>
+                        </div>
+                    </div>
+                </form>
+                
+            </div>
+            <div class="col-lg-4 col-xl-5 pt-3 pt-lg-0 d-none d-sm-block text-center">
+                <img class="img-fluid sign-banner"  src="{% static 'images/sign-up-banner.svg' %}" alt="sign-banner">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

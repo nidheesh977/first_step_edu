@@ -1,6 +1,9 @@
 from django.urls import path
 from . import views
 urlpatterns = [
+    path("", views.AdminLogin.as_view(),name="admin-login"),
+    path("forget-password", views.AdminForgetPassword.as_view(),name="admin-forget-password"),
+
     path("dashboard", views.AdminDashboard.as_view(),name="dashboard"),
 
     path("banner-view", views.BannerView.as_view(),name="home-banner"),

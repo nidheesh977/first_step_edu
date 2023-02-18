@@ -57,7 +57,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     class_name = models.CharField(max_length=50, null=True, blank=True)
     school_name = models.CharField(max_length=100, null=True, blank=True)
-    state = models.CharField(max_length=100, null=True, blank=True)
+    state = models.CharField(max_length=40, null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     gender = models.CharField(max_length=10, null=True, blank=True)
 
@@ -224,7 +224,11 @@ class Questions(models.Model):
     section_description = models.CharField(_("Section Description"), max_length=50, blank=True, null=True)
     section_time_limit = models.DurationField(_("Section Duration"),default=timedelta, null=True, blank=True)
     question = models.TextField(_("Question"),null=True, blank=True)
-    
+    option1 = models.CharField(_("Option 1"), max_length=250, null=True, blank=True)
+    option2 = models.CharField(_("Option 2"), max_length=250, null=True, blank=True)
+    option3 = models.CharField(_("Option 3"), max_length=250, null=True, blank=True)
+    option4 = models.CharField(_("Option 4"), max_length=250, null=True, blank=True)
+    correct_answer = models.CharField(_("Correct Answer"), max_length=250, null=True, blank=True)
 
     class Meta:
         verbose_name = _("Questions")
