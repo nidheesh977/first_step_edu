@@ -4,41 +4,57 @@
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Edit Banner</h1>
-        <a href="banner-view.php" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i
+        <a href="{% url 'admin_dashboard:home-banner' %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i
                     class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a>
     </div>
     <div class="p-4">
         <div class="p-4">
-            <form class="user row">
+            <form class="user row" method="post" enctype='multipart/form-data'>
+                {% csrf_token %}
                 <div class="form-group col-sm-6">
                     <label>Title <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control form-control-user" required>
+                    <input name="title" type="text" value="{{obj.title}}" class="form-control form-control-user" required>
                 </div>
                 <div class="form-group col-sm-6">
                     <label>Main Title <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control form-control-user" required>
+                    <input name="main_title" type="text" value="{{obj.main_title}}" class="form-control form-control-user" required>
                 </div>
                 <div class="form-group col-12">
                     <label>Descriptiom <span class="text-danger">*</span></label>
-                    <textarea rows="3" class="form-control form-control-user" required></textarea>
+                    <textarea  name="description" rows="3"  class="form-control form-control-user" required>{{obj.description}}</textarea>
                 </div>
                 <div class="form-group col-sm-6">
                     <label>Button Name</label>
-                    <input type="text" class="form-control form-control-user">
+                    <input  name="button_name" type="text" {% if obj.button_name != "None" %}value="{{obj.button_name}}" {% endif %} class="form-control form-control-user">
                 </div>
                 <div class="form-group col-sm-6">
                     <label>Button URL</label>
-                    <input type="text" class="form-control form-control-user">
+                    <input name="button_url" type="text" {% if obj.button_url != "None" %} value="{{obj.button_url}}" {% endif %} class="form-control form-control-user">
                 </div>
                 <div class="form-group col-12">
-                    <label>Upload Image <span class="text-danger">*</span></label>
-                    <input class="form-control form-control-lg" type="file" required>
+                    <label>Upload Image <span class="text-danger">*</span> {% if obj.image %}<a href="{{obj.image.url}}">{{obj.image.url}}</a>{% endif %} </label>
+                    <input id="uploadImage" name="upload_image" class="form-control form-control-lg" type="file">
                 </div>
                 <div class="col-12 text-center pt-4">
-                    <input type="submit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+                    <input  type="submit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
                 </div>
             </form>
         </div>
     </div>
 </div>
 {% endblock content %}
+
+{% block script %}
+<script>
+
+$( document ).ready(function() {
+    var image="{{obj.image}}";
+    console.log(image);
+    if(image==""){
+        $("#uploadImage").attr("required","true");
+    }
+});
+
+</script>
+
+{% endblock script %}

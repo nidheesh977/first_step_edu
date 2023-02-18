@@ -17,6 +17,8 @@ class MetaDetails(models.Model):
     meta_title = models.CharField(_("Meta Title"), max_length=50, blank=True, null=True)
     meta_description = models.CharField(_("Meta Description"), max_length=50, blank=True, null=True)
     meta_keywords = models.TextField(_("Meta Keywords"), blank=True, null=True)
+    created_on = models.DateTimeField(_("Created on"), auto_now_add=True, null=True, blank=True)
+    updated_on = models.DateTimeField(_("Updated on"), auto_now=True, null=True, blank=True)
 
 
 class CustomAccountManager(BaseUserManager):
@@ -76,7 +78,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
-
 class Blogs(MetaDetails):
     title = models.CharField(_("Title"), max_length=250, blank=False, null=True)
     description = models.TextField(_("Description"),blank=True, null=True)
@@ -92,10 +93,12 @@ class Blogs(MetaDetails):
     def __str__(self):
         return self.title
 
+
+
     def get_absolute_url(self):
         return reverse("Blogs_detail", kwargs={"pk": self.pk})
 
-class Events(models.Model):
+class Events(ImportdantDates):
     title = models.CharField(_("Title"), max_length=250, blank=False, null=True)
     label = models.CharField(_("Label"), max_length=250, blank=False, null=True)
     event_date = models.DateField(_("Event Date"), auto_now=False, auto_now_add=False,blank=False, null=True)
@@ -113,7 +116,7 @@ class Events(models.Model):
     def get_absolute_url(self):
         return reverse("Events_detail", kwargs={"pk": self.pk})
 
-class RegisterdEvents(models.Model):
+class RegisterdEvents(ImportdantDates):
     student = models.ForeignKey("application.CustomUser", verbose_name=_("Student"), on_delete=models.CASCADE, blank=True, null=True)
     event = models.ForeignKey("application.Events", verbose_name=_("Event"), on_delete=models.CASCADE, blank=True, null=True)
     registered_date = models.DateField(_("Registered Date"), auto_now=False, auto_now_add=False, blank=True, null=True)
@@ -126,7 +129,7 @@ class RegisterdEvents(models.Model):
     def get_absolute_url(self):
         return reverse("RegisterdEvents_detail", kwargs={"pk": self.pk})
 
-class News(models.Model):
+class News(ImportdantDates):
     event_date = models.DateField(_("Event Date"), auto_now=False, auto_now_add=False,blank=False, null=True)
     image = models.ImageField(_("Image"), upload_to="news_images/",blank=True, null=True)
     image_alt_name = models.CharField(_("Image Alt Name"), max_length=50, blank=True, null=True)
@@ -142,7 +145,7 @@ class News(models.Model):
     def get_absolute_url(self):
         return reverse("News_detail", kwargs={"pk": self.pk})
 
-class Testimonials(models.Model):
+class Testimonials(ImportdantDates):
     client_name = models.CharField(_("Client Name"), max_length=50, null=True, blank=True)
     client_role = models.CharField(_("Client Role"), max_length=50, null=True, blank=True)
     image = models.ImageField(_("Image"), upload_to="event_images/",blank=True, null=True)
@@ -158,7 +161,7 @@ class Testimonials(models.Model):
     def get_absolute_url(self):
         return reverse("Testimonials_detail", kwargs={"pk": self.pk})
 
-class ResultAnnouncements(models.Model):
+class ResultAnnouncements(ImportdantDates):
     title = models.CharField(_("Title"), max_length=250, blank=False, null=True)
     winner_name = models.CharField(_("Winner Name"), max_length=250, blank=False, null=True)
     winner_martk= models.PositiveSmallIntegerField(_("Winner Mark"), blank=False, null=True)
@@ -192,7 +195,7 @@ class ContactUs(ImportdantDates):
     def get_absolute_url(self):
         return reverse("ContactUs_detail", kwargs={"pk": self.pk})
 
-class HomeBanners(models.Model):
+class HomeBanners(ImportdantDates):
     title = models.CharField(_("Title"), max_length=250, blank=False, null=True)
     main_title = models.CharField(_("Main Title"), max_length=250, blank=False, null=True)
     description = models.TextField(_("Description"),blank=True, null=True)
@@ -208,7 +211,7 @@ class HomeBanners(models.Model):
     def get_absolute_url(self):
         return reverse("HomeBanner_detail", kwargs={"pk": self.pk})
 
-class MarqueeTexts(models.Model):
+class MarqueeTexts(ImportdantDates):
     text = models.TextField(_("Text"),blank=True, null=True)
     
 
@@ -219,7 +222,7 @@ class MarqueeTexts(models.Model):
     def get_absolute_url(self):
         return reverse("MarqueeTexts_detail", kwargs={"pk": self.pk})
 
-class Questions(models.Model):
+class Questions(ImportdantDates):
     section = models.CharField(_("Section"), max_length=50, blank=True, null=True)
     section_description = models.CharField(_("Section Description"), max_length=50, blank=True, null=True)
     section_time_limit = models.DurationField(_("Section Duration"),default=timedelta, null=True, blank=True)

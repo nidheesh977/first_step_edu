@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail.message import EmailMessage
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import CreateView, UpdateView, View
 
 from application.models import *
@@ -88,13 +88,43 @@ class AdminDashboard(View):
 
 class BannerView(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"banner-view.html")
+        objs = HomeBanners.objects.all().order_by("created_on")
+        context = {"objs":objs}
+        return render(request,"banner-view.html",context)
 
 
 class AddBanner(View):
     def get(self,request,*args, **kwargs):
         return render(request,"banner-add.html")
+    
+    def post(self,request,*args, **kwargs):
+        obj = HomeBanners.objects.create(
+            title = request.POST.get("title"),
+            main_title = request.POST.get("main_title"),
+            description = request.POST.get("description"),
+            button_name = request.POST.get("button_name"),
+            button_url = request.POST.get("button_url"),
+            image = request.FILES.get("upload_image"),
+        )
+        return redirect("admin_dashboard:home-banner")
 
+
+class EditBanner(View):
+    def get(self,request,*args, **kwargs):
+        obj = get_object_or_404(HomeBanners,id=kwargs.get("id"))
+        context = {"obj":obj}
+        return render(request,"banner-edit.html",context)
+    
+    def post(self,request,*args, **kwargs):
+        obj = get_object_or_404(HomeBanners,id=kwargs.get("id"))
+        obj.title = request.POST.get("title",obj.title)
+        obj.main_title = request.POST.get("main_title",obj.main_title)
+        obj.description = request.POST.get("description",obj.description)
+        obj.button_name = request.POST.get("button_name",obj.button_name)
+        obj.button_url = request.POST.get("button_url",obj.button_url)
+        obj.image = request.FILES.get("upload_image",obj.image)
+        obj.save()
+        return redirect("admin_dashboard:home-banner")
 
 class MarqueeText(View):
     def get(self,request,*args, **kwargs):

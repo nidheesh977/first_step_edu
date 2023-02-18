@@ -19,14 +19,16 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for obj in objs %}
                         <tr>
-                            <td>1</td>
-                            <td>Lorem ipsum dolor sit amet consectetur adipisicing elit</td>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{obj.title}}</td>
                             <td>
-                                <a href="banner-edit.php" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a>
+                                <a href="{% url 'admin_dashboard:home-banner-edit' obj.id %}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a>
                                 <a href="javascript:void(0);" onclick="alert('Do you Want to Delete?')" class="btn btn-danger btn-circle btn-sm"><i class="fas fa-trash"></i></a>
                             </td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
