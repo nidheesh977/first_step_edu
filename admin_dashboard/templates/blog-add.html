@@ -1,0 +1,75 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Create Blog</h1>
+        <a href="{% url 'admin_dashboard:blogs-list' %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i
+                    class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a>
+    </div>
+    <div class="p-4">
+        <form class="user row" method="POST" name="blogForm" enctype='multipart/form-data'>
+            {% csrf_token %}
+            <div class="form-group col-sm-6">
+                <label>Title <span class="text-danger">*</span></label>
+                <input name="title" type="text" class="form-control form-control-user" required>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>URL <span class="text-danger">*</span></label>
+                <input name="url" type="text" class="form-control form-control-user" required>
+                <font>Make sure to avoid special characters except "-" symbol.</font>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Upload Image <span class="text-danger">*</span></label>
+                <input class="form-control form-control-lg" name="upload_image" type="file" required accept="image/png, image/jpeg">
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Image Alt Name <span class="text-danger">*</span></label>
+                <input name="uploaded_image_alt_name" type="text" class="form-control form-control-user" required>
+            </div>
+            <div class="form-group col-12">
+                <label>Description <span class="text-danger">*</span></label>
+                <textarea name="description" rows="2" class="form-control form-control-user" required></textarea>
+            </div>
+            <div class="form-group col-12">
+                <label>Overall Description <span class="text-danger">*</span></label>
+                <div class="mysummernote"></div>
+            </div>
+            <div class="form-group col-12">
+                <label>Meta Title <span class="text-danger">*</span></label>
+                <input name="meta_title" type="text" class="form-control form-control-user" required>
+            </div>
+            <div class="form-group col-12">
+                <label>Meta Description <span class="text-danger">*</span></label>
+                <textarea name="meta_description" rows="2" class="form-control form-control-user" required></textarea>
+            </div>
+            <div class="form-group col-12">
+                <label>Meta Keywords <span class="text-danger">*</span></label>
+                <textarea name="meta_keywords" rows="3" class="form-control form-control-user" required></textarea>
+            </div>
+            <div class="col-12 text-center pt-4">
+                <input type="submit" id="formSubmit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+
+
+<script>
+    $(document).ready(function(){
+        $('.note-codable').attr("name","overall_description");
+        /*$('form').submit(function(evt){
+            if($('.note-editable').summernote('isEmpty')) {
+                alert('Over all description is empty, fill it!');
+                evt.preventDefault();
+              }
+        });*/
+        
+    });
+
+
+</script>
+
+{% endblock script %}

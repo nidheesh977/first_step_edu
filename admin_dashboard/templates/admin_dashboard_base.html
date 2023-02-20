@@ -26,6 +26,24 @@
 
 
 <body id="page-top">
+
+
+     <!-- sweet alert -->
+     {% block sweetalert %}
+
+        <script>
+            {% if messages %}
+                {% for message in messages %}
+                swal({
+                    title: "{{message|safe|title}}",
+                    icon: "{{message.tags}}",
+                });
+                {% endfor %}
+            {% endif %}
+        </script>
+
+    {% endblock sweetalert %}
+
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
@@ -77,7 +95,7 @@
                     <span>Competitive Management</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="blog-view.php">
+                <a class="nav-link" href="{% url 'admin_dashboard:blogs-list' %}">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Blog</span></a>
             </li>

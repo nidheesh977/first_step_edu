@@ -81,7 +81,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Blogs(MetaDetails):
     title = models.CharField(_("Title"), max_length=250, blank=False, null=True)
     description = models.TextField(_("Description"),blank=True, null=True)
-    url = models.TextField(_("URL"), blank=True, null=True)
+    url = models.TextField(_("URL"), blank=True, null=True, unique=True)
     image = models.ImageField(_("Image"), upload_to="blog_images/",blank=True, null=True)
     image_alt_name = models.CharField(_("Image Alt Name"), max_length=50, blank=True, null=True)
     overall_description = models.TextField(_("Overall Description"),blank=True, null=True)

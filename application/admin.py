@@ -7,7 +7,11 @@ from .models import *
 
 
 class SomeModelAdmin(SummernoteModelAdmin):
-    summernote_fields = 'instructions'
+    summernote_fields = ('instructions',)
+
+
+class BlogModelAdmin(SummernoteModelAdmin):
+    summernote_fields = ('overall_description',)
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
@@ -58,7 +62,7 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(Papers, SomeModelAdmin)
 admin.site.register(ContactUs)
-admin.site.register(Blogs)
+admin.site.register(Blogs,BlogModelAdmin)
 admin.site.register(Events)
 admin.site.register(RegisterdEvents)
 admin.site.register(News)
