@@ -9,8 +9,8 @@ from django.views.generic import CreateView, UpdateView, View
 from application.models import *
 from utils.constants import EmailContents
 from utils.functions import OTP_Gen, is_ajax
-
-
+from . import custom_mixins
+from PIL import Image
 class AdminLogin(View):
     def get(self,request,*args, **kwargs):
         admin_email = request.POST.get("admin_email")
@@ -26,7 +26,7 @@ class AdminLogin(View):
         admin_password = request.POST.get("admin_password")
         user = authenticate(request, username=admin_email, password=admin_password)
         if user is not None and user.is_superuser:
-            return redirect("admin_dashboard:dashboard")
+            return redirect("admin_dashboard:admin-dashboard")
         else:
             messages.error(request,"Invalid Credentials")
             return redirect("admin_dashboard:admin-login")
@@ -80,36 +80,55 @@ class AdminForgetPassword(View):
                 messages.warning(request,"OTP is not generated for submitted email please click send OTP")
             return redirect("admin_dashboard:admin-forget-password")
 
-class AdminDashboard(View):
+class AdminDashboard(custom_mixins.SuperUserCheck,View):
     def get(self,request,*args, **kwargs):
         return render(request,"admin_dashboard_base.html")
 
 
 
-class BannerView(View):
+class BannerView(LoginRequiredMixin,View):
     def get(self,request,*args, **kwargs):
         objs = HomeBanners.objects.all().order_by("created_on")
         context = {"objs":objs}
         return render(request,"banner-view.html",context)
+    
+    def post(self,request,*args, **kwargs):
+        objs = HomeBanners.objects.get(id=request.POST.get("objId")).delete()
+        to_return = {
+                        "title":"Deleted",
+                        "icon":"success",
+                    }
+        return JsonResponse(to_return,safe=True,)
 
 
-class AddBanner(View):
+class AddBanner(LoginRequiredMixin,View):
     def get(self,request,*args, **kwargs):
         return render(request,"banner-add.html")
     
     def post(self,request,*args, **kwargs):
+        IMAGE_SCALE = (573,374)
+
+        IMAGE = request.FILES.get("upload_image")
+        imageImage = Image.open(IMAGE)
+        scale = imageImage.size
+        if IMAGE_SCALE == scale:
+            print("OK")
+        else:
+            messages.error(request,"Invalid Image")
+            print("NOT OK")
+        
         obj = HomeBanners.objects.create(
             title = request.POST.get("title"),
             main_title = request.POST.get("main_title"),
             description = request.POST.get("description"),
             button_name = request.POST.get("button_name"),
             button_url = request.POST.get("button_url"),
-            image = request.FILES.get("upload_image"),
+            image = IMAGE,
         )
         return redirect("admin_dashboard:home-banner")
 
 
-class EditBanner(View):
+class EditBanner(LoginRequiredMixin,View):
     def get(self,request,*args, **kwargs):
         obj = get_object_or_404(HomeBanners,id=kwargs.get("id"))
         context = {"obj":obj}
@@ -128,7 +147,15 @@ class EditBanner(View):
 
 class MarqueeText(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"admin_dashboard_base.html")
+        obj,created = MarqueeTexts.objects.get_or_create(id=1)
+        context = {"obj":obj}
+        return render(request,"marquee.html",context)
+
+    def post(self,request,*args, **kwargs):
+        obj,created = MarqueeTexts.objects.get_or_create(id=1)
+        obj.text = request.POST.get("marquee_text")
+        obj.save()
+        return redirect("admin_dashboard:marquee")
 
 
 

@@ -25,7 +25,7 @@
                             <td>{{obj.title}}</td>
                             <td>
                                 <a href="{% url 'admin_dashboard:home-banner-edit' obj.id %}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a>
-                                <a href="javascript:void(0);" onclick="alert('Do you Want to Delete?')" class="btn btn-danger btn-circle btn-sm"><i class="fas fa-trash"></i></a>
+                                <a href="javascript:void(0);"  data={{obj.id}} class="btn btn-danger btn-circle btn-sm deleteBanner"><i class="fas fa-trash"></i></a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -37,3 +37,44 @@
 </div>
 {% endblock content %}
 
+{% block script %}
+
+
+<script>  
+
+    $(".deleteBanner").click(function(){
+        let text = "Do you want to delete ?";
+        var objId = $(this).attr("data");
+        if (confirm(text) == true) {
+            text = "You pressed OK!";
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                data: {
+                  csrfmiddlewaretoken: '{{ csrf_token }}',
+                  objId:objId
+                },
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    swal({
+                        title: response["title"],
+                        icon: response["icon"],
+                    });
+                    location.reload();
+                },
+                error: function(response) {
+                   alert("Something Wrong");
+                }
+            });
+        }
+    })
+
+
+</script>
+
+
+
+{% endblock script %}

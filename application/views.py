@@ -107,6 +107,7 @@ class ForgetPassword(View):
 class LogoutView(View):
     def get(self, request, *args, **kwargs):
         user_type = request.user.is_superuser
+        print(user_type)
         logout(request)
         if user_type:
             return redirect("admin_dashboard:admin-login")

@@ -1,0 +1,29 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+{% load static %}
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Marquee Text</h1>
+       <!-- <a href="javascript:void(0);" class="d-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-edit fa-sm text-white-50 pr-1"></i> Edit</a> -->
+    </div>
+    <div class="p-4">
+        <div class="p-4">
+            <div class="bg-white p-4 mb-4">
+                <h4 class="text-gray-900">Sample Scrolling Text</h4>
+                &lt;span class="span-marquee"&gt;Lorem ipsum dolor sit amet consectetur adipisicing&lt;/span&gt;
+            </div>
+            <form class="user row" method="post">
+                {% csrf_token %}
+                <div class="form-group col-12">
+                    <label>Paste The Above Text Here <span class="text-danger">*</span></label>
+                    <textarea rows="2" class="form-control form-control-user" name="marquee_text" required>{{obj.text}}</textarea>
+                </div>
+                <div class="col-12 text-center pt-4">
+                    <input type="submit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
