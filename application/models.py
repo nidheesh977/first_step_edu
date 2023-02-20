@@ -69,7 +69,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     created_on = models.DateTimeField(auto_now_add=True, null=True)
     updated_on = models.DateTimeField(auto_now=True, null=True)
-    profile_pic = models.ImageField(upload_to="ProfilePictures/", blank=True, default='ProfilePictures/default_user.png')
+    profile_pic = models.ImageField(upload_to="ProfilePictures/", blank=True, default='profilePictures/user.png')
 
     objects = CustomAccountManager()
     USERNAME_FIELD = 'email'

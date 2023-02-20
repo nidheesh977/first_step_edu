@@ -3,8 +3,8 @@
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Blogs</h6>
-            <a href="{% url 'admin_dashboard:blog-add' %}" class="d-inline-block btn btn-sm btn-primary shadow-sm"><i
+            <h6 class="m-0 font-weight-bold text-primary">Testimonials</h6>
+            <a href="{% url 'admin_dashboard:testimonial-add' %}" class="d-inline-block btn btn-sm btn-primary shadow-sm"><i
                     class="fas fa-plus fa-sm text-white-50"></i> Add</a>
         </div>
         <div class="card-body">
@@ -13,7 +13,8 @@
                     <thead>
                         <tr>
                             <th>S.No</th>
-                            <th>Title</th>
+                            <th>Name</th>
+                            <th width="50%">Description</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -21,10 +22,11 @@
                         {% for obj in objs %}
                         <tr>
                             <td>{{forloop.counter}}</td>
-                            <td>{{obj.title}}</td>
+                            <td>{{obj.client_name}}</td>
+                            <td>{{obj.description}}</td>
                             <td>
-                                <a href="{% url 'admin_dashboard:blog-edit' obj.id %}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a>
-                                <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-danger btn-circle btn-sm deleteBlog"><i class="fas fa-trash"></i></a>
+                                <a href="{% url 'admin_dashboard:testimonial-edit' obj.id %}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a>
+                                <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-danger btn-circle btn-sm deleteTestimonials"><i class="fas fa-trash"></i></a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -36,11 +38,10 @@
 </div>
 {% endblock content %}
 
-
 {% block script %}
 <script>  
 
-    $(".deleteBlog").click(function(){
+    $(".deleteTestimonials").click(function(){
         let text = "Do you want to delete ?";
         var objId = $(this).attr("data");
         if (confirm(text) == true) {
