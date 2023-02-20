@@ -10,6 +10,7 @@ from application.models import *
 from utils.constants import EmailContents
 from utils.functions import OTP_Gen, is_ajax
 from . import custom_mixins
+from django.db import IntegrityError
 from PIL import Image
 class AdminLogin(View):
     def get(self,request,*args, **kwargs):
@@ -186,19 +187,25 @@ class AddBlog(View):
         return render(request,"blog-add.html")
     
     def post(self,request,*args, **kwargs):
-
-        obj = Blogs.objects.create(
-            title = request.POST.get("title"),
-            description = request.POST.get("description"),
-            url = request.POST.get("url"),
-            image = request.FILES.get("upload_image"),
-            image_alt_name = request.POST.get("uploaded_image_alt_name"),
-            overall_description = request.POST.get("overall_description"),
-            meta_title = request.POST.get("meta_title"),
-            meta_description = request.POST.get("meta_description"),
-            meta_keywords = request.POST.get("meta_keywords"),
-        )
-        return redirect("admin_dashboard:blogs-list")
+        print(request.POST)
+        try:
+            obj = Blogs.objects.create(
+                title = request.POST.get("title"),
+                description = request.POST.get("description"),
+                url = request.POST.get("url"),
+                image = request.FILES.get("upload_image"),
+                image_alt_name = request.POST.get("uploaded_image_alt_name"),
+                overall_description = request.POST.get("overall_description"),
+                meta_title = request.POST.get("meta_title"),
+                meta_description = request.POST.get("meta_description"),
+                meta_keywords = request.POST.get("meta_keywords"),
+            )
+            return redirect("admin_dashboard:blogs-list")
+        except IntegrityError:
+            messages.error(request, "URL must be unique")
+            return redirect("admin_dashboard:blog-add")
+        
+        
 
 class EditBlog(View):
     def get(self,request,*args, **kwargs):

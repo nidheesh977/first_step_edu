@@ -32,8 +32,11 @@
             </div>
             <div class="form-group col-12">
                 <label>Overall Description <span class="text-danger">*</span></label>
-                <div class="mysummernote"></div>
+                <div>
+                    <textarea class="form-control form-control-user" id="summernote"  autofocus="autofocus" name="overall_description"></textarea>
+                </div>
             </div>
+
             <div class="form-group col-12">
                 <label>Meta Title <span class="text-danger">*</span></label>
                 <input name="meta_title" type="text" class="form-control form-control-user" required>
@@ -56,20 +59,29 @@
 
 {% block script %}
 
-
 <script>
-    $(document).ready(function(){
-        $('.note-codable').attr("name","overall_description");
-        /*$('form').submit(function(evt){
-            if($('.note-editable').summernote('isEmpty')) {
-                alert('Over all description is empty, fill it!');
-                evt.preventDefault();
-              }
-        });*/
+    $(document).ready(function() {
+        $('textarea#summernote').summernote({
+            tabsize: 2,
+            height: 100,
+            toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'hr']],
+                    ['help', ['help']]
+                ],
+          });
         
+        $("form").submit(function(event){
+            if($('textarea#summernote').summernote('isEmpty')) {
+                alert('over all description is empty, fill it!');
+                event.preventDefault();
+              }
+        });
     });
-
-
-</script>
-
+    </script>
 {% endblock script %}
