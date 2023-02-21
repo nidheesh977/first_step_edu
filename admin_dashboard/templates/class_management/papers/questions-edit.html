@@ -1,0 +1,72 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+<style>
+    .form-check-input {
+        margin-top: 8px;
+        margin-left: -27px;
+        width: 20px;
+        height: 20px;
+    }
+    select {
+        background-color: #fff;
+        border: 1px solid #d1d3e2;
+        height: 50px;
+        padding: 12px;
+    }
+</style>
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Edit <span>Paper 1</span></h1>
+        <a href="{% url 'admin_dashboard:clsm-questions-list' cls_id sub_id paper_id %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a>
+    </div>
+    <div class="p-4">
+        <form class="user row" method="POST">
+            {% csrf_token %}
+            <div class="form-group col-sm-6">
+                <label>Select Section <span class="text-danger">*</span></label>
+                <select name="section" class="form-select w-100" required>
+                    <option selected disabled>Select Section</option>
+                    <option {% if obj.section == "Section - A" %}selected{% endif %} >Section - A</option>
+                    <option {% if obj.section == "Section - B" %}selected{% endif %} >Section - B</option>
+                    <option {% if obj.section == "Section - C" %}selected{% endif %} >Section - C</option>
+                </select>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Section Description <span class="text-danger">*</span></label>
+                <input type="text" name="section_description" value="{{obj.section_description}}" maxlength="250" class="form-control form-control-user" required>
+            </div>
+            <div class="form-group col-12">
+                <label>Questions <span class="text-danger">*</span></label>
+                <input type="text" name="question" value="{{obj.question}}" class="form-control form-control-user" required>
+            </div>
+            
+            <label class="pl-3">Options <span class="text-danger">*</span></label>
+            <div class="form-group col-12 row mx-0 px-0">
+                <div class="form-check pb-2 col-lg-6">
+                    <input {% if obj.correct_answer == obj.option1 %}checked{% endif %} class="form-check-input" type="radio" name="option" value="" onchange="showVal()" id="option1">
+                    <input type="text" name="option1" class="option form-control" value="{{obj.option1}}" required>
+                </div>
+                <div class="form-check pb-2 col-lg-6">
+                    <input {% if obj.correct_answer == obj.option2 %}checked{% endif %} class="form-check-input" type="radio" name="option" value="" onchange="showVal()" id="option2">
+                    <input type="text" name="option2" class="option form-control" value="{{obj.option2}}" required>
+                </div>
+                <div class="form-check pb-2 col-lg-6">
+                    <input {% if obj.correct_answer == obj.option3 %}checked{% endif %} class="form-check-input" type="radio" name="option" value="" onchange="showVal()" id="option3">                    
+                    <input type="text" name="option3" class="option form-control" value="{{obj.option3}}" required>
+                </div>
+                <div class="form-check pb-2 col-lg-6">
+                    <input {% if obj.correct_answer == obj.option4 %}checked{% endif %} class="form-check-input" type="radio" name="option" value="" onchange="showVal()" id="option4">                    
+                    <input type="text" name="option4" class="option form-control" value="{{obj.option4}}" required>
+                </div>
+            </div>
+            <div class="form-group col-12">
+                <label>Correct Option <span class="text-danger">*</span></label>
+                <input type="text" name="correct_option" id="correct-option" class="form-control form-control-user" value="{{obj.correct_answer}}" readonly>
+            </div>
+            <div class="col-12 text-center pt-4">
+                <input type="submit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

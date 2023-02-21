@@ -225,7 +225,7 @@ class MarqueeTexts(ImportdantDates):
 
 class Questions(ImportdantDates):
     section = models.CharField(_("Section"), max_length=50, blank=True, null=True)
-    section_description = models.CharField(_("Section Description"), max_length=50, blank=True, null=True)
+    section_description = models.CharField(_("Section Description"), max_length=250, blank=True, null=True)
     section_time_limit = models.DurationField(_("Section Duration"),default=timedelta, null=True, blank=True)
     question = models.TextField(_("Question"),null=True, blank=True)
     option1 = models.CharField(_("Option 1"), max_length=250, null=True, blank=True)
@@ -252,8 +252,8 @@ class Papers(MetaDetails):
         verbose_name = _("Papers")
         verbose_name_plural = _("Papers")
 
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.name
 
     def get_absolute_url(self):
         return reverse("Papers_detail", kwargs={"pk": self.pk})
@@ -268,8 +268,8 @@ class Subjects(MetaDetails):
         verbose_name = _("Subjects")
         verbose_name_plural = _("Subjects")
 
-    # def __str__(self):
-    #     return self.name
+    def __str__(self):
+        return f"{self.id}"
 
     def get_absolute_url(self):
         return reverse("Subjects_detail", kwargs={"pk": self.pk})

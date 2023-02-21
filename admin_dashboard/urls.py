@@ -47,10 +47,11 @@ urlpatterns = [
 
     # Class Management
     path("classes", views.CMClassListView.as_view(),name="clsm-classes-list"),
-    path("classes/<str:class_id>/subjects", views.CMSubjectsListView.as_view(),name="clsm-subjects-list"),
-    path("classes/<str:class_id>/subjects/<str:subject_id>/papers", views.CMPapersListView.as_view(),name="clsm-papers-list"),
-    path("classes/<str:class_id>/subjects/<str:subject_id>/papers/questions", views.CMQuestionsList.as_view(),name="clsm-questions-list"),
-    path("classes/<str:class_id>/subjects/<str:subject_id>/papers/add-question", views.CMAddQuestions.as_view(),name="clsm-paper-qus-add"),
+    path("class-<str:class_id>/subjects", views.CMSubjectsListView.as_view(),name="clsm-subjects-list"),
+    path("class-<str:class_id>/subjects-<str:subject_id>/papers", views.CMPapersListView.as_view(),name="clsm-papers-list"),
+    path("class-<str:class_id>/subjects-<str:subject_id>/papers-<str:paper_id>/questions", views.CMQuestionsList.as_view(),name="clsm-questions-list"),
+    path("class-<str:class_id>/subjects-<str:subject_id>/paper-<str:paper_id>/add-question", views.CMAddQuestions.as_view(),name="clsm-paper-qus-add"),
+    path("class-<str:class_id>/subjects-<str:subject_id>/paper-<str:paper_id>/edit-question/<str:qus_id>", views.CMEditQuestions.as_view(),name="clsm-paper-qus-edit"),
 
 
     path("contact-enquiry", views.ContactEnquiry.as_view(),name="contact-enquiry"),

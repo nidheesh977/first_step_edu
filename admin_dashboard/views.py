@@ -492,21 +492,198 @@ class CMClassListView(View):
 
 class CMSubjectsListView(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"class_management/subjects/subjects-list.html")
+        cls_obj = get_object_or_404(Classes,id=kwargs.get("class_id")) 
+        context = {
+            "cls_id":kwargs.get("class_id"),
+            "subjects":cls_obj.assigned_subjects.all()
+        }
+        return render(request,"class_management/subjects/subjects-list.html",context)
+    
+
+    def post(self,request,*args, **kwargs):
+        cls_obj = get_object_or_404(Classes,id=kwargs.get("class_id")) 
+        if request.POST.get("action") == "delete":
+            obj = get_object_or_404(Subjects,id=request.POST.get("objId")) 
+            obj.delete()
+            to_return = {
+                        "title":"Deleted",
+                        "icon":"success",
+                    }
+            return JsonResponse(to_return,safe=True,)
+        if request.POST.get("action") == "retrieve":
+            obj = Subjects.objects.filter(id=request.POST.get("objId")).values(
+                "id",
+                "title",
+                "description",
+                "meta_title",
+                "meta_description",
+                "meta_keywords",
+            )
+            to_return = {"obj":list(obj)[0]}
+            return JsonResponse(to_return,safe=True,)
+
+        if request.POST.get("edit_form") != None:
+            obj = get_object_or_404(Subjects,id=request.POST.get("id"))       
+            obj.title = request.POST.get("subject_title",obj.title)
+            obj.description = request.POST.get("subject_description",obj.description)
+            obj.meta_title = request.POST.get("meta_title",obj.meta_title)
+            obj.meta_description = request.POST.get("meta_description",obj.meta_description)
+            obj.meta_keywords = request.POST.get("meta_keywords",obj.meta_keywords)
+            obj.save()
+            return redirect("admin_dashboard:clsm-subjects-list",class_id=cls_obj.id)
+        else:
+            sub_obj = Subjects.objects.create(
+                title = request.POST.get("subject_title"),
+                description = request.POST.get("subject_description"),
+                meta_title = request.POST.get("meta_title"),
+                meta_description = request.POST.get("meta_description"),
+                meta_keywords = request.POST.get("meta_keywords"),
+            )
+            cls_obj.assigned_subjects.add(sub_obj)
+            return redirect("admin_dashboard:clsm-subjects-list",class_id=cls_obj.id)
+
 
 class CMPapersListView(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"class_management/papers/papers-list.html")
+        SUBJECT_ID = kwargs.get("subject_id")
+        CLASS_ID = kwargs.get("class_id")
+        sub_obj = get_object_or_404(Subjects,id=SUBJECT_ID)
+        context = {
+            "cls_id":CLASS_ID,
+            "sub_id":SUBJECT_ID,
+            "objs":sub_obj.assigned_papers.all(),
+        }
+        return render(request,"class_management/papers/papers-list.html",context)
+
+    
+    def post(self,request,*args, **kwargs):
+        SUBJECT_ID = kwargs.get("subject_id")
+        CLASS_ID = kwargs.get("class_id")
+        sub_obj = get_object_or_404(Subjects,id=SUBJECT_ID)
+
+        if request.POST.get("action") == "delete":
+            obj = get_object_or_404(Papers,id=request.POST.get("objId")) 
+            obj.delete()
+            to_return = {
+                        "title":"Deleted",
+                        "icon":"success",
+                    }
+            return JsonResponse(to_return,safe=True,)
+        if request.POST.get("action") == "retrieve":
+            obj = Papers.objects.filter(id=request.POST.get("objId")).values(
+                "id",
+                "title",
+                "description",
+                "instructions"
+            )
+            to_return = {"obj":list(obj)[0]}
+            return JsonResponse(to_return,safe=True,)
+
+        if request.POST.get("edit_form") != None:
+            obj = get_object_or_404(Papers,id=request.POST.get("id"))       
+            obj.title = request.POST.get("paper_title",obj.title)
+            obj.description = request.POST.get("paper_description",obj.description)
+            obj.instructions = request.POST.get("general_instructions",obj.instructions)
+            obj.save()
+            return redirect("admin_dashboard:clsm-papers-list",class_id=CLASS_ID,subject_id=SUBJECT_ID)
+        else:
+            paper_obj = Papers.objects.create(
+                title = request.POST.get("paper_title"),
+                description = request.POST.get("paper_description"),
+                instructions = request.POST.get("general_instructions"),
+            )
+            sub_obj.assigned_papers.add(paper_obj)
+            return redirect("admin_dashboard:clsm-papers-list",class_id=CLASS_ID,subject_id=SUBJECT_ID)
+
 
 
 class CMQuestionsList(View):
     def get(self,request,*args, **kwargs):
-            return render(request,"class_management/papers/paper-questions-list.html")
+        print(kwargs)
+        PAPER_ID = kwargs.get("paper_id")
+        CLASS_ID = kwargs.get("class_id")
+        SUBJECT_ID = kwargs.get("subject_id")
+        paper_obj = get_object_or_404(Papers,id=PAPER_ID)
+        context = {
+            "qus_obj":paper_obj.assigned_questions.all(),
+            "cls_id":CLASS_ID,
+            "sub_id":SUBJECT_ID,
+            "paper_id":PAPER_ID,
+        }
+        return render(request,"class_management/papers/questions-list.html",context)
+    
+    def post(self,request,*args, **kwargs):
+        paper_obj = get_object_or_404(Questions,id=request.POST.get("objId")).delete()
+        to_return = {
+                        "title":"Deleted",
+                        "icon":"success",
+                    }
+        return JsonResponse(to_return,safe=True,)
 
 class CMAddQuestions(View):
     def get(self,request,*args, **kwargs):
-            return render(request,"class_management/papers/paper-questions-add.html")
+        PAPER_ID = kwargs.get("paper_id")
+        CLASS_ID = kwargs.get("class_id")
+        SUBJECT_ID = kwargs.get("subject_id")
+        context = {
+            "cls_id":CLASS_ID,
+            "sub_id":SUBJECT_ID,
+            "paper_id":PAPER_ID,
+        }
+        return render(request,"class_management/papers/questions-add.html",context)
+    
+    def post(self,request,*args, **kwargs):
+        PAPER_ID = kwargs.get("paper_id")
+        CLASS_ID = kwargs.get("class_id")
+        SUBJECT_ID = kwargs.get("subject_id")
+        
+        qus_obj = Questions.objects.create(
+            section = request.POST.get("section"),
+            section_description = request.POST.get("section_description"),
+            section_time_limit = request.POST.get("section_time_limit"),
+            question = request.POST.get("question"),
+            option1 = request.POST.get("option1"),
+            option2 = request.POST.get("option2"),
+            option3 = request.POST.get("option3"),
+            option4 = request.POST.get("option4"),
+            correct_answer = request.POST.get("correct_option"),
+        )
+        paper_obj = get_object_or_404(Papers,id=PAPER_ID)
+        paper_obj.assigned_questions.add(qus_obj)
+        return redirect("admin_dashboard:clsm-questions-list", class_id=CLASS_ID, subject_id=SUBJECT_ID, paper_id=PAPER_ID)
 
+
+class CMEditQuestions(View): 
+    def get(self,request,*args, **kwargs):
+        PAPER_ID = kwargs.get("paper_id")
+        CLASS_ID = kwargs.get("class_id")
+        SUBJECT_ID = kwargs.get("subject_id")
+        qus_obj = get_object_or_404(Questions,id=kwargs.get("qus_id"))
+        context = {
+            "cls_id":CLASS_ID,
+            "sub_id":SUBJECT_ID,
+            "paper_id":PAPER_ID,
+            "obj":qus_obj,
+        }
+        return render(request,"class_management/papers/questions-edit.html",context)
+    
+    def post(self,request,*args, **kwargs):
+        PAPER_ID = kwargs.get("paper_id")
+        CLASS_ID = kwargs.get("class_id")
+        SUBJECT_ID = kwargs.get("subject_id")
+        qus_obj = get_object_or_404(Questions,id=kwargs.get("qus_id"))
+        
+        qus_obj.section = request.POST.get("section",qus_obj.section)
+        qus_obj.section_description = request.POST.get("section_description",qus_obj.section_description)
+        qus_obj.section_time_limit = request.POST.get("section_time_limit",qus_obj.section_time_limit)
+        qus_obj.question = request.POST.get("question",qus_obj.question)
+        qus_obj.option1 = request.POST.get("option1",qus_obj.option1)
+        qus_obj.option2 = request.POST.get("option2",qus_obj.option2)
+        qus_obj.option3 = request.POST.get("option3",qus_obj.option3)
+        qus_obj.option4 = request.POST.get("option4",qus_obj.option4)
+        qus_obj.correct_answer = request.POST.get("correct_option",qus_obj.correct_answer)
+        qus_obj.save()
+        return redirect("admin_dashboard:clsm-questions-list", class_id=CLASS_ID, subject_id=SUBJECT_ID, paper_id=PAPER_ID)
 
 class CompetitiveManagement(View):
     def get(self,request,*args, **kwargs):
