@@ -9,9 +9,9 @@ from django.views.generic import View
 from application.models import *
 from utils.constants import EmailContents
 from utils.functions import OTP_Gen, is_ajax
-from . import custom_mixins
 from django.db import IntegrityError
 from PIL import Image
+import json
 class AdminLogin(View):
     def get(self,request,*args, **kwargs):
         admin_email = request.POST.get("admin_email")
@@ -83,7 +83,19 @@ class AdminForgetPassword(View):
 
 class AdminDashboard(LoginRequiredMixin,View):
     def get(self,request,*args, **kwargs):
-        return render(request,"admin_dashboard_base.html")
+        registerdUsers = CustomUser.objects.all().exclude(is_superuser=True)
+        blogs = Blogs.objects.all().count()
+        events = Events.objects.all().count()
+        enquiry = ContactUs.objects.all().count()
+        
+        context = {
+            "user_counts":registerdUsers.count(),
+            "blogs_counts":blogs,
+            "events_counts":events,
+            "enquiry_counts":enquiry,
+            "user_objs":registerdUsers,
+        }
+        return render(request,"admin_dashboard_base.html",context)
 
 class BannerView(LoginRequiredMixin,View):
     def get(self,request,*args, **kwargs):
@@ -335,12 +347,14 @@ class AddTestimonial(View):
         return render(request,"testimonials-add.html")
     
     def post(self,request,*args, **kwargs):
+        
         Testimonials.objects.create(
             client_name = request.POST.get("client_name"),
             client_role = request.POST.get("client_role"),
             image = request.FILES.get("upload_image"),
             image_alt_name = request.POST.get("upload_image_alt_name"),
             description = request.POST.get("description"),
+            assigned_pages = request.POST.getlist("assigned_pages"),
         )
         return redirect("admin_dashboard:testimonials-list")
 
@@ -357,13 +371,59 @@ class EditTestimonial(View):
         obj.image = request.FILES.get("upload_image",obj.image)
         obj.image_alt_name = request.POST.get("upload_image_alt_name",obj.image_alt_name)
         obj.description = request.POST.get("description",obj.description)
+        obj.assigned_pages = request.POST.getlist("assigned_pages",obj.assigned_pages)
         obj.save()
         return redirect("admin_dashboard:testimonials-list")
 
-    
-class ResultAnnouncement(View):
+
+class ResultAnnouncementsList(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"admin_dashboard_base.html")
+        objs = ResultAnnouncements.objects.all().order_by("created_on")
+        context = {"objs":objs}
+        return render(request,"announce-view.html",context)
+    
+    def post(self,request,*args, **kwargs):
+        ResultAnnouncements.objects.get(id=request.POST.get("objId")).delete()
+        to_return = {
+                        "title":"Deleted",
+                        "icon":"success",
+                    }
+        return JsonResponse(to_return,safe=True,)
+
+
+class AddResultAnnouncement(View):
+    def get(self,request,*args, **kwargs):
+        return render(request,"announce-add.html")
+    
+    def post(self,request,*args, **kwargs):
+        ResultAnnouncements.objects.create(
+            title = request.POST.get("title"),
+            winner_name = request.POST.get("winner_name"),
+            winner_mark = int(request.POST.get("winner_mark")),
+            winner_image = request.FILES.get("upload_image"),
+            winner_image_alt_name = request.POST.get("uploaded_image_alt_name"),
+            winner_description = request.POST.get("description"),
+        )
+        return redirect("admin_dashboard:result_announcements-list")
+
+class EditResultAnnouncement(View):
+    def get(self,request,*args, **kwargs):
+        obj = get_object_or_404(ResultAnnouncements,id=kwargs.get("id"))
+        context = {"obj":obj}
+        return render(request,"announce-edit.html",context)
+    
+    def post(self,request,*args, **kwargs):
+        obj = get_object_or_404(ResultAnnouncements,id=kwargs.get("id"))        
+        
+        obj.title = request.POST.get("title",obj.title)
+        obj.winner_name = request.POST.get("winner_name",obj.winner_name)
+        obj.winner_mark = int(request.POST.get("winner_mark",obj.winner_mark))
+        obj.winner_image = request.FILES.get("upload_image",obj.winner_image)
+        obj.winner_image_alt_name = request.POST.get("uploaded_image_alt_name",obj.winner_image_alt_name)
+        obj.winner_description = request.POST.get("description",obj.winner_description)
+        
+        obj.save()
+        return redirect("admin_dashboard:result_announcements-list")
 
 
 class ContactEnquiry(View):
@@ -374,16 +434,78 @@ class ContactEnquiry(View):
         }
         return render(request,"contact-enquiry.html", context)
 
-
 class RegistredUsers(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"admin_dashboard_base.html")
+        objs = CustomUser.objects.all().exclude(is_superuser=True)
+        context = {"objs":objs}
+        return render(request,"registration.html",context)
 
 
-
-class ClassManagement(View):
+# CM - Class Management
+class CMClassListView(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"admin_dashboard_base.html")
+        objs = Classes.objects.all()
+        context = {
+            "objs":objs,
+        }
+        return render(request,"class_management/classes/class-list.html",context)
+    
+    def post(self,request,*args, **kwargs):
+        if request.POST.get("action") == "delete":
+            Classes.objects.get(id=request.POST.get("objId")).delete()
+            to_return = {
+                        "title":"Deleted",
+                        "icon":"success",
+                    }
+            return JsonResponse(to_return,safe=True,)
+        if request.POST.get("action") == "retrieve":
+            obj = Classes.objects.filter(id=request.POST.get("objId")).values(
+                "id",
+                "title",
+                "description",
+                "meta_title",
+                "meta_description",
+                "meta_keywords",
+            )
+            to_return = {"obj":list(obj)[0]}
+            return JsonResponse(to_return,safe=True,)
+
+        if request.POST.get("edit_form") != None:
+            obj = get_object_or_404(Classes,id=request.POST.get("id"))       
+            obj.title = request.POST.get("class_title",obj.title)
+            obj.description = request.POST.get("class_description",obj.description)
+            obj.meta_title = request.POST.get("meta_title",obj.meta_title)
+            obj.meta_description = request.POST.get("meta_description",obj.meta_description)
+            obj.meta_keywords = request.POST.get("meta_keywords",obj.meta_keywords)
+            obj.save()
+            return redirect("admin_dashboard:clsm-classes-list")
+        else:
+            Classes.objects.create(
+                title = request.POST.get("class_title"),
+                description = request.POST.get("class_description"),
+                meta_title = request.POST.get("meta_title"),
+                meta_description = request.POST.get("meta_description"),
+                meta_keywords = request.POST.get("meta_keywords"),
+            )
+        return redirect("admin_dashboard:clsm-classes-list")
+
+
+class CMSubjectsListView(View):
+    def get(self,request,*args, **kwargs):
+        return render(request,"class_management/subjects/subjects-list.html")
+
+class CMPapersListView(View):
+    def get(self,request,*args, **kwargs):
+        return render(request,"class_management/papers/papers-list.html")
+
+
+class CMQuestionsList(View):
+    def get(self,request,*args, **kwargs):
+            return render(request,"class_management/papers/paper-questions-list.html")
+
+class CMAddQuestions(View):
+    def get(self,request,*args, **kwargs):
+            return render(request,"class_management/papers/paper-questions-add.html")
 
 
 class CompetitiveManagement(View):

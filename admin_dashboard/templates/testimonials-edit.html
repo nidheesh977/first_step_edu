@@ -32,9 +32,9 @@
             <div class="form-group col-12">
                 <label>Assign This Testimonial Us Pagewise <span class="text-danger">*</span></label>
                 <select name="assigned_pages" class="form-control selectpicker" multiple required>
-                    <option>Class</option>
-                    <option>Subject</option>
-                    <option>Paper</option>
+                    <option {% if 'Class' in obj.assigned_pages %}selected{% endif %} value="Class">Class</option>
+                    <option {% if 'Subject' in obj.assigned_pages %}selected{% endif %} value="Subject">Subject</option>
+                    <option {% if 'Paper' in obj.assigned_pages %}selected{% endif %} value="Paper">Paper</option>
                 </select>
             </div>
             <div class="col-12 text-center pt-4">

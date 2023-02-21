@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from phonenumber_field.modelfields import PhoneNumberField
 from datetime import timedelta
+from django.contrib.postgres.fields import ArrayField
 
 class ImportdantDates(models.Model):
     class Meta:
@@ -15,7 +16,7 @@ class MetaDetails(models.Model):
     class Meta:
         abstract=True
     meta_title = models.CharField(_("Meta Title"), max_length=50, blank=True, null=True)
-    meta_description = models.CharField(_("Meta Description"), max_length=50, blank=True, null=True)
+    meta_description = models.TextField(_("Meta Description"), null=True, blank=True)
     meta_keywords = models.TextField(_("Meta Keywords"), blank=True, null=True)
     created_on = models.DateTimeField(_("Created on"), auto_now_add=True, null=True, blank=True)
     updated_on = models.DateTimeField(_("Updated on"), auto_now=True, null=True, blank=True)
@@ -151,7 +152,7 @@ class Testimonials(ImportdantDates):
     image = models.ImageField(_("Image"), upload_to="event_images/",blank=True, null=True)
     image_alt_name = models.CharField(_("Image Alt Name"), max_length=50, blank=True, null=True)
     description = models.TextField(_("Description"),blank=True, null=True)
-    # assigned_pages = 
+    assigned_pages = ArrayField(models.CharField(max_length=255, null=True, blank=True), null=True, blank=True)
     class Meta:
         verbose_name = _("Testimonials")
         verbose_name_plural = _("Testimonials")
@@ -164,7 +165,7 @@ class Testimonials(ImportdantDates):
 class ResultAnnouncements(ImportdantDates):
     title = models.CharField(_("Title"), max_length=250, blank=False, null=True)
     winner_name = models.CharField(_("Winner Name"), max_length=250, blank=False, null=True)
-    winner_martk= models.PositiveSmallIntegerField(_("Winner Mark"), blank=False, null=True)
+    winner_mark= models.PositiveSmallIntegerField(_("Winner Mark"), blank=False, null=True)
     winner_image = models.ImageField(_("Image"), upload_to="winner_images/",blank=True, null=True)
     winner_image_alt_name = models.CharField(_("Winner Image Alt Name"), max_length=50, blank=True, null=True)
     winner_description = models.TextField(_("Winner Description"),blank=True, null=True)
@@ -276,7 +277,7 @@ class Subjects(MetaDetails):
 
 class Classes(MetaDetails):
     title = models.CharField(_("Title"), max_length=50, blank=True, null=True)
-    description = models.CharField(_("Description"), max_length=250, blank=True, null=True)
+    description = models.TextField(_("Description"), null=True, blank=True)
     assigned_subjects = models.ManyToManyField("application.Subjects", verbose_name=_("Subjects"), blank=True,)
 
     class Meta:

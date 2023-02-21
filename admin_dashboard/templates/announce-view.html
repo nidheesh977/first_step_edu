@@ -1,0 +1,71 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Result Announcement</h6>
+            <a href="{% url 'admin_dashboard:result_announcement-add' %}" class="d-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-plus fa-sm text-white-50"></i> Add</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Title</th>
+                            <th>Winner Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in objs %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{obj.title}}</td>
+                            <td>{{obj.winner_name}}</td>
+                            <td>
+                                <a href="{% url 'admin_dashboard:result_announcement-edit' obj.id %}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a>
+                                <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-danger btn-circle btn-sm deleteItem"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+
+<script>
+    $(".deleteItem").click(function () {
+        let text = "Do you want to delete ?";
+        var objId = $(this).attr("data");
+        if (confirm(text) == true) {
+            text = "You pressed OK!";
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    objId: objId
+                },
+                dataType: 'json',
+                success: function (response) {
+                    location.reload();
+                },
+                error: function (response) {
+                    alert("Something Wrong");
+                }
+            });
+        }
+    });
+</script>
+{% endblock script %}

@@ -1,0 +1,188 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Class</h6>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#classAdd" class="d-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-plus fa-sm text-white-50"></i> Add Class</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Class Name</th>
+                            <th width="20%">Subjects List</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in objs %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{obj.title}}</td>
+                            <td>{{obj.assigned_subjects.count}}</td>
+                            <td>
+                                <a href="{% url 'admin_dashboard:clsm-subjects-list' obj.id %}" class="btn btn-success btn-circle btn-sm"><i class="fas fa-eye"></i></a>
+                                <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-primary btn-circle btn-sm editItem"><i class="fas fa-edit fa-sm text-white-50"></i></a>
+                                <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-danger btn-circle btn-sm deleteItem"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="classAdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark" id="exampleModalLabel">Create Class</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="user row" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group col-12">
+                        <label>Class Title <span class="text-danger">*</span></label>
+                        <input type="text" maxlength="50" name="class_title" class="form-control form-control-user" required>
+                    </div>
+                    <div class="form-group col-12">
+                        <label>Class Description <span class="text-danger">*</span></label>
+                        <textarea rows="1"  name="class_description" class="form-control form-control-user" required></textarea>
+                    </div>
+                    <div class="form-group col-12">
+                        <label>Meta Title <span class="text-danger">*</span></label>
+                        <input type="text" maxlength="50" name="meta_title" class="form-control form-control-user" required>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <label>Meta Description <span class="text-danger">*</span></label>
+                        <textarea rows="1" name="meta_description" class="form-control form-control-user" required></textarea>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <label>Meta Keywords <span class="text-danger">*</span></label>
+                        <textarea rows="1" name="meta_keywords" class="form-control form-control-user" required></textarea>
+                    </div>
+                    <div class="col-12 text-center pt-4">
+                        <input type="submit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="classEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark" id="exampleModalLabel">Create Class</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="user row" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group col-12">
+                        <label>Class Title <span class="text-danger">*</span></label>
+                        <input type="text" id="class_title" maxlength="50" name="class_title" class="form-control form-control-user" required>
+                    </div>
+                    <div class="form-group col-12">
+                        <label>Class Description <span class="text-danger">*</span></label>
+                        <textarea rows="1" id="class_description" name="class_description" class="form-control form-control-user" required></textarea>
+                    </div>
+                    <div class="form-group col-12">
+                        <label>Meta Title <span class="text-danger">*</span></label>
+                        <input type="text" id="meta_title" maxlength="50" name="meta_title" class="form-control form-control-user" required>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <label>Meta Description <span class="text-danger">*</span></label>
+                        <textarea rows="1" id="meta_description" name="meta_description" class="form-control form-control-user" required></textarea>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <label>Meta Keywords <span class="text-danger">*</span></label>
+                        <textarea rows="1" id="meta_keywords" name="meta_keywords" class="form-control form-control-user" required></textarea>
+                    </div>
+                    <input type="hidden" id="idValue" name="id" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+
+                    <div class="col-12 text-center pt-4">
+                        <input type="submit" id="submitBtn" name="edit_form" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+<script>  
+
+    $(".deleteItem").click(function(){
+        let text = "Do you want to delete ?";
+        var objId = $(this).attr("data");
+        if (confirm(text) == true) {
+            text = "You pressed OK!";
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action:"delete",
+                    objId:objId
+                },
+                dataType: 'json',
+                success: function (response) {
+                    location.reload();
+                },
+                error: function(response) {
+                   alert("Something Wrong");
+                }
+            });
+        }
+    });
+
+
+    $(".editItem").click(function(){
+        var objId = $(this).attr("data");
+        $.ajax({
+            type: 'post',
+            headers: {
+                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action:"retrieve",
+                objId:objId
+            },
+            dataType: 'json',
+            success: function (response) {
+                //location.reload();
+                
+                $("#class_title").val(response["obj"]["title"]);
+                $("#class_description").text(response["obj"]["description"]);
+                $("#meta_title").val(response["obj"]["meta_title"]);
+                $("#meta_description").text(response["obj"]["meta_description"]);
+                $("#meta_keywords").text(response["obj"]["meta_keywords"]);
+                $("#idValue").val(response["obj"]["id"]);
+                $('#classEdit').modal('show'); 
+            },
+            error: function(response) {
+               alert("Something Wrong");
+            }
+        });
+    });
+
+</script>
+{% endblock script %}

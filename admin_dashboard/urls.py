@@ -39,7 +39,22 @@ urlpatterns = [
     path("testimonial/edit/<str:id>", views.EditTestimonial.as_view(),name="testimonial-edit"),
 
 
+    # ResultAnnouncements
+    path("result-announcements", views.ResultAnnouncementsList.as_view(),name="result_announcements-list"),
+    path("result-announcement/add", views.AddResultAnnouncement.as_view(),name="result_announcement-add"),
+    path("result-announcement/edit/<str:id>", views.EditResultAnnouncement.as_view(),name="result_announcement-edit"),
+
+
+    # Class Management
+    path("classes", views.CMClassListView.as_view(),name="clsm-classes-list"),
+    path("classes/<str:class_id>/subjects", views.CMSubjectsListView.as_view(),name="clsm-subjects-list"),
+    path("classes/<str:class_id>/subjects/<str:subject_id>/papers", views.CMPapersListView.as_view(),name="clsm-papers-list"),
+    path("classes/<str:class_id>/subjects/<str:subject_id>/papers/questions", views.CMQuestionsList.as_view(),name="clsm-questions-list"),
+    path("classes/<str:class_id>/subjects/<str:subject_id>/papers/add-question", views.CMAddQuestions.as_view(),name="clsm-paper-qus-add"),
+
+
     path("contact-enquiry", views.ContactEnquiry.as_view(),name="contact-enquiry"),
+    path("registered-users", views.RegistredUsers.as_view(),name="registered-users"),
 
 ]
 

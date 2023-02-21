@@ -1,0 +1,55 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Edit Announcement</h1>
+        <a href="{% url 'admin_dashboard:result_announcements-list' %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i
+                    class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a>
+    </div>
+    <div class="p-4">
+        <form class="user row" method="POST" name="blogForm" enctype='multipart/form-data'>
+            {% csrf_token %}
+            <div class="form-group col-12">
+                <label>Title <span class="text-danger">*</span></label>
+                <input type="text" value="{{obj.title}}" name="title" maxlength="100" class="form-control form-control-user" required>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Winner Name <span class="text-danger">*</span></label>
+                <input type="text" value="{{obj.winner_name}}" name="winner_name" maxlength="100" class="form-control form-control-user" required>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Winner Mark <span class="text-danger">*</span></label>
+                <input type="text" value="{{obj.winner_mark}}" name="winner_mark" maxlength="3" class="form-control form-control-user textToNumbers" required>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Upload Winner Image <span class="text-danger">*</span>{% if obj.winner_image %}<a target="_blank" href="{{obj.winner_image.url}}">{{obj.winner_image.url}}</a>{% endif %}</label>
+                <input name="upload_image" class="form-control form-control-lg" type="file" id="uploadImage" accept="image/png, image/jpeg">
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Image Alt Name <span class="text-danger">*</span></label>
+                <input type="text" value="{{obj.winner_image_alt_name}}" name="uploaded_image_alt_name" maxlength="40" class="form-control form-control-user" required>
+            </div>
+            <div class="form-group col-12">
+                <label>Winner Description <span class="text-danger">*</span></label>
+                <textarea rows="3" name="description" class="form-control form-control-user" required>{{obj.winner_description}}</textarea>
+            </div>
+            <div class="col-12 text-center pt-4">
+                <input type="submit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+
+        var image="{{obj.winner_image}}";
+        if(image==""){
+            $("#uploadImage").attr("required","true");
+        }
+    });
+    </script>
+{% endblock script %}
