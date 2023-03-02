@@ -16,6 +16,7 @@
                         <tr>
                             <th>S.No</th>
                             <th>Title</th>
+                            <th>Total Questions</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -24,6 +25,7 @@
                         <tr>
                             <td>{{forloop.counter}}</td>
                             <td>{{obj.title}}</td>
+                            <td>{{obj.assigned_questions.count}}</td>
                             <td>
                                 <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-primary btn-circle btn-sm editItem"><i class="fas fa-edit fa-sm text-white-50"></i></a>
                                 <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-danger btn-circle btn-sm deleteItem"><i class="fas fa-trash"></i></a>

@@ -165,7 +165,6 @@ class AddBanner(LoginRequiredMixin,View):
         return redirect("admin_dashboard:home-banner")
 
 
-
 class EditBanner(LoginRequiredMixin,View):
     def get(self,request,*args, **kwargs):
         obj = get_object_or_404(HomeBanners,id=kwargs.get("id"))
@@ -576,10 +575,11 @@ class CMPapersListView(View):
         SUBJECT_ID = kwargs.get("subject_id")
         CLASS_ID = kwargs.get("class_id")
         sub_obj = get_object_or_404(Subjects,id=SUBJECT_ID)
+        objs = sub_obj.assigned_papers.filter(is_competitive=False)
         context = {
             "cls_id":CLASS_ID,
             "sub_id":SUBJECT_ID,
-            "objs":sub_obj.assigned_papers.filter(is_competitive=False),
+            "objs":objs,
         }
         return render(request,"class_management/papers/papers-list.html",context)
 
