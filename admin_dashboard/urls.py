@@ -11,6 +11,7 @@ urlpatterns = [
     path("forget-password", views.AdminForgetPassword.as_view(),name="admin-forget-password"),
 
     path("dashboard", views.AdminDashboard.as_view(),name="admin-dashboard"),
+    path("change-password", views.AdminChangePassword.as_view(),name="admin_change_password"),
 
     # Assets
     path("banner-view", views.BannerView.as_view(),name="home-banner"),
@@ -49,13 +50,20 @@ urlpatterns = [
     path("classes", views.CMClassListView.as_view(),name="clsm-classes-list"),
     path("class-<str:class_id>/subjects", views.CMSubjectsListView.as_view(),name="clsm-subjects-list"),
     path("class-<str:class_id>/subjects-<str:subject_id>/papers", views.CMPapersListView.as_view(),name="clsm-papers-list"),
-    path("class-<str:class_id>/subjects-<str:subject_id>/papers-<str:paper_id>/questions", views.CMQuestionsList.as_view(),name="clsm-questions-list"),
+    path("class-<str:class_id>/subjects-<str:subject_id>/paper-<str:paper_id>/questions", views.CMQuestionsList.as_view(),name="clsm-questions-list"),
     path("class-<str:class_id>/subjects-<str:subject_id>/paper-<str:paper_id>/add-question", views.CMAddQuestions.as_view(),name="clsm-paper-qus-add"),
     path("class-<str:class_id>/subjects-<str:subject_id>/paper-<str:paper_id>/edit-question/<str:qus_id>", views.CMEditQuestions.as_view(),name="clsm-paper-qus-edit"),
 
 
     path("contact-enquiry", views.ContactEnquiry.as_view(),name="contact-enquiry"),
     path("registered-users", views.RegistredUsers.as_view(),name="registered-users"),
+
+
+    # Competitive management
+    path("competitive-papers-list",views.CompetitiveManagementPapersList.as_view(), name="competitve_papers_list"),
+    path("competitive-papers-list/paper-<str:paper_id>/questions", views.CMQuestionsList.as_view(),name="comp_ques_list"),
+    path("competitive-papers-list/paper-<str:paper_id>/questions/add-question", views.CMAddQuestions.as_view(),name="comp_ques_add"),
+    path("competitive-papers-list/paper-<str:paper_id>/edit-question/<str:qus_id>", views.CMEditQuestions.as_view(),name="comp_ques_edit"),
 
 ]
 

@@ -1,0 +1,228 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Create Paper</h6>
+            <div>
+                <a href="javascript:void(0);" data-toggle="modal" data-target="#paperAdd"  class="d-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50 pr-1"></i> Add Paper</a>
+                {% comment %} <a href="{% url 'admin_dashboard:admin-dashboard' %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a> {% endcomment %}
+            </div>
+            </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Title</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in objs %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{obj.title}}</td>
+                            <td>
+                                <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-primary btn-circle btn-sm editItem"><i class="fas fa-edit fa-sm text-white-50"></i></a>
+                                <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-danger btn-circle btn-sm deleteItem"><i class="fas fa-trash"></i></a>
+                                <a href="{% url 'admin_dashboard:comp_ques_list' obj.id %}" class="btn btn-success btn-sm">View Questions</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="paperAdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark" id="exampleModalLabel">Create Paper</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="user row" method="post">
+                    {% csrf_token %}
+                    <div class="form-group col-12">
+                        <label>Paper Title <span class="text-danger">*</span></label>
+                        <input name="paper_title" type="text" class="form-control form-control-user" required>
+                    </div>
+                    <div class="form-group col-12">
+                        <label>Paper Description <span class="text-danger">*</span></label>
+                        <textarea name="paper_description" rows="1" class="form-control form-control-user" required></textarea>
+                    </div>
+                    <div class="form-group col-12">
+                        <label>General Instructions <span class="text-danger">*</span></label>
+                        <div>
+                            <textarea class="form-control form-control-user" id="summernote"  autofocus="autofocus" name="general_instructions"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-12 text-center pt-4">
+                        <input type="submit" id="addForm" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="paperEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark" id="exampleModalLabel">Create Paper</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="user row" method="post" id="editForm">
+                    {% csrf_token %}
+                    <div class="form-group col-12">
+                        <label>Paper Title <span class="text-danger">*</span></label>
+                        <input id="paper_title" name="paper_title" type="text" class="form-control form-control-user" required>
+                    </div>
+                    <div class="form-group col-12">
+                        <label>Paper Description <span class="text-danger">*</span></label>
+                        <textarea id="paper_description" name="paper_description" rows="1" class="form-control form-control-user" required></textarea>
+                    </div>
+                    <div class="form-group col-12">
+                        <label>General Instructions <span class="text-danger">*</span></label>
+                        <div>
+                            <textarea name="general_instructions" class="form-control form-control-user" id="summernoteEdit"  autofocus="autofocus"></textarea>
+                        </div>
+                    </div>
+                    <input type="hidden" id="idValue" name="id">
+                    <div class="col-12 text-center pt-4">
+                        <input type="submit" id="editFormBtn" name="edit_form" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+
+<script>
+    $(document).ready(function() {
+        $('textarea#summernote').summernote({
+            tabsize: 2,
+            height: 100,
+            toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'hr']],
+                    ['help', ['help']]
+                ],
+        });
+
+        $('textarea#summernoteEdit').summernote({
+            tabsize: 2,
+            height: 100,
+            toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'hr']],
+                    ['help', ['help']]
+                ],
+        });
+        
+        $("#addForm").click(function(){
+            $("form").submit(function(event){
+                if($('textarea#summernote').summernote('isEmpty')) {
+                    alert('General instructions is empty, fill it!');
+                    event.preventDefault();
+                  }
+            });
+        });
+        
+        $("#editFormBtn").click(function(){
+            if($('textarea#summernoteEdit').summernote('isEmpty')) {
+                alert('General instructions is empty, fill it!');
+              }
+              else{
+                $("#editForm").submit();
+              }
+        });
+        
+    
+    });
+
+
+    $(".deleteItem").click(function(){
+        let text = "Do you want to delete ?";
+        var objId = $(this).attr("data");
+        if (confirm(text) == true) {
+            text = "You pressed OK!";
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action:"delete",
+                    objId:objId
+                },
+                dataType: 'json',
+                success: function (response) {
+                    location.reload();
+                },
+                error: function(response) {
+                   alert("Something Wrong");
+                }
+            });
+        }
+    });
+
+
+    $(".editItem").click(function(){
+        var objId = $(this).attr("data");
+        $.ajax({
+            type: 'post',
+            headers: {
+                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action:"retrieve",
+                objId:objId
+            },
+            dataType: 'json',
+            success: function (response) {
+                
+                $("#paper_title").val(response["obj"]["title"]);
+                $("#paper_description").text(response["obj"]["description"]);
+        
+                $('#summernoteEdit').summernote('code', response["obj"]["instructions"]);
+            
+                $("#idValue").val(response["obj"]["id"]);
+                $('#paperEdit').modal('show'); 
+            },
+            error: function(response) {
+               alert("Something Wrong");
+            }
+        });
+    });
+    </script>
+{% endblock script %}

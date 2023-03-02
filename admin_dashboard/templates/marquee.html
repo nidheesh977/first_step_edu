@@ -16,7 +16,7 @@
                 {% csrf_token %}
                 <div class="form-group col-12">
                     <label>Paste The Above Text Here <span class="text-danger">*</span></label>
-                    <textarea rows="2" class="form-control form-control-user" name="marquee_text" required>{{obj.text}}</textarea>
+                    <textarea rows="2" class="form-control form-control-user" name="marquee_text" required>{% if obj.text %}{{obj.text}}{% endif %}</textarea>
                 </div>
                 <div class="col-12 text-center pt-4">
                     <input type="submit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">

@@ -225,14 +225,14 @@ class MarqueeTexts(ImportdantDates):
 
 class Questions(ImportdantDates):
     section = models.CharField(_("Section"), max_length=50, blank=True, null=True)
-    section_description = models.CharField(_("Section Description"), max_length=250, blank=True, null=True)
+    section_description = models.TextField(_("Section Description"), blank=True, null=True)
     section_time_limit = models.DurationField(_("Section Duration"),default=timedelta, null=True, blank=True)
     question = models.TextField(_("Question"),null=True, blank=True)
-    option1 = models.CharField(_("Option 1"), max_length=250, null=True, blank=True)
-    option2 = models.CharField(_("Option 2"), max_length=250, null=True, blank=True)
-    option3 = models.CharField(_("Option 3"), max_length=250, null=True, blank=True)
-    option4 = models.CharField(_("Option 4"), max_length=250, null=True, blank=True)
-    correct_answer = models.CharField(_("Correct Answer"), max_length=250, null=True, blank=True)
+    option1 = models.TextField(_("Option 1"), null=True, blank=True)
+    option2 = models.TextField(_("Option 2"), null=True, blank=True)
+    option3 = models.TextField(_("Option 3"), null=True, blank=True)
+    option4 = models.TextField(_("Option 4"), null=True, blank=True)
+    correct_answer = models.TextField(_("Correct Answer"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Questions")
@@ -244,23 +244,23 @@ class Questions(ImportdantDates):
 
 class Papers(MetaDetails):
     title = models.CharField(_("Title"), max_length=50, blank=True, null=True)
-    description = models.CharField(_("Description"), max_length=250, blank=True, null=True)
+    description = models.TextField(_("Description"), blank=True, null=True)
     instructions = models.TextField(_("Instructions"), blank=True, null=True)
     assigned_questions = models.ManyToManyField("application.Questions", verbose_name=_("Questions"), blank=True,)
-
+    is_competitive = models.BooleanField(_("Is competitive"),default=False)
     class Meta:
         verbose_name = _("Papers")
         verbose_name_plural = _("Papers")
 
-    # def __str__(self):
-    #     return self.name
+    def __str__(self):
+        return self.title
 
     def get_absolute_url(self):
         return reverse("Papers_detail", kwargs={"pk": self.pk})
 
 class Subjects(MetaDetails):
     title = models.CharField(_("Title"), max_length=50, blank=True, null=True)
-    description = models.CharField(_("Description"), max_length=250, blank=True, null=True)
+    description = models.TextField(_("Description"), blank=True, null=True)
     assigned_papers = models.ManyToManyField("application.Papers", verbose_name=_("Papers"), blank=True,)
     
 

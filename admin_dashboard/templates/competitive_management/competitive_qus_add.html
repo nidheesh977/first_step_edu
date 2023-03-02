@@ -17,7 +17,7 @@
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Create <span>Paper 1</span></h1>
-        <a href="{% url 'admin_dashboard:clsm-questions-list' cls_id sub_id paper_id %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a>
+        <a href="{% url 'admin_dashboard:comp_ques_list' paper_id %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a>
     </div>
     <div class="p-4">
         <form class="user row" method="POST">
@@ -64,7 +64,7 @@
             </div>
             <div class="form-group col-12">
                 <label>Correct Option <span class="text-danger">*</span></label>
-                <input type="text" {% if request.GET.correct_option %} value="{{request.GET.correct_option}}" {% endif %} name="correct_option" id="correct-option" class="form-control form-control-user" value="" required readonly>
+                <input type="text" {% if request.GET.correct_option %} value="{{request.GET.correct_option}}" {% endif %} name="correct_option" id="correct-option" class="form-control form-control-user" required readonly>
             </div>
             <div class="col-12 text-center pt-4">
                 <input type="submit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">

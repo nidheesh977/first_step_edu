@@ -50,7 +50,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'admin_dashboard:admin-dashboard' %}">
                 <div class="sidebar-brand-text">LOGO</div>
             </a>
 
@@ -90,7 +90,7 @@
                     <span>Class Management</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="class.php">
+                <a class="nav-link" href="{% url 'admin_dashboard:competitve_papers_list' %}">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Competitive Management</span></a>
             </li>
@@ -166,16 +166,17 @@
                                 <img class="img-profile rounded-circle" {% if request.user.profile_pic %} src="{{request.user.profile_pic.url}}" {% else %} src="{% static 'img/user.png' %}" {% endif %}>
                             </a>
                             <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-                                <p class="dropdown-item">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Hello {{request.user.first_name|title}}
-                                </p>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+         
+                                <a class="dropdown-item" href="{% url 'admin_dashboard:admin_change_password' %}">
+                                    <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Change password
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
+
                             </div>
                         </li>
 
@@ -278,16 +279,18 @@
                                                     <th>S.No</th>
                                                     <th>Name</th>
                                                     <th>Email</th>
-                                                    <th>Batch ID</th>
+                                                    <th>City</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                {% for user_obj in user_objs %}
                                                 <tr>
-                                                    <td>1</td>
-                                                    <td>John Doe</td>
-                                                    <td>johndoe@gmail.com</td>
-                                                    <td>PACSM023031517INHYD1</td>
+                                                    <td>{{forloop.counter}}</td>
+                                                    <td>{{user_obj.first_name}} {{user_obj.last_name}}</td>
+                                                    <td>{{user_obj.email}}</td>
+                                                    <td>{{user_obj.city}}</td>
                                                 </tr>
+                                                {% endfor %}
                                             </tbody>
                                         </table>
                                     </div>

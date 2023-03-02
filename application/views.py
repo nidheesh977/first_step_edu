@@ -129,7 +129,6 @@ class WhyChooseUs(TemplateView):
     template_name="why-choose-us.html"
 
 
-
 class OurTeam(TemplateView):
     template_name="our-team.html"
 
@@ -151,3 +150,12 @@ class ContactUsView(View):
         )
         messages.success(request, TextConstants.contact_enquiry_success_msg)
         return redirect("application:index-page")
+
+
+class CompetitivePage(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, "competitive.html")
+
+class SchoolPage(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, "school.html")

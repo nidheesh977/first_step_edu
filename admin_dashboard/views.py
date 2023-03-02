@@ -1,17 +1,21 @@
+
+from datetime import timedelta
+
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail.message import EmailMessage
-from django.http import JsonResponse
+from django.db import IntegrityError
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import View
+from PIL import Image
 
 from application.models import *
 from utils.constants import EmailContents
-from utils.functions import OTP_Gen, is_ajax
-from django.db import IntegrityError
-from PIL import Image
-import json
+from utils.functions import OTP_Gen, is_ajax, reterive_request_data
+
+
 class AdminLogin(View):
     def get(self,request,*args, **kwargs):
         admin_email = request.POST.get("admin_email")
@@ -81,6 +85,30 @@ class AdminForgetPassword(View):
                 messages.warning(request,"OTP is not generated for submitted email please click send OTP")
             return redirect("admin_dashboard:admin-forget-password")
 
+class AdminChangePassword(View):
+    def get(self,request, *args, **kwargs):
+        return render(request, "admin_change_password.html")
+    
+    def post(self,request, *args, **kwargs):
+        old_password = request.POST.get("old_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+        
+        if new_password == confirm_password:
+            is_valid_oldPassword=request.user.check_password(old_password)
+            if is_valid_oldPassword:
+                request.user.set_password(confirm_password)
+                request.user.save()
+                logout(request)
+                messages.success(request,"password has been changed")
+                return redirect("admin_dashboard:admin-login")
+            else:
+                messages.error(request,"Old password is not correct")
+                return redirect("admin_dashboard:admin_change_password")
+        else:
+            messages.error(request,"password not matched")
+            return redirect("admin_dashboard:admin_change_password")
+
 class AdminDashboard(LoginRequiredMixin,View):
     def get(self,request,*args, **kwargs):
         registerdUsers = CustomUser.objects.all().exclude(is_superuser=True)
@@ -137,6 +165,7 @@ class AddBanner(LoginRequiredMixin,View):
         return redirect("admin_dashboard:home-banner")
 
 
+
 class EditBanner(LoginRequiredMixin,View):
     def get(self,request,*args, **kwargs):
         obj = get_object_or_404(HomeBanners,id=kwargs.get("id"))
@@ -172,7 +201,6 @@ class MarqueeText(View):
         obj.text = request.POST.get("marquee_text")
         obj.save()
         return redirect("admin_dashboard:marquee")
-
 
 class BlogsList(View):
     def get(self,request,*args, **kwargs):
@@ -551,7 +579,7 @@ class CMPapersListView(View):
         context = {
             "cls_id":CLASS_ID,
             "sub_id":SUBJECT_ID,
-            "objs":sub_obj.assigned_papers.all(),
+            "objs":sub_obj.assigned_papers.filter(is_competitive=False),
         }
         return render(request,"class_management/papers/papers-list.html",context)
 
@@ -595,25 +623,30 @@ class CMPapersListView(View):
             sub_obj.assigned_papers.add(paper_obj)
             return redirect("admin_dashboard:clsm-papers-list",class_id=CLASS_ID,subject_id=SUBJECT_ID)
 
-
-
 class CMQuestionsList(View):
     def get(self,request,*args, **kwargs):
-        print(kwargs)
         PAPER_ID = kwargs.get("paper_id")
         CLASS_ID = kwargs.get("class_id")
         SUBJECT_ID = kwargs.get("subject_id")
         paper_obj = get_object_or_404(Papers,id=PAPER_ID)
-        context = {
-            "qus_obj":paper_obj.assigned_questions.all(),
-            "cls_id":CLASS_ID,
-            "sub_id":SUBJECT_ID,
-            "paper_id":PAPER_ID,
-        }
-        return render(request,"class_management/papers/questions-list.html",context)
+
+        if CLASS_ID and SUBJECT_ID:
+            context = {
+                "qus_obj":paper_obj.assigned_questions.all(),
+                "cls_id":CLASS_ID,
+                "sub_id":SUBJECT_ID,
+                "paper_id":PAPER_ID,
+            }
+            return render(request,"class_management/papers/questions-list.html",context)
+        else:
+            context = {
+                "paper_id":PAPER_ID,
+                "qus_obj":paper_obj.assigned_questions.all(),
+            }
+            return render(request,"competitive_management/competitve_qus_list.html",context)
     
     def post(self,request,*args, **kwargs):
-        paper_obj = get_object_or_404(Questions,id=request.POST.get("objId")).delete()
+        get_object_or_404(Questions,id=request.POST.get("objId")).delete()
         to_return = {
                         "title":"Deleted",
                         "icon":"success",
@@ -622,69 +655,174 @@ class CMQuestionsList(View):
 
 class CMAddQuestions(View):
     def get(self,request,*args, **kwargs):
+
         PAPER_ID = kwargs.get("paper_id")
         CLASS_ID = kwargs.get("class_id")
         SUBJECT_ID = kwargs.get("subject_id")
-        context = {
-            "cls_id":CLASS_ID,
-            "sub_id":SUBJECT_ID,
-            "paper_id":PAPER_ID,
-        }
-        return render(request,"class_management/papers/questions-add.html",context)
+        paper_obj = get_object_or_404(Papers,id=PAPER_ID)
+        if CLASS_ID and SUBJECT_ID:
+            context = {
+                "cls_id":CLASS_ID,
+                "sub_id":SUBJECT_ID,
+                "paper_id":PAPER_ID,
+                "paper_name":paper_obj.title,
+            }
+            return render(request,"class_management/papers/questions-add.html",context)
+        else:
+            context = {
+                "paper_id":PAPER_ID,
+                "paper_name":paper_obj.title,
+            }
+            return render(request,"competitive_management/competitive_qus_add.html",context)
     
     def post(self,request,*args, **kwargs):
         PAPER_ID = kwargs.get("paper_id")
         CLASS_ID = kwargs.get("class_id")
         SUBJECT_ID = kwargs.get("subject_id")
-        
-        qus_obj = Questions.objects.create(
+        time_limit = str(request.POST.get("section_time_limit")).split(":")
+        SECONDS = int(time_limit[1])
+        MINUTES = int(time_limit[0])
+        if all([SECONDS<=60,MINUTES<=60]):
+            section_time_limit = timedelta(seconds=SECONDS, minutes=MINUTES)
+            qus_obj = Questions.objects.create(
             section = request.POST.get("section"),
             section_description = request.POST.get("section_description"),
-            section_time_limit = request.POST.get("section_time_limit"),
+            section_time_limit = section_time_limit,
             question = request.POST.get("question"),
             option1 = request.POST.get("option1"),
             option2 = request.POST.get("option2"),
             option3 = request.POST.get("option3"),
             option4 = request.POST.get("option4"),
             correct_answer = request.POST.get("correct_option"),
-        )
-        paper_obj = get_object_or_404(Papers,id=PAPER_ID)
-        paper_obj.assigned_questions.add(qus_obj)
-        return redirect("admin_dashboard:clsm-questions-list", class_id=CLASS_ID, subject_id=SUBJECT_ID, paper_id=PAPER_ID)
+            )
+            paper_obj = get_object_or_404(Papers,id=PAPER_ID)
+            paper_obj.assigned_questions.add(qus_obj)
 
-
+            if CLASS_ID and SUBJECT_ID:
+                return redirect("admin_dashboard:clsm-questions-list", class_id=CLASS_ID, subject_id=SUBJECT_ID, paper_id=PAPER_ID)
+            else:
+                return redirect("admin_dashboard:comp_ques_list", paper_id=PAPER_ID)
+            
+        else:
+            messages.error(request, "Invalid Time duration format")
+            da = reterive_request_data(request.POST)
+            
+            if CLASS_ID and SUBJECT_ID:
+                rr = reverse('admin_dashboard:clsm-paper-qus-add',kwargs={"class_id":CLASS_ID, "subject_id":SUBJECT_ID, "paper_id":PAPER_ID})+da
+                return HttpResponseRedirect(redirect_to=rr)
+            else:
+                rr = reverse("admin_dashboard:comp_ques_add", kwargs={"paper_id":PAPER_ID})+da
+                return HttpResponseRedirect(redirect_to=rr)
+        
+        
 class CMEditQuestions(View): 
     def get(self,request,*args, **kwargs):
         PAPER_ID = kwargs.get("paper_id")
         CLASS_ID = kwargs.get("class_id")
         SUBJECT_ID = kwargs.get("subject_id")
         qus_obj = get_object_or_404(Questions,id=kwargs.get("qus_id"))
-        context = {
-            "cls_id":CLASS_ID,
-            "sub_id":SUBJECT_ID,
-            "paper_id":PAPER_ID,
-            "obj":qus_obj,
-        }
-        return render(request,"class_management/papers/questions-edit.html",context)
+        seconds = qus_obj.section_time_limit
+        
+        if seconds != None:
+            convert = str(timedelta(seconds = seconds.total_seconds()))
+            OUTCOME = convert.split(":")
+            TIME_LIMIT= f"{OUTCOME[1]}:{OUTCOME[2]}"
+        else:
+            TIME_LIMIT = None
+        
+        if CLASS_ID and SUBJECT_ID:
+            context = {
+                "cls_id":CLASS_ID,
+                "sub_id":SUBJECT_ID,
+                "paper_id":PAPER_ID,
+                "obj":qus_obj,
+                "time_limit":TIME_LIMIT,
+            }
+            return render(request,"class_management/papers/questions-edit.html",context)
+        else:
+            context = {
+                "paper_id":PAPER_ID,
+                "obj":qus_obj,
+                "time_limit":TIME_LIMIT,
+            }
+            return render(request,"competitive_management/competitve_qus_edit.html",context)
     
     def post(self,request,*args, **kwargs):
         PAPER_ID = kwargs.get("paper_id")
         CLASS_ID = kwargs.get("class_id")
         SUBJECT_ID = kwargs.get("subject_id")
         qus_obj = get_object_or_404(Questions,id=kwargs.get("qus_id"))
-        
-        qus_obj.section = request.POST.get("section",qus_obj.section)
-        qus_obj.section_description = request.POST.get("section_description",qus_obj.section_description)
-        qus_obj.section_time_limit = request.POST.get("section_time_limit",qus_obj.section_time_limit)
-        qus_obj.question = request.POST.get("question",qus_obj.question)
-        qus_obj.option1 = request.POST.get("option1",qus_obj.option1)
-        qus_obj.option2 = request.POST.get("option2",qus_obj.option2)
-        qus_obj.option3 = request.POST.get("option3",qus_obj.option3)
-        qus_obj.option4 = request.POST.get("option4",qus_obj.option4)
-        qus_obj.correct_answer = request.POST.get("correct_option",qus_obj.correct_answer)
-        qus_obj.save()
-        return redirect("admin_dashboard:clsm-questions-list", class_id=CLASS_ID, subject_id=SUBJECT_ID, paper_id=PAPER_ID)
+        time_limit = str(request.POST.get("section_time_limit")).split(":")
+        section_time_limit = timedelta(seconds=int(time_limit[1]), minutes=int(time_limit[0]))
 
-class CompetitiveManagement(View):
+        SECONDS = int(time_limit[1])
+        MINUTES = int(time_limit[0])
+        if all([SECONDS<=60,MINUTES<=60]):
+            qus_obj.section = request.POST.get("section",qus_obj.section)
+            qus_obj.section_description = request.POST.get("section_description",qus_obj.section_description)
+            qus_obj.section_time_limit = section_time_limit if section_time_limit else qus_obj.section_time_limit
+            qus_obj.question = request.POST.get("question",qus_obj.question)
+            qus_obj.option1 = request.POST.get("option1",qus_obj.option1)
+            qus_obj.option2 = request.POST.get("option2",qus_obj.option2)
+            qus_obj.option3 = request.POST.get("option3",qus_obj.option3)
+            qus_obj.option4 = request.POST.get("option4",qus_obj.option4)
+            qus_obj.correct_answer = request.POST.get("correct_option",qus_obj.correct_answer)
+            qus_obj.save()
+
+            if CLASS_ID and SUBJECT_ID:
+                return redirect("admin_dashboard:clsm-questions-list", class_id=CLASS_ID, subject_id=SUBJECT_ID, paper_id=PAPER_ID)
+            else:
+                return redirect("admin_dashboard:comp_ques_list", paper_id=PAPER_ID)
+        else:
+            messages.error(request, "Invalid Time duration format")
+            if CLASS_ID and SUBJECT_ID:
+                return redirect("admin_dashboard:clsm-paper-qus-edit", class_id=CLASS_ID, subject_id=SUBJECT_ID, paper_id=PAPER_ID, qus_id =kwargs.get("qus_id"))
+            else:
+                return redirect("admin_dashboard:comp_ques_edit", paper_id=PAPER_ID, qus_id =kwargs.get("qus_id"))
+            
+
+class CompetitiveManagementPapersList(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"admin_dashboard_base.html")
+        objs = Papers.objects.filter(is_competitive=True)
+        context = {
+            "objs":objs,
+        }
+        return render(request,"competitive_management/competitive_papers_list.html",context)
+
+    def post(self,request, *args, **kwargs):
+        if request.POST.get("action") == "delete":
+            obj = get_object_or_404(Papers,id=request.POST.get("objId")) 
+            obj.delete()
+            to_return = {
+                        "title":"Deleted",
+                        "icon":"success",
+                    }
+            return JsonResponse(to_return,safe=True,)
+        
+        if request.POST.get("action") == "retrieve":
+            obj = Papers.objects.filter(id=request.POST.get("objId")).values(
+                "id",
+                "title",
+                "description",
+                "instructions"
+            )
+            to_return = {"obj":list(obj)[0]}
+            return JsonResponse(to_return,safe=True,)
+        
+        if request.POST.get("edit_form") != None:
+            obj = get_object_or_404(Papers,id=request.POST.get("id"))       
+            obj.title = request.POST.get("paper_title",obj.title)
+            obj.description = request.POST.get("paper_description",obj.description)
+            obj.instructions = request.POST.get("general_instructions",obj.instructions)
+            obj.save()
+            return redirect("admin_dashboard:competitve_papers_list")
+    
+        else:
+            Papers.objects.create(
+                title = request.POST.get("paper_title"),
+                description = request.POST.get("paper_description"),
+                instructions = request.POST.get("general_instructions"),
+                is_competitive=True,
+            )
+            return redirect("admin_dashboard:competitve_papers_list")
+        
