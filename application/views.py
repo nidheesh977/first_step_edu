@@ -120,7 +120,26 @@ class AccountDashboard(View):
 
 class IndexView(View):
     def get(self,request, *args, **kwargs):
-        return render(request, "index.html")
+        bannerObj = HomeBanners.objects.all()
+        classesObj = Classes.objects.all()[:6]
+        competitiveExamObj = CompetitiveExam.objects.all()[:6]
+        results = ResultAnnouncements.objects.all()[:6]
+        news=News.objects.all()[:6]
+        blogs = Blogs.objects.all().order_by("created_on")[:3]
+        testimonials = Testimonials.objects.all()[:6]
+        events = Events.objects.all()[:3]
+        context = {
+            "bannerObj":bannerObj,
+            "classesObj":classesObj,
+            "competitiveExamObj":competitiveExamObj,
+            "resultsObj":results,
+            "news":news,
+            "blogs":blogs,
+            "testimonials":testimonials,
+            "events":events,
+           
+        }
+        return render(request, "index.html",context)
 
 class AboutUs(TemplateView):
     template_name="about-us.html"

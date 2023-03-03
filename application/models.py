@@ -158,14 +158,13 @@ class Testimonials(ImportdantDates):
         verbose_name_plural = _("Testimonials")
 
   
-
     def get_absolute_url(self):
         return reverse("Testimonials_detail", kwargs={"pk": self.pk})
 
 class ResultAnnouncements(ImportdantDates):
     title = models.CharField(_("Title"), max_length=250, blank=False, null=True)
     winner_name = models.CharField(_("Winner Name"), max_length=250, blank=False, null=True)
-    winner_mark= models.PositiveSmallIntegerField(_("Winner Mark"), blank=False, null=True)
+    winner_mark= models.CharField(_("Winner Mark"),max_length=20, blank=False, null=True)
     winner_image = models.ImageField(_("Image"), upload_to="winner_images/",blank=True, null=True)
     winner_image_alt_name = models.CharField(_("Winner Image Alt Name"), max_length=50, blank=True, null=True)
     winner_description = models.TextField(_("Winner Description"),blank=True, null=True)
@@ -262,6 +261,7 @@ class CompetitiveExam(ImportdantDates):
     exam_name = models.CharField(_("Exam Name"), max_length=50)
     description = models.TextField(_("Description"), blank=True, null=True)
     assigned_papers = models.ManyToManyField("application.Papers", verbose_name=_("Papers"), blank=True,)
+    price = models.DecimalField(_("Price"), max_digits=8, decimal_places=2,blank=True, null=True)
 
 class Subjects(MetaDetails):
     title = models.CharField(_("Title"), max_length=50, blank=True, null=True)

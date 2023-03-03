@@ -19,7 +19,7 @@
                 <font>Make sure to avoid special characters except "-" symbol.</font>
             </div>
             <div class="form-group col-sm-6">
-                <label>Upload Image <span class="text-danger">acceptable image size is 615x340 *</span>{% if obj.image %}<a target="_blank" href="{{obj.image.url}}">{{obj.image.url}}</a>{% endif %}</label>
+                <label>Upload Image <span class="text-danger">acceptable image size is {{img_size}} *</span>{% if obj.image %}<a target="_blank" href="{{obj.image.url}}">{{obj.image.url}}</a>{% endif %}</label>
                 <input class="form-control form-control-lg" id="uploadImage" type="file" accept="image/png, image/jpeg" name="upload_image">
             </div>
             <div class="form-group col-sm-6">

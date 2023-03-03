@@ -12,7 +12,7 @@ from django.views.generic import View
 from PIL import Image
 
 from application.models import *
-from utils.constants import EmailContents
+from utils.constants import EmailContents, ImageSizes
 from utils.functions import OTP_Gen, is_ajax, reterive_request_data
 
 
@@ -141,11 +141,13 @@ class BannerView(LoginRequiredMixin,View):
 
 class AddBanner(LoginRequiredMixin,View):
     def get(self,request,*args, **kwargs):
-        return render(request,"banner-add.html")
+        context = {
+            "image_size":ImageSizes.homepage_img_size_str,
+        }
+        return render(request,"banner-add.html",context)
     
     def post(self,request,*args, **kwargs):
-        IMAGE_SCALE = (575,375)
-
+        IMAGE_SCALE = ImageSizes.homepage_img_size
         IMAGE = request.FILES.get("upload_image")
         imageImage = Image.open(IMAGE)
         scale = imageImage.size
@@ -168,11 +170,11 @@ class AddBanner(LoginRequiredMixin,View):
 class EditBanner(LoginRequiredMixin,View):
     def get(self,request,*args, **kwargs):
         obj = get_object_or_404(HomeBanners,id=kwargs.get("id"))
-        context = {"obj":obj}
+        context = {"obj":obj,"image_size":ImageSizes.homepage_img_size_str,}
         return render(request,"banner-edit.html",context)
     
     def post(self,request,*args, **kwargs):
-        IMAGE_SCALE = (573,374)
+        IMAGE_SCALE = ImageSizes.homepage_img_size
         IMAGE = request.FILES.get("upload_image")
         if IMAGE != None:
             IMAGE = request.FILES.get("upload_image")
@@ -218,10 +220,11 @@ class BlogsList(View):
 
 class AddBlog(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"blog-add.html")
+        context = {"img_size":ImageSizes.blog_img_size_str}
+        return render(request,"blog-add.html",context)
     
     def post(self,request,*args, **kwargs):
-        IMAGE_SCALE = (615,340)
+        IMAGE_SCALE =ImageSizes.blog_img_size
         try:
             
             IMAGE = request.FILES.get("upload_image")
@@ -251,11 +254,11 @@ class AddBlog(View):
 class EditBlog(View):
     def get(self,request,*args, **kwargs):
         obj = get_object_or_404(Blogs,id=kwargs.get("id"))
-        context = {"obj":obj}
+        context = {"obj":obj,"img_size":ImageSizes.blog_img_size_str}
         return render(request,"blog-edit.html",context)
     
     def post(self,request,*args, **kwargs):
-        IMAGE_SCALE = (615,340)
+        IMAGE_SCALE =ImageSizes.blog_img_size
         try:
             obj = get_object_or_404(Blogs,id=kwargs.get("id"))
             
@@ -302,10 +305,11 @@ class EventsList(View):
 
 class AddEvent(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"event-add.html")
+        context = {"img_size":ImageSizes.events_img_size_str}
+        return render(request,"event-add.html",context)
     
     def post(self,request,*args, **kwargs):
-        IMAGE_SCALE = (380,410)
+        IMAGE_SCALE = ImageSizes.events_img_size
         IMAGE = request.FILES.get("upload_image")
         imageImage = Image.open(IMAGE)
         scale = imageImage.size
@@ -326,7 +330,7 @@ class AddEvent(View):
 class EditEvent(View):
     def get(self,request,*args, **kwargs):
         obj = get_object_or_404(Events,id=kwargs.get("id"))
-        context = {"obj":obj}
+        context = {"obj":obj, "img_size":ImageSizes.events_img_size_str}
         return render(request,"event-edit.html", context)
         
     def post(self,request,*args, **kwargs):
@@ -338,7 +342,7 @@ class EditEvent(View):
         obj.image_alt_name = request.POST.get("image_alt_name",obj.image_alt_name)
 
 
-        IMAGE_SCALE = (380,410)
+        IMAGE_SCALE = ImageSizes.events_img_size
         IMAGE = request.FILES.get("upload_image")
     
         if IMAGE != None:
@@ -358,7 +362,7 @@ class EditEvent(View):
 class NewsList(View):
     def get(self,request,*args, **kwargs):
         objs = News.objects.all().order_by("created_on")
-        context = {"objs":objs}
+        context = {"objs":objs,"img_size":ImageSizes.news_img_size_img_size_str}
         return render(request,"news-view.html",context)
     
     def post(self,request,*args, **kwargs):
@@ -371,10 +375,11 @@ class NewsList(View):
     
 class AddNews(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"news-add.html")
+        context = {"img_size":ImageSizes.news_img_size_img_size_str}
+        return render(request,"news-add.html",context)
     
     def post(self,request,*args, **kwargs):
-        IMAGE_SCALE = (80,80)
+        IMAGE_SCALE = ImageSizes.news_img_size
         IMAGE = request.FILES.get("upload_image")
         if IMAGE != None:
             imageImage = Image.open(IMAGE)
@@ -401,7 +406,7 @@ class AddNews(View):
 class EditNews(View):
     def get(self,request,*args, **kwargs):
         obj = get_object_or_404(News,id=kwargs.get("id"))
-        context = {"obj":obj}
+        context = {"obj":obj,"img_size":ImageSizes.news_img_size_img_size_str}
         return render(request,"news-edit.html",context)
     
     def post(self,request,*args, **kwargs):
@@ -411,7 +416,7 @@ class EditNews(View):
         obj.image_alt_name = request.POST.get("upload_image_alt_name",obj.image_alt_name)
         obj.description = request.POST.get("description",obj.description)
         
-        IMAGE_SCALE = (80,80)
+        IMAGE_SCALE = ImageSizes.news_img_size
         IMAGE = request.FILES.get("upload_image")
         
         if IMAGE != None:
@@ -445,10 +450,11 @@ class TestimonialsList(View):
     
 class AddTestimonial(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"testimonials-add.html")
+        context = {"img_size":ImageSizes.testimonials_img_size_str}
+        return render(request,"testimonials-add.html",context)
     
     def post(self,request,*args, **kwargs):
-        IMAGE_SCALE = (80,80)
+        IMAGE_SCALE = ImageSizes.testimonials_img_size
         IMAGE = request.FILES.get("upload_image")
         imageImage = Image.open(IMAGE)
         scale = imageImage.size
@@ -469,7 +475,7 @@ class AddTestimonial(View):
 class EditTestimonial(View):
     def get(self,request,*args, **kwargs):
         obj = get_object_or_404(Testimonials,id=kwargs.get("id"))
-        context = {"obj":obj}
+        context = {"obj":obj,"img_size":ImageSizes.testimonials_img_size_str}
         return render(request,"testimonials-edit.html",context)
     
     def post(self,request,*args, **kwargs):
@@ -481,7 +487,7 @@ class EditTestimonial(View):
         obj.description = request.POST.get("description",obj.description)
         obj.assigned_pages = request.POST.getlist("assigned_pages",obj.assigned_pages)
 
-        IMAGE_SCALE = (80,80)
+        IMAGE_SCALE = ImageSizes.testimonials_img_size
         IMAGE = request.FILES.get("upload_image")
         if IMAGE != None:
             imageImage = Image.open(IMAGE)
@@ -489,6 +495,7 @@ class EditTestimonial(View):
             if IMAGE_SCALE == scale:
                 obj.image = request.FILES.get("upload_image",obj.image)
                 obj.save()
+                return redirect("admin_dashboard:testimonials-list")
             else:
                 messages.error(request,"Image scale is not acceptable")
                 return redirect("admin_dashboard:testimonial-edit",id=kwargs.get("id"))
@@ -514,10 +521,13 @@ class ResultAnnouncementsList(View):
 
 class AddResultAnnouncement(View):
     def get(self,request,*args, **kwargs):
-        return render(request,"announce-add.html")
+        context = {
+            "img_size":ImageSizes.result_announce_img_size_str
+        }
+        return render(request,"announce-add.html", context)
     
     def post(self,request,*args, **kwargs):
-        IMAGE_SCALE = (225,225)
+        IMAGE_SCALE =ImageSizes.result_announce_img_size
         IMAGE = request.FILES.get("upload_image")
         imageImage = Image.open(IMAGE)
         scale = imageImage.size
@@ -525,7 +535,7 @@ class AddResultAnnouncement(View):
             ResultAnnouncements.objects.create(
                 title = request.POST.get("title"),
                 winner_name = request.POST.get("winner_name"),
-                winner_mark = int(request.POST.get("winner_mark")),
+                winner_mark = request.POST.get("winner_mark"),
                 winner_image = request.FILES.get("upload_image"),
                 winner_image_alt_name = request.POST.get("uploaded_image_alt_name"),
                 winner_description = request.POST.get("description"),
@@ -538,7 +548,10 @@ class AddResultAnnouncement(View):
 class EditResultAnnouncement(View):
     def get(self,request,*args, **kwargs):
         obj = get_object_or_404(ResultAnnouncements,id=kwargs.get("id"))
-        context = {"obj":obj}
+        context = {
+            "obj":obj,
+            "img_size":ImageSizes.result_announce_img_size_str
+        }
         return render(request,"announce-edit.html",context)
     
     def post(self,request,*args, **kwargs):
@@ -975,6 +988,7 @@ class CompetitiveExamsList(View):
                 "id",
                 "exam_name",
                 "description",
+                "price",
             )
             to_return = {"obj":list(obj)[0]}
             return JsonResponse(to_return,safe=True,)
@@ -983,6 +997,7 @@ class CompetitiveExamsList(View):
             obj = get_object_or_404(CompetitiveExam,id=request.POST.get("id"))       
             obj.exam_name = request.POST.get("exam_title",obj.exam_name)
             obj.description = request.POST.get("exam_description",obj.description)
+            obj.price = request.POST.get("exam_price",obj.price)
             obj.save()
             return redirect("admin_dashboard:competitve_exams_list")
     
@@ -990,5 +1005,6 @@ class CompetitiveExamsList(View):
             CompetitiveExam.objects.create(
                 exam_name = request.POST.get("exam_title"),
                 description = request.POST.get("exam_description"),
+                price = request.POST.get("exam_price"),
             )
             return redirect("admin_dashboard:competitve_exams_list")

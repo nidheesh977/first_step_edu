@@ -32,7 +32,7 @@
                     <input maxlength="190" name="button_url" type="text" {% if obj.button_url != "None" %} value="{{obj.button_url}}" {% endif %} class="form-control form-control-user">
                 </div>
                 <div class="form-group col-12">
-                    <label>Upload Image <span class="text-danger">*</span> {% if obj.image %}<a target="_blank" href="{{obj.image.url}}">{{obj.image.url}}</a>{% endif %} </label>
+                    <label>Upload Image <span class="text-danger">image acceptable size is {{image_size}}*</span> {% if obj.image %}<a target="_blank" href="{{obj.image.url}}">{{obj.image.url}}</a>{% endif %} </label>
                     <input id="uploadImage" name="upload_image" class="form-control form-control-lg" type="file" accept="image/png, image/jpeg">
                 </div>
                 <div class="col-12 text-center pt-4">

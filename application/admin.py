@@ -73,4 +73,5 @@ admin.site.register(MarqueeTexts)
 admin.site.register(Questions)
 admin.site.register(Subjects)
 admin.site.register(Classes)
+admin.site.register(CompetitiveExam)
 

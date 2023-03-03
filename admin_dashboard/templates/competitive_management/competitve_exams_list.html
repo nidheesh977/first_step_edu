@@ -61,6 +61,10 @@
                         <label>Exam Description <span class="text-danger">*</span></label>
                         <textarea name="exam_description" rows="1" class="form-control form-control-user" required></textarea>
                     </div>
+                    <div class="form-group col-12">
+                        <label>Exam Price <span class="text-danger">*</span></label>
+                        <input name="exam_price" type="number" class="form-control form-control-user" required>
+                    </div>
                     <!--<div class="form-group col-12">
                         <label>General Instructions <span class="text-danger">*</span></label>
                         <div>
@@ -96,6 +100,10 @@
                     <div class="form-group col-12">
                         <label>Exam Description <span class="text-danger">*</span></label>
                         <textarea id="exam_description" name="exam_description" rows="1" class="form-control form-control-user" required></textarea>
+                    </div>
+                    <div class="form-group col-12">
+                        <label>Exam Price <span class="text-danger">*</span></label>
+                        <input name="exam_price" id="exam_price"  type="number" class="form-control form-control-user" required>
                     </div>
                     
                     <input type="hidden" id="idValue" name="id">
@@ -207,11 +215,10 @@
             },
             dataType: 'json',
             success: function (response) {
-                
                 $("#exam_title").val(response["obj"]["exam_name"]);
                 $("#exam_description").text(response["obj"]["description"]);
+                $("#exam_price").val(response["obj"]["price"]);
         
-               
             
                 $("#idValue").val(response["obj"]["id"]);
                 $('#examEdit').modal('show'); 

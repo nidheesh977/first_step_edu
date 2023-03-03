@@ -20,10 +20,10 @@
             </div>
             <div class="form-group col-sm-6">
                 <label>Winner Mark <span class="text-danger">*</span></label>
-                <input type="text" value="{{obj.winner_mark}}" name="winner_mark" maxlength="3" class="form-control form-control-user textToNumbers" required>
+                <input type="text" value="{{obj.winner_mark}}" name="winner_mark"  class="form-control form-control-user" required>
             </div>
             <div class="form-group col-sm-6">
-                <label>Upload Winner Image <span class="text-danger">*</span>{% if obj.winner_image %}<a target="_blank" href="{{obj.winner_image.url}}">{{obj.winner_image.url}}</a>{% endif %}</label>
+                <label>Upload Winner Image <span class="text-danger">acceptable image size is  {{img_size}}*</span>{% if obj.winner_image %}<a target="_blank" href="{{obj.winner_image.url}}">{{obj.winner_image.url}}</a>{% endif %}</label>
                 <input name="upload_image" class="form-control form-control-lg" type="file" id="uploadImage" accept="image/png, image/jpeg">
             </div>
             <div class="form-group col-sm-6">

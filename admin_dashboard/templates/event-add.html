@@ -4,7 +4,7 @@
 
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Create Event</h1>
-        <a href="event-view.php" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i
+        <a href="{% url 'admin_dashboard:events-list' %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i
                     class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a>
     </div>
     <div class="p-4">
@@ -28,7 +28,7 @@
                     <input type="text" maxlength="180" name="meeting_link" class="form-control form-control-user">
                 </div>
                 <div class="form-group col-sm-6">
-                    <label>Upload Image <span class="text-danger">*</span></label>
+                    <label>Upload Image <span class="text-danger">acceptable image size is {{img_size}}*</span></label>
                     <input class="form-control form-control-lg" name="upload_image" type="file" required accept="image/png, image/jpeg">
                 </div>
                 <div class="form-group col-sm-6">
