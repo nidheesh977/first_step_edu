@@ -54,6 +54,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'first_edu.context_processors.marquee_context_processor',
             ],
         },
     },
@@ -133,3 +134,5 @@ PHONENUMBER_DEFAULT_FORMAT = "NATIONAL"
 PHONENUMBER_DEFAULT_REGION = "IN"
 
 LOGIN_URL = 'application:signin'
+
+

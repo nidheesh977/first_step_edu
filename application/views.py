@@ -151,6 +151,9 @@ class WhyChooseUs(TemplateView):
 class OurTeam(TemplateView):
     template_name="our-team.html"
 
+class BlogView(TemplateView):
+    template_name="blog.html"
+
 
 class Announcement(TemplateView):
     template_name="announcement.html"

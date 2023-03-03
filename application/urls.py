@@ -13,6 +13,7 @@ urlpatterns = [
     path("about-us",views.AboutUs.as_view(),name="about-us"),
     path("why-choose-us",views.WhyChooseUs.as_view(),name="why-choose-us"),
     path("our-team",views.OurTeam.as_view(),name="our-team"),
+    path("blogs",views.BlogView.as_view(),name="blogs_page"),
     path("announcement",views.Announcement.as_view(),name="announcement"),
     path("contact-us",views.ContactUsView.as_view(),name="contact-us"),
     path("competitive",views.CompetitivePage.as_view(),name="competitive_page"),

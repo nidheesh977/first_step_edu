@@ -73,11 +73,11 @@
                                 </li>
                                 <li class="nav-item list text-center d-none d-lg-block">
                                     <p class="mb-0">EXAMINATION</p>
-                                    <div class="d-inline-flex"><a href="class.php" class="cl-lightblue fs-14" id="id_exam">SCHOOL</a> <span class="px-1">|</span> <a href="class.php" class="cl-lightblue fs-14" id="id_exam">COMPETITIVE</a></div>
+                                    <div class="d-inline-flex"><a href="class.php" class="cl-lightblue fs-14" id="id_exam">SCHOOL</a> <span class="px-1">|</span> <a href="{% url 'application:competitive_page' %}" class="cl-lightblue fs-14" id="id_exam">COMPETITIVE</a></div>
                                 </li>
 
                                 <li class="nav-item list">
-                                    <a href="blog.php" class="nav-link  cl-lightblue" id="id_blog">BLOG</a>
+                                    <a href="{% url 'application:blogs_page' %}" class="nav-link  cl-lightblue" id="id_blog">BLOG</a>
                                 </li>
 
                                 <li class="nav-item list">
