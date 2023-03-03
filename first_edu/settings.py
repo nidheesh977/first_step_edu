@@ -62,30 +62,20 @@ TEMPLATES = [
 WSGI_APPLICATION = 'first_edu.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': "firstedu",
         'USER': 'postgres',
-        'PASSWORD': 'QrAdmin@#$432',
+        'PASSWORD': 'Nexevo@123',
         'HOST': 'localhost',
         'PORT': '',
         'ATOMIC_REQUESTS': True
     }
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -102,9 +92,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 

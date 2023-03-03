@@ -60,10 +60,11 @@ urlpatterns = [
 
 
     # Competitive management
-    path("competitive-papers-list",views.CompetitiveManagementPapersList.as_view(), name="competitve_papers_list"),
-    path("competitive-papers-list/paper-<str:paper_id>/questions", views.CMQuestionsList.as_view(),name="comp_ques_list"),
-    path("competitive-papers-list/paper-<str:paper_id>/questions/add-question", views.CMAddQuestions.as_view(),name="comp_ques_add"),
-    path("competitive-papers-list/paper-<str:paper_id>/edit-question/<str:qus_id>", views.CMEditQuestions.as_view(),name="comp_ques_edit"),
+    path("competitive-exams-list",views.CompetitiveExamsList.as_view(), name="competitve_exams_list"),
+    path("competitive-exam-<str:exm_id>/competitive-papers-list",views.CompetitiveManagementPapersList.as_view(), name="competitve_papers_list"),
+    path("competitive-exam-<str:exm_id>/paper-<str:paper_id>/questions", views.CMQuestionsList.as_view(),name="comp_ques_list"),
+    path("competitive-exam-<str:exm_id>/paper-<str:paper_id>/questions/add-question", views.CMAddQuestions.as_view(),name="comp_ques_add"),
+    path("competitive-exam-<str:exm_id>/paper-<str:paper_id>/edit-question/<str:qus_id>", views.CMEditQuestions.as_view(),name="comp_ques_edit"),
 
 ]
 
