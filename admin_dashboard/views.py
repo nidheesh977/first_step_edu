@@ -144,7 +144,7 @@ class AddBanner(LoginRequiredMixin,View):
         return render(request,"banner-add.html")
     
     def post(self,request,*args, **kwargs):
-        IMAGE_SCALE = (573,374)
+        IMAGE_SCALE = (575,375)
 
         IMAGE = request.FILES.get("upload_image")
         imageImage = Image.open(IMAGE)
@@ -221,20 +221,29 @@ class AddBlog(View):
         return render(request,"blog-add.html")
     
     def post(self,request,*args, **kwargs):
-        print(request.POST)
+        IMAGE_SCALE = (615,340)
         try:
-            obj = Blogs.objects.create(
-                title = request.POST.get("title"),
-                description = request.POST.get("description"),
-                url = request.POST.get("url"),
-                image = request.FILES.get("upload_image"),
-                image_alt_name = request.POST.get("uploaded_image_alt_name"),
-                overall_description = request.POST.get("overall_description"),
-                meta_title = request.POST.get("meta_title"),
-                meta_description = request.POST.get("meta_description"),
-                meta_keywords = request.POST.get("meta_keywords"),
-            )
-            return redirect("admin_dashboard:blogs-list")
+            
+            IMAGE = request.FILES.get("upload_image")
+            imageImage = Image.open(IMAGE)
+            scale = imageImage.size
+
+            if IMAGE_SCALE == scale:
+                obj = Blogs.objects.create(
+                    title = request.POST.get("title"),
+                    description = request.POST.get("description"),
+                    url = request.POST.get("url"),
+                    image = request.FILES.get("upload_image"),
+                    image_alt_name = request.POST.get("uploaded_image_alt_name"),
+                    overall_description = request.POST.get("overall_description"),
+                    meta_title = request.POST.get("meta_title"),
+                    meta_description = request.POST.get("meta_description"),
+                    meta_keywords = request.POST.get("meta_keywords"),
+                )
+                return redirect("admin_dashboard:blogs-list")
+            else:
+                messages.error(request,"Image scale is not acceptable")
+                return redirect("admin_dashboard:blog-add")
         except IntegrityError:
             messages.error(request, "URL must be unique")
             return redirect("admin_dashboard:blog-add")
@@ -246,22 +255,36 @@ class EditBlog(View):
         return render(request,"blog-edit.html",context)
     
     def post(self,request,*args, **kwargs):
+        IMAGE_SCALE = (615,340)
         try:
             obj = get_object_or_404(Blogs,id=kwargs.get("id"))
+            
             obj.title = request.POST.get("title",obj.title)
             obj.description = request.POST.get("description",obj.description)
             obj.url = request.POST.get("url",obj.url)
-            obj.image = request.FILES.get("upload_image",obj.image)
             obj.image_alt_name = request.POST.get("uploaded_image_alt_name",obj.image_alt_name)
             obj.overall_description = request.POST.get("overall_description",obj.overall_description)
             obj.meta_title = request.POST.get("meta_title",obj.meta_title)
             obj.meta_description = request.POST.get("meta_description",obj.meta_description)
             obj.meta_keywords = request.POST.get("meta_keywords",obj.meta_keywords)
-            obj.save()
-            return redirect("admin_dashboard:blogs-list")
+
+            IMAGE = request.FILES.get("upload_image")
+            if IMAGE != None:
+                imageImage = Image.open(IMAGE)
+                scale = imageImage.size
+                if IMAGE_SCALE == scale:
+                    obj.image = request.FILES.get("upload_image",obj.image)
+                    obj.save()
+                    return redirect("admin_dashboard:blogs-list")
+                else:
+                    messages.error(request,"Image scale is not acceptable")
+                    return redirect("admin_dashboard:blog-edit", id=kwargs.get("id"))
+            else:
+                obj.save()
+                return redirect("admin_dashboard:blogs-list")
         except IntegrityError:
             messages.error(request, "URL must be unique")
-            return redirect("admin_dashboard:blog-add")
+            return redirect("admin_dashboard:blog-edit", id=kwargs.get("id"))
 
 class EventsList(View):
     def get(self,request,*args, **kwargs):
@@ -282,16 +305,23 @@ class AddEvent(View):
         return render(request,"event-add.html")
     
     def post(self,request,*args, **kwargs):
-        print(request.POST)
-        obj = Events.objects.create(
-            title = request.POST.get("title"),
-            label = request.POST.get("label"),
-            event_date = request.POST.get("event_date"),
-            event_meeting_link = request.POST.get("meeting_link"),
-            image = request.FILES.get("upload_image"),
-            image_alt_name = request.POST.get("upload_image_alt_name"),
-        )
-        return redirect("admin_dashboard:events-list")
+        IMAGE_SCALE = (380,410)
+        IMAGE = request.FILES.get("upload_image")
+        imageImage = Image.open(IMAGE)
+        scale = imageImage.size
+        if IMAGE_SCALE == scale:
+            obj = Events.objects.create(
+                title = request.POST.get("title"),
+                label = request.POST.get("label"),
+                event_date = request.POST.get("event_date"),
+                event_meeting_link = request.POST.get("meeting_link"),
+                image = request.FILES.get("upload_image"),
+                image_alt_name = request.POST.get("upload_image_alt_name"),
+            )
+            return redirect("admin_dashboard:events-list")
+        else:
+            messages.error(request,"Image scale is not acceptable")
+            return redirect("admin_dashboard:event-add")
 
 class EditEvent(View):
     def get(self,request,*args, **kwargs):
@@ -305,11 +335,25 @@ class EditEvent(View):
         obj.label = request.POST.get("label",obj.label)
         obj.event_date = request.POST.get("event_date",obj.event_date)
         obj.event_meeting_link = request.POST.get("event_meeting_link",obj.event_meeting_link)
-        obj.image = request.FILES.get("image",obj.image)
         obj.image_alt_name = request.POST.get("image_alt_name",obj.image_alt_name)
-        
-        obj.save()
-        return redirect("admin_dashboard:events-list")
+
+
+        IMAGE_SCALE = (380,410)
+        IMAGE = request.FILES.get("upload_image")
+    
+        if IMAGE != None:
+            imageImage = Image.open(IMAGE)
+            scale = imageImage.size
+            if IMAGE_SCALE == scale:
+                obj.image = request.FILES.get("upload_image",obj.image)
+                obj.save()
+                return redirect("admin_dashboard:events-list")
+            else:
+                messages.error(request,"Image scale is not acceptable")
+                return redirect("admin_dashboard:event-edit",id=kwargs.get("id"))
+        else:
+            obj.save()
+            return redirect("admin_dashboard:events-list")
 
 class NewsList(View):
     def get(self,request,*args, **kwargs):
@@ -330,13 +374,29 @@ class AddNews(View):
         return render(request,"news-add.html")
     
     def post(self,request,*args, **kwargs):
-        News.objects.create(
-            event_date = request.POST.get("event_date"),
-            image = request.FILES.get("upload_image"),
-            image_alt_name = request.POST.get("upload_image_alt_name"),
-            description = request.POST.get("description"),
-        )
-        return redirect("admin_dashboard:news-list")
+        IMAGE_SCALE = (80,80)
+        IMAGE = request.FILES.get("upload_image")
+        if IMAGE != None:
+            imageImage = Image.open(IMAGE)
+            scale = imageImage.size
+            if IMAGE_SCALE == scale:
+                News.objects.create(
+                    event_date = request.POST.get("event_date"),
+                    image = request.FILES.get("upload_image"),
+                    image_alt_name = request.POST.get("upload_image_alt_name"),
+                    description = request.POST.get("description"),
+                )
+                return redirect("admin_dashboard:news-list")
+            else:
+                messages.error(request,"Image scale is not acceptable")
+                return redirect("admin_dashboard:news-add")
+        else:
+            News.objects.create(
+                    event_date = request.POST.get("event_date"),
+                    image_alt_name = request.POST.get("upload_image_alt_name"),
+                    description = request.POST.get("description"),
+                )
+            return redirect("admin_dashboard:news-list")
 
 class EditNews(View):
     def get(self,request,*args, **kwargs):
@@ -346,13 +406,27 @@ class EditNews(View):
     
     def post(self,request,*args, **kwargs):
         obj = get_object_or_404(News,id=kwargs.get("id"))
-
         obj.event_date = request.POST.get("event_date",obj.event_date)
-        obj.image = request.FILES.get("upload_image",obj.image)
+        
         obj.image_alt_name = request.POST.get("upload_image_alt_name",obj.image_alt_name)
         obj.description = request.POST.get("description",obj.description)
-        obj.save()
-        return redirect("admin_dashboard:news-list")
+        
+        IMAGE_SCALE = (80,80)
+        IMAGE = request.FILES.get("upload_image")
+        
+        if IMAGE != None:
+            imageImage = Image.open(IMAGE)
+            scale = imageImage.size
+            if IMAGE_SCALE == scale:
+                obj.image = request.FILES.get("upload_image",obj.image)
+                obj.save()
+                return redirect("admin_dashboard:news-list")
+            else:
+               messages.error(request,"Image scale is not acceptable") 
+               return redirect("admin_dashboard:news-edit",id=kwargs.get("id"))
+        else:
+            obj.save()
+            return redirect("admin_dashboard:news-list")
 
 
 class TestimonialsList(View):
@@ -374,16 +448,23 @@ class AddTestimonial(View):
         return render(request,"testimonials-add.html")
     
     def post(self,request,*args, **kwargs):
-        
-        Testimonials.objects.create(
-            client_name = request.POST.get("client_name"),
-            client_role = request.POST.get("client_role"),
-            image = request.FILES.get("upload_image"),
-            image_alt_name = request.POST.get("upload_image_alt_name"),
-            description = request.POST.get("description"),
-            assigned_pages = request.POST.getlist("assigned_pages"),
-        )
-        return redirect("admin_dashboard:testimonials-list")
+        IMAGE_SCALE = (80,80)
+        IMAGE = request.FILES.get("upload_image")
+        imageImage = Image.open(IMAGE)
+        scale = imageImage.size
+        if scale == IMAGE_SCALE:
+            Testimonials.objects.create(
+                client_name = request.POST.get("client_name"),
+                client_role = request.POST.get("client_role"),
+                image = request.FILES.get("upload_image"),
+                image_alt_name = request.POST.get("upload_image_alt_name"),
+                description = request.POST.get("description"),
+                assigned_pages = request.POST.getlist("assigned_pages"),
+            )
+            return redirect("admin_dashboard:testimonials-list")
+        else:
+            messages.error(request,"Image scale is not acceptable")
+            return redirect("admin_dashboard:testimonial-add")
 
 class EditTestimonial(View):
     def get(self,request,*args, **kwargs):
@@ -395,12 +476,25 @@ class EditTestimonial(View):
         obj = get_object_or_404(Testimonials,id=kwargs.get("id"))        
         obj.client_name = request.POST.get("client_name",obj.client_name)
         obj.client_role = request.POST.get("client_role",obj.client_role)
-        obj.image = request.FILES.get("upload_image",obj.image)
+        
         obj.image_alt_name = request.POST.get("upload_image_alt_name",obj.image_alt_name)
         obj.description = request.POST.get("description",obj.description)
         obj.assigned_pages = request.POST.getlist("assigned_pages",obj.assigned_pages)
-        obj.save()
-        return redirect("admin_dashboard:testimonials-list")
+
+        IMAGE_SCALE = (80,80)
+        IMAGE = request.FILES.get("upload_image")
+        if IMAGE != None:
+            imageImage = Image.open(IMAGE)
+            scale = imageImage.size
+            if IMAGE_SCALE == scale:
+                obj.image = request.FILES.get("upload_image",obj.image)
+                obj.save()
+            else:
+                messages.error(request,"Image scale is not acceptable")
+                return redirect("admin_dashboard:testimonial-edit",id=kwargs.get("id"))
+        else:
+            obj.save()
+            return redirect("admin_dashboard:testimonials-list")
 
 
 class ResultAnnouncementsList(View):
@@ -423,15 +517,23 @@ class AddResultAnnouncement(View):
         return render(request,"announce-add.html")
     
     def post(self,request,*args, **kwargs):
-        ResultAnnouncements.objects.create(
-            title = request.POST.get("title"),
-            winner_name = request.POST.get("winner_name"),
-            winner_mark = int(request.POST.get("winner_mark")),
-            winner_image = request.FILES.get("upload_image"),
-            winner_image_alt_name = request.POST.get("uploaded_image_alt_name"),
-            winner_description = request.POST.get("description"),
-        )
-        return redirect("admin_dashboard:result_announcements-list")
+        IMAGE_SCALE = (225,225)
+        IMAGE = request.FILES.get("upload_image")
+        imageImage = Image.open(IMAGE)
+        scale = imageImage.size
+        if scale == IMAGE_SCALE:
+            ResultAnnouncements.objects.create(
+                title = request.POST.get("title"),
+                winner_name = request.POST.get("winner_name"),
+                winner_mark = int(request.POST.get("winner_mark")),
+                winner_image = request.FILES.get("upload_image"),
+                winner_image_alt_name = request.POST.get("uploaded_image_alt_name"),
+                winner_description = request.POST.get("description"),
+            )
+            return redirect("admin_dashboard:result_announcements-list")
+        else:
+            messages.error(request,"Image scale is not acceptable")
+            return redirect("admin_dashboard:result_announcement-add")
 
 class EditResultAnnouncement(View):
     def get(self,request,*args, **kwargs):
@@ -445,12 +547,27 @@ class EditResultAnnouncement(View):
         obj.title = request.POST.get("title",obj.title)
         obj.winner_name = request.POST.get("winner_name",obj.winner_name)
         obj.winner_mark = int(request.POST.get("winner_mark",obj.winner_mark))
-        obj.winner_image = request.FILES.get("upload_image",obj.winner_image)
+        
         obj.winner_image_alt_name = request.POST.get("uploaded_image_alt_name",obj.winner_image_alt_name)
         obj.winner_description = request.POST.get("description",obj.winner_description)
         
         obj.save()
-        return redirect("admin_dashboard:result_announcements-list")
+        IMAGE_SCALE = (80,80)
+        IMAGE = request.FILES.get("upload_image")
+
+        if IMAGE != None:
+            imageImage = Image.open(IMAGE)
+            scale = imageImage.size
+            if IMAGE_SCALE == scale:
+                obj.winner_image = request.FILES.get("upload_image",obj.winner_image)
+                obj.save()
+                return redirect("admin_dashboard:result_announcements-list")
+            else:
+                messages.error(request,"Image scale is not acceptable")
+                return redirect("admin_dashboard:result_announcement-edit",id=kwargs.get("id"))
+        else:
+            obj.save()
+            return redirect("admin_dashboard:result_announcements-list")
 
 
 class ContactEnquiry(View):
@@ -625,6 +742,7 @@ class CMPapersListView(View):
 
 class CMQuestionsList(View):
     def get(self,request,*args, **kwargs):
+        print(kwargs)
         PAPER_ID = kwargs.get("paper_id")
         CLASS_ID = kwargs.get("class_id")
         SUBJECT_ID = kwargs.get("subject_id")
@@ -640,6 +758,7 @@ class CMQuestionsList(View):
             return render(request,"class_management/papers/questions-list.html",context)
         else:
             context = {
+                'exm_id':kwargs.get("exm_id"),
                 "paper_id":PAPER_ID,
                 "qus_obj":paper_obj.assigned_questions.all(),
             }
@@ -670,6 +789,7 @@ class CMAddQuestions(View):
             return render(request,"class_management/papers/questions-add.html",context)
         else:
             context = {
+                'exm_id':kwargs.get("exm_id"),
                 "paper_id":PAPER_ID,
                 "paper_name":paper_obj.title,
             }
@@ -783,9 +903,11 @@ class CMEditQuestions(View):
 
 class CompetitiveManagementPapersList(View):
     def get(self,request,*args, **kwargs):
-        objs = Papers.objects.filter(is_competitive=True)
+        com_obj = get_object_or_404(CompetitiveExam,id=kwargs.get("exm_id"))
+        objs = com_obj.assigned_papers.all()
         context = {
             "objs":objs,
+            "exm_id":kwargs.get("exm_id"),
         }
         return render(request,"competitive_management/competitive_papers_list.html",context)
 
@@ -818,11 +940,55 @@ class CompetitiveManagementPapersList(View):
             return redirect("admin_dashboard:competitve_papers_list")
     
         else:
-            Papers.objects.create(
+            com_obj = get_object_or_404(CompetitiveExam,id=kwargs.get("exm_id"))
+            paper_obj = Papers.objects.create(
                 title = request.POST.get("paper_title"),
                 description = request.POST.get("paper_description"),
                 instructions = request.POST.get("general_instructions"),
                 is_competitive=True,
             )
-            return redirect("admin_dashboard:competitve_papers_list")
+            com_obj.assigned_papers.add(paper_obj)
+            return redirect("admin_dashboard:competitve_papers_list",exm_id=kwargs.get("exm_id"))
         
+
+
+class CompetitiveExamsList(View):
+    def get(self, request,*args, **kwargs):
+        objs = CompetitiveExam.objects.all()
+        context = {
+            "objs":objs,
+        }
+        return render(request,"competitive_management/competitve_exams_list.html",context)
+    
+    def post(self,request, *args, **kwargs):
+        if request.POST.get("action") == "delete":
+            obj = get_object_or_404(CompetitiveExam,id=request.POST.get("objId")) 
+            obj.delete()
+            to_return = {
+                        "title":"Deleted",
+                        "icon":"success",
+                    }
+            return JsonResponse(to_return,safe=True,)
+        
+        if request.POST.get("action") == "retrieve":
+            obj = CompetitiveExam.objects.filter(id=request.POST.get("objId")).values(
+                "id",
+                "exam_name",
+                "description",
+            )
+            to_return = {"obj":list(obj)[0]}
+            return JsonResponse(to_return,safe=True,)
+        
+        if request.POST.get("edit_form") != None:
+            obj = get_object_or_404(CompetitiveExam,id=request.POST.get("id"))       
+            obj.exam_name = request.POST.get("exam_title",obj.exam_name)
+            obj.description = request.POST.get("exam_description",obj.description)
+            obj.save()
+            return redirect("admin_dashboard:competitve_exams_list")
+    
+        else:
+            CompetitiveExam.objects.create(
+                exam_name = request.POST.get("exam_title"),
+                description = request.POST.get("exam_description"),
+            )
+            return redirect("admin_dashboard:competitve_exams_list")

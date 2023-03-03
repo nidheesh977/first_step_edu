@@ -19,7 +19,7 @@
             </div>
             <div class="form-group col-sm-6">
                 <label>Upload Image <span class="text-danger">*</span>{% if obj.image %}<a target="_blank" href="{{obj.image.url}}">{{obj.image.url}}</a>{% endif %}</label>
-                <input class="form-control form-control-lg" type="file">
+                <input class="form-control form-control-lg" name="upload_image" type="file">
             </div>
             <div class="form-group col-sm-6">
                 <label>Image Alt Name <span class="text-danger">*</span></label>

@@ -257,13 +257,17 @@ class Papers(MetaDetails):
 
     def get_absolute_url(self):
         return reverse("Papers_detail", kwargs={"pk": self.pk})
+    
+class CompetitiveExam(ImportdantDates):
+    exam_name = models.CharField(_("Exam Name"), max_length=50)
+    description = models.TextField(_("Description"), blank=True, null=True)
+    assigned_papers = models.ManyToManyField("application.Papers", verbose_name=_("Papers"), blank=True,)
 
 class Subjects(MetaDetails):
     title = models.CharField(_("Title"), max_length=50, blank=True, null=True)
     description = models.TextField(_("Description"), blank=True, null=True)
     assigned_papers = models.ManyToManyField("application.Papers", verbose_name=_("Papers"), blank=True,)
     
-
     class Meta:
         verbose_name = _("Subjects")
         verbose_name_plural = _("Subjects")

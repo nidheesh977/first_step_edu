@@ -14,7 +14,7 @@
                 <input type="date" name="event_date" value="{{obj.event_date|date:"Y-m-d"}}" class="form-control form-control-user" required>
             </div>
             <div class="form-group col-sm-6">
-                <label>Upload Image <span class="text-danger"></span>{% if obj.image %}<a target="_blank" href="{{obj.image.url}}">{{obj.image.url}}</a>{% endif %}</label>
+                <label>Upload Image <span class="text-danger">acceptable image size is 80x80</span>{% if obj.image %}<a target="_blank" href="{{obj.image.url}}">{{obj.image.url}}</a>{% endif %}</label>
                 <input id="uploadImage" class="form-control form-control-lg" name="upload_image" type="file" accept="image/png, image/jpeg">
             </div>
             <div class="form-group col-sm-6">

@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext as _
-from django_summernote.admin import SummernoteModelAdmin
 
 from .models import *
+from django_summernote.admin import SummernoteModelAdmin
 
 
 class SomeModelAdmin(SummernoteModelAdmin):

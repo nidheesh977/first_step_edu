@@ -3,10 +3,10 @@
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Create Paper</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Create Exams</h6>
             <div>
-                <a href="javascript:void(0);" data-toggle="modal" data-target="#paperAdd"  class="d-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50 pr-1"></i> Add Paper</a>
-                 <a href="{% url 'admin_dashboard:competitve_exams_list' %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a> 
+                <a href="javascript:void(0);" data-toggle="modal" data-target="#paperAdd"  class="d-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50 pr-1"></i> Add Exam</a>
+                {% comment %} <a href="{% url 'admin_dashboard:admin-dashboard' %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a> {% endcomment %}
             </div>
             </div>
         <div class="card-body">
@@ -15,8 +15,8 @@
                     <thead>
                         <tr>
                             <th>S.No</th>
-                            <th>Title</th>
-                            <th>Total Questions</th>
+                            <th>Exam Title</th>
+                            <th>Total Papers</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -24,12 +24,12 @@
                         {% for obj in objs %}
                         <tr>
                             <td>{{forloop.counter}}</td>
-                            <td>{{obj.title}}</td>
-                            <td>{{obj.assigned_questions.count}}</td>
+                            <td>{{obj.exam_name}}</td>
+                            <td>{{obj.assigned_papers.count}}</td>
                             <td>
                                 <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-primary btn-circle btn-sm editItem"><i class="fas fa-edit fa-sm text-white-50"></i></a>
                                 <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-danger btn-circle btn-sm deleteItem"><i class="fas fa-trash"></i></a>
-                                <a href="{% url 'admin_dashboard:comp_ques_list' exm_id obj.id %}" class="btn btn-success btn-sm">View Questions</a>
+                                <a href="{% url 'admin_dashboard:competitve_papers_list' obj.id %}" class="btn btn-success btn-sm">View Papers</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -54,19 +54,19 @@
                 <form class="user row" method="post">
                     {% csrf_token %}
                     <div class="form-group col-12">
-                        <label>Paper Title <span class="text-danger">*</span></label>
-                        <input name="paper_title" type="text" class="form-control form-control-user" required>
+                        <label>Exam Title <span class="text-danger">*</span></label>
+                        <input name="exam_title" type="text" class="form-control form-control-user" required>
                     </div>
                     <div class="form-group col-12">
-                        <label>Paper Description <span class="text-danger">*</span></label>
-                        <textarea name="paper_description" rows="1" class="form-control form-control-user" required></textarea>
+                        <label>Exam Description <span class="text-danger">*</span></label>
+                        <textarea name="exam_description" rows="1" class="form-control form-control-user" required></textarea>
                     </div>
-                    <div class="form-group col-12">
+                    <!--<div class="form-group col-12">
                         <label>General Instructions <span class="text-danger">*</span></label>
                         <div>
                             <textarea class="form-control form-control-user" id="summernote"  autofocus="autofocus" name="general_instructions"></textarea>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="col-12 text-center pt-4">
                         <input type="submit" id="addForm" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
                     </div>
@@ -76,7 +76,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="paperEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="examEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
@@ -90,19 +90,14 @@
                 <form class="user row" method="post" id="editForm">
                     {% csrf_token %}
                     <div class="form-group col-12">
-                        <label>Paper Title <span class="text-danger">*</span></label>
-                        <input id="paper_title" name="paper_title" type="text" class="form-control form-control-user" required>
+                        <label>Exam Title <span class="text-danger">*</span></label>
+                        <input id="exam_title" name="exam_title" type="text" class="form-control form-control-user" required>
                     </div>
                     <div class="form-group col-12">
-                        <label>Paper Description <span class="text-danger">*</span></label>
-                        <textarea id="paper_description" name="paper_description" rows="1" class="form-control form-control-user" required></textarea>
+                        <label>Exam Description <span class="text-danger">*</span></label>
+                        <textarea id="exam_description" name="exam_description" rows="1" class="form-control form-control-user" required></textarea>
                     </div>
-                    <div class="form-group col-12">
-                        <label>General Instructions <span class="text-danger">*</span></label>
-                        <div>
-                            <textarea name="general_instructions" class="form-control form-control-user" id="summernoteEdit"  autofocus="autofocus"></textarea>
-                        </div>
-                    </div>
+                    
                     <input type="hidden" id="idValue" name="id">
                     <div class="col-12 text-center pt-4">
                         <input type="submit" id="editFormBtn" name="edit_form" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
@@ -149,7 +144,7 @@
                 ],
         });
         
-        $("#addForm").click(function(){
+        /*$("#addForm").click(function(){
             $("form").submit(function(event){
                 if($('textarea#summernote').summernote('isEmpty')) {
                     alert('General instructions is empty, fill it!');
@@ -165,7 +160,7 @@
               else{
                 $("#editForm").submit();
               }
-        });
+        });*/
         
     
     });
@@ -213,13 +208,13 @@
             dataType: 'json',
             success: function (response) {
                 
-                $("#paper_title").val(response["obj"]["title"]);
-                $("#paper_description").text(response["obj"]["description"]);
+                $("#exam_title").val(response["obj"]["exam_name"]);
+                $("#exam_description").text(response["obj"]["description"]);
         
-                $('#summernoteEdit').summernote('code', response["obj"]["instructions"]);
+               
             
                 $("#idValue").val(response["obj"]["id"]);
-                $('#paperEdit').modal('show'); 
+                $('#examEdit').modal('show'); 
             },
             error: function(response) {
                alert("Something Wrong");
