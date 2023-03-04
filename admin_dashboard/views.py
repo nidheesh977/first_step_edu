@@ -634,12 +634,14 @@ class CMClassListView(View):
             obj.meta_title = request.POST.get("meta_title",obj.meta_title)
             obj.meta_description = request.POST.get("meta_description",obj.meta_description)
             obj.meta_keywords = request.POST.get("meta_keywords",obj.meta_keywords)
+            obj.price = request.POST.get("price",obj.price)
             obj.save()
             return redirect("admin_dashboard:clsm-classes-list")
         else:
             Classes.objects.create(
                 title = request.POST.get("class_title"),
                 description = request.POST.get("class_description"),
+                price = request.POST.get("price"),
                 meta_title = request.POST.get("meta_title"),
                 meta_description = request.POST.get("meta_description"),
                 meta_keywords = request.POST.get("meta_keywords"),

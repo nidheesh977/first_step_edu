@@ -3,16 +3,17 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail.message import EmailMessage
+
 from django.http.response import JsonResponse
 from django.shortcuts import redirect, render
-from django.views.generic import TemplateView, View
+from django.views.generic import DetailView, ListView, TemplateView, View
 
 from utils.constants import EmailContents, TextConstants
 from utils.functions import OTP_Gen, is_ajax
-
+from django.core import serializers
 from .models import *
-
-
+from django.conf import settings
+import environ
 class SignUpView(View):
     def get(self,request, *args, **kwargs):
         return render(request, "sign-up.html")
@@ -151,8 +152,51 @@ class WhyChooseUs(TemplateView):
 class OurTeam(TemplateView):
     template_name="our-team.html"
 
-class BlogView(TemplateView):
-    template_name="blog.html"
+
+class BlogsList(ListView):
+    template_name = "blog.html"
+    model = Blogs
+    paginate_by = 6
+    ordering = "created_on"
+
+    def get_context_data(self,**kwargs):
+        env = environ.Env()
+        blog_url = env.get_value("blog_url")
+        context = super(BlogsList,self).get_context_data(**kwargs)
+        context["blog_url"] = blog_url
+        return context
+
+    def post(self, request, *args, **kwargs):
+        blog_count = request.POST.get("blogCount")
+        start_num = int(blog_count)+1
+        end_num = start_num + self.paginate_by
+        list_exam = Blogs.objects.all().order_by("created_on").defer("id","title","image","description","url","image_alt_name")
+        objs = list_exam[start_num:end_num]
+        data = serializers.serialize('json', objs, fields=("id","title","image","description","url","image_alt_name"))
+        res = {"data":data, "media_url":settings.MEDIA_URL}
+        return JsonResponse(res)
+
+class BlogView(View):
+    def get(self, request, *args, **kwargs):
+        blogsObj = Blogs.objects.all()[:6]
+        context = {
+            "objs":blogsObj,
+        }
+        return render(request,"blog.html",context)
+
+    def post(self, request,*arg, **kwargs):
+        return render(request,"blog.html")
+class BlogDetailView(DetailView):
+    template_name = "bloglanding.html"
+    model = Blogs
+    slug_field = 'url'
+    slug_url_kwarg = 'url'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        recent_blogs = Blogs.objects.all().order_by("created_on")[:3]
+        context["recent_blogs"] = recent_blogs
+        return context
 
 
 class Announcement(TemplateView):
@@ -181,3 +225,11 @@ class CompetitivePage(View):
 class SchoolPage(View):
     def get(self, request, *args, **kwargs):
         return render(request, "school.html")
+    
+class PapersView(ListView):
+    def get(self,request, *args,**kwargs):
+        choosed_class = Classes.objects.get(id = kwargs.get("id"))
+        context = {
+            "obj":choosed_class
+        }
+        return render(request,"paper.html", context )

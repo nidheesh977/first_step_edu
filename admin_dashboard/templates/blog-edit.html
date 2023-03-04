@@ -32,6 +32,7 @@
             </div>
             <div class="form-group col-12">
                 <label>Overall Description <span class="text-danger">*</span></label>
+                
                 <div>
                     <textarea class="form-control form-control-user" id="summernote"  autofocus="autofocus" name="overall_description">{{obj.overall_description}}</textarea>
                 </div>
@@ -80,6 +81,8 @@
                     ['help', ['help']]
                 ],
           });
+        $("textarea#summernote").code("{{obj.overall_description}}");
+
         
         $("form").submit(function(event){
             if($('textarea#summernote').summernote('isEmpty')) {

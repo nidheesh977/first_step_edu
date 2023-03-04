@@ -82,7 +82,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Blogs(MetaDetails):
     title = models.CharField(_("Title"), max_length=250, blank=False, null=True)
     description = models.TextField(_("Description"),blank=True, null=True)
-    url = models.TextField(_("URL"), blank=True, null=True, unique=True)
+    url = models.SlugField(_("URL"), blank=True, null=True, unique=True)
     image = models.ImageField(_("Image"), upload_to="blog_images/",blank=True, null=True)
     image_alt_name = models.CharField(_("Image Alt Name"), max_length=50, blank=True, null=True)
     overall_description = models.TextField(_("Overall Description"),blank=True, null=True)
@@ -93,11 +93,14 @@ class Blogs(MetaDetails):
 
     def __str__(self):
         return self.title
-
+    
+    def save(self, *args, **kwargs):
+        self.url = str(self.url.lower()).strip()
+        return super().save(*args, **kwargs)
 
 
     def get_absolute_url(self):
-        return reverse("Blogs_detail", kwargs={"pk": self.pk})
+        return reverse("application:blog-detail", kwargs={"url": self.url})
 
 class Events(ImportdantDates):
     title = models.CharField(_("Title"), max_length=250, blank=False, null=True)
@@ -247,6 +250,7 @@ class Papers(MetaDetails):
     instructions = models.TextField(_("Instructions"), blank=True, null=True)
     assigned_questions = models.ManyToManyField("application.Questions", verbose_name=_("Questions"), blank=True,)
     is_competitive = models.BooleanField(_("Is competitive"),default=False)
+    price = models.DecimalField(_("Price"), max_digits=8, decimal_places=2,blank=True, null=True)
     class Meta:
         verbose_name = _("Papers")
         verbose_name_plural = _("Papers")
@@ -267,6 +271,7 @@ class Subjects(MetaDetails):
     title = models.CharField(_("Title"), max_length=50, blank=True, null=True)
     description = models.TextField(_("Description"), blank=True, null=True)
     assigned_papers = models.ManyToManyField("application.Papers", verbose_name=_("Papers"), blank=True,)
+    price = models.DecimalField(_("Price"), max_digits=8, decimal_places=2,blank=True, null=True)
     
     class Meta:
         verbose_name = _("Subjects")
@@ -283,6 +288,7 @@ class Classes(MetaDetails):
     title = models.CharField(_("Title"), max_length=50, blank=True, null=True)
     description = models.TextField(_("Description"), null=True, blank=True)
     assigned_subjects = models.ManyToManyField("application.Subjects", verbose_name=_("Subjects"), blank=True,)
+    price = models.DecimalField(_("Price"), max_digits=8, decimal_places=2,blank=True, null=True)
 
     class Meta:
         verbose_name = _("Classes")
@@ -292,4 +298,4 @@ class Classes(MetaDetails):
     #     return self.name
 
     def get_absolute_url(self):
-        return reverse("Classes_detail", kwargs={"pk": self.pk})
+        return reverse("classes_detail", kwargs={"pk": self.pk})

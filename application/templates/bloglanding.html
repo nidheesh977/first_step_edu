@@ -1,0 +1,40 @@
+{% extends 'application_base.html' %}
+
+{% block content %}
+<section class="section_blog-banner bgs-lightblue py-4 py-sm-5">
+<div class="container py-3">
+    <div class="row">
+        <div class="col-lg-6 align-self-center ">
+            <h1 class="test-bold fs-40 cl-darkblue">{{object.title}}</h1>
+            <p class="cl-blue-1 fs-15 pt-2 pt-sm-4 right-padding">{{object.description}}</p>
+        </div>
+        <div class="col-lg-6 about-banner text-lg-right text-center pt-lg-0 pt-3">
+            <img src="{{object.image.url}}" alt="{{object.image_alt_name}}" class="img-fluid br-20">
+        </div>
+    </div>
+</div>
+</section>
+<section class="section_blogl-content pb-5 pt-4 py-sm-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="blog-description">
+                    {{object.overall_description|safe}}
+                </div>
+            </div>
+            <div class="col-lg-4 pt-3 pt-lg-0">
+                <div class="bgs-sky p-4">
+                    <h5 class="test-semibold  fs-25 cl-black mb-0 pt-3">Recent Post</h5>
+                    {% for recent_blog in recent_blogs %}
+                    <a href="{{recent_blog.get_absolute_url}}" class="d-flex align-items-center recent-post py-4">
+                        <img src="{{recent_blog.image.url}}" alt="{{recent_blog.image_alt_name}}" class="recent-post-img">
+                        <h6 class="test-semibold fs-16 cl-black pl-3">{{recent_blog.title}}</h6>
+                    </a>
+                    {% endfor %}
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

@@ -95,9 +95,8 @@
                                     <h5 class="test-semibold  fs-18 cl-black">{{obj.title}}</h5>
                                     <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">{{obj.description}}</p>
                                     <div class="d-xl-flex justify-content-between  align-items-center">
-                                        <a href="paper.php"
-                                            class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy
-                                            Paperwise</a>
+                                        <a href="{% url 'application:class_papers' obj.id %}"
+                                            class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy Paperwise</a>
                                         <a class="home-btn-olympiad decrt-none fs-15  cl-black bgs-yellow test-semibold"
                                             href="subject.php">Buy Subjectwise
                                             <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
