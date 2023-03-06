@@ -1,0 +1,165 @@
+{% extends 'application_base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container px-0 mx-sm-0 dash-board-main-box"> 
+    {% include 'dashboard_side_menu.html' %}
+    <span class="hide-box  d-lg-none"><i class="fa fa-arrow-right"></i></span>
+    <span class="side-box  d-lg-none"><i class="fa fa-arrow-left"></i></span>
+    <div class="dashboard-content bgs-lightgrey pt-5 pb-3"> 
+        <h1 class="test-bold fs-25 lh-27 cl-grey pb-4">Enrolled Paper</h1>   
+        <div class="section_home-olympiad-test">
+            <div class="oly-tap">
+                <ul class="nav nav-pills mb-5 tab-width olympaind-tab " id="pills-tab" role="tablist">
+
+                    <li class="nav-item active olympaid">
+                        <a class="nav-link  fs-13  cl-black" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Board Exam</a>
+                    </li>
+                    <li class="nav-item olympaid">
+                        <a class="nav-link olympaid fs-13 cl-black" id="pills-profile-tab" data-toggle="pill"
+                            href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Competitive Exam</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-content pb-2" id="pills-tabContent">
+                <div class="tab-pane fade show active " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                    <div class="row">
+                        <div class="col-xl-6 pb-4 mb-md-2">
+                            <div class="card card-over mb-2">
+                                <div class="card-body">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">4</span></p>
+                                    <h5 class="dash-view test-semibold fs-16 cl-black">Class 4</h5>
+                                    <p class="fs-13 cl-dark col-xl-11 px-0">Lorem ipsum dolor sit amet consectetur
+                                        orem ipsum lorem ipsum dolor.</p>
+                                    <div class="row align-items-center">
+                                        <div class="col-4 pr-0">
+                                            <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; 1000</p>
+                                        </div>
+                                        <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
+                                            <a href="view-paper.php" class="text-white fs-15 bgs-black decrt-none enroll-button">View Papers
+                                                <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
+                                                    width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                                    <path id="arrow-color" data-name="Path 3"
+                                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                        transform="translate(-3.278 -102.821)" fill="#fff" />
+                                                </svg></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 pb-4 mb-md-2">
+                            <div class="card card-over mb-2">
+                                <div class="card-body">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Papers : <span class="test-bold">10</span></p>
+                                    <h5 class="dash-view test-semibold  fs-16 cl-black"><span class="test-semibold fs-16">Class 4</span>Physics</h5>
+                                    <p class="fs-13 cl-dark col-xl-11 px-0">Lorem ipsum dolor sit amet consectetur
+                                        orem ipsum lorem ipsum dolor.</p>
+                                    <div class="row align-items-center">
+                                        <div class="col-4 pr-0">
+                                            <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; 1000</p>
+                                        </div>
+                                        <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
+                                            <a href="view-paper.php" class="text-white fs-15 bgs-black decrt-none enroll-button">View Papers
+                                                <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
+                                                    width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                                    <path id="arrow-color" data-name="Path 3"
+                                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                        transform="translate(-3.278 -102.821)" fill="#fff" />
+                                                </svg></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 pb-4 mb-md-2">
+                            <div class="card card-over mb-2">
+                                <div class="card-body">
+                                    <h5 class="dash-view test-semibold fs-16 cl-black"><span class="test-semibold fs-16">Class 4</span><span class="test-semibold fs-16">Physics</span> Paper 1</h5>
+                                    <p class="fs-13 cl-dark col-xl-11 px-0">Lorem ipsum dolor sit amet consectetur
+                                        orem ipsum lorem ipsum dolor.</p>
+                                    <div class="row align-items-center">
+                                        <div class="col-4 pr-0">
+                                            <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; 1000</p>
+                                        </div>
+                                        <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
+                                            <a href="view-paper.php" class="text-white fs-15 bgs-black decrt-none enroll-button">View Papers
+                                                <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
+                                                    width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                                    <path id="arrow-color" data-name="Path 3"
+                                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                        transform="translate(-3.278 -102.821)" fill="#fff" />
+                                                </svg></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                    <div class="row">
+                        <div class="col-xl-6 pb-4 mb-md-2">
+                            <div class="card card-over mb-2">
+                                <div class="card-body">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">4</span></p>
+                                    <h5 class="test-semibold  fs-18 cl-black">JEE</h5>
+                                    <p class="fs-13 cl-dark col-xl-11 pl-0">Lorem ipsum dolor sit amet consectetur
+                                        orem ipsum lorem ipsum dolor.</p>
+                                    <div class="row align-items-center">
+                                        <div class="col-4 pr-0">
+                                            <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; 1000</p>
+                                        </div>
+                                        <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
+                                            <a href="#" class="text-white fs-15 bgs-black decrt-none enroll-button">View Paper
+                                                <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
+                                                    width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                                    <path id="arrow-color" data-name="Path 3"
+                                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                        transform="translate(-3.278 -102.821)" fill="#fff" />
+                                                </svg></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 pb-4 mb-md-2">
+                            <div class="card card-over mb-2">
+                                <div class="card-body">
+                                    <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">4</span></p>
+                                    <h5 class="test-semibold  fs-18 cl-black">NEET</h5>
+                                    <p class="fs-13 cl-dark col-xl-11 pl-0">Lorem ipsum dolor sit amet consectetur
+                                        orem ipsum lorem ipsum dolor.</p>
+                                    <div class="row align-items-center">
+                                        <div class="col-4 pr-0">
+                                            <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; 1000</p>
+                                        </div>
+                                        <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
+                                            <a href="#" class="text-white fs-15 bgs-black decrt-none enroll-button">View Paper
+                                                <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
+                                                    width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                                    <path id="arrow-color" data-name="Path 3"
+                                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                        transform="translate(-3.278 -102.821)" fill="#fff" />
+                                                </svg></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script>
+    $("#id-enroll").addClass('active');
+</script>
+{% endblock script %}
+
+
+
+

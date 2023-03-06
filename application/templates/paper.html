@@ -55,8 +55,8 @@
             </select>
         </div>
         <div class="row pt-3">
-            {% for subject in obj.assigned_subjects.all %}
-                {% for paper  in subject.assigned_papers.all  %}
+            
+                {% for paper  in papers  %}
                 <div class="col-md-6 pb-4 mb-md-2">
                     <div class="card card-over mb-2">
                         <div class="card-body">
@@ -80,7 +80,7 @@
                         </div>
                     </div>
                 </div>
-                {% endfor %}
+                
             {% endfor %}
             
         </div>

@@ -34,7 +34,7 @@
 
     <!-- marquee -->
     <section class="section_header-marquee">
-        <div class="text-white bgs-black d-flex align-items-center py-2">
+        <div class="text-white bgs-black d-flex align-items-center py-2">{{marqueeText.text|safe}}
             <marquee width="100%" class="align-right" behavior="scroll">{{marqueeText.text|safe}}</marquee>
         </div> 
     </section>
@@ -66,14 +66,14 @@
                                     <a href="{% url 'application:why-choose-us' %}" class="nav-link  cl-lightblue" id="">WHY CHOOSE US</a>
                                 </li>
                                 <li class="nav-item list d-block d-lg-none">
-                                    <a href="class.php" class="nav-link  cl-lightblue" id="">SCHOOL EXAM</a>
+                                    <a href="{% url 'application:school' %}" class="nav-link  cl-lightblue" id="">SCHOOL EXAM</a>
                                 </li>
                                 <li class="nav-item list d-block d-lg-none">
                                     <a href="{% url 'application:competitive_page' %}" class="nav-link  cl-lightblue" id="">COMPETITIVE EXAM</a>
                                 </li>
                                 <li class="nav-item list text-center d-none d-lg-block">
                                     <p class="mb-0">EXAMINATION</p>
-                                    <div class="d-inline-flex"><a href="class.php" class="cl-lightblue fs-14" id="id_exam">SCHOOL</a> <span class="px-1">|</span> <a href="{% url 'application:competitive_page' %}" class="cl-lightblue fs-14" id="id_exam">COMPETITIVE</a></div>
+                                    <div class="d-inline-flex"><a href="{% url 'application:school' %}" class="cl-lightblue fs-14" id="id_exam">SCHOOL</a> <span class="px-1">|</span> <a href="{% url 'application:competitive_page' %}" class="cl-lightblue fs-14" id="id_exam">COMPETITIVE</a></div>
                                 </li>
 
                                 <li class="nav-item list">
@@ -83,11 +83,19 @@
                                 <li class="nav-item list">
                                     <a href="{% url 'application:contact-us' %}" class="nav-link  cl-lightblue" id="id_contact">CONTACT US</a>
                                 </li>
+                                {% if not user.is_authenticated %}
                                  <div class="form-button bgs-blue d-flex align-items-center ml-lg-2 ml-xl-4">
                                     <a href="{% url 'application:signin' %}" class="cl-white login-hover decrt-none fs-14 ">LOGIN </a>
                                     <span class="sign-bar cl-white ">  |  </span>
                                     <a href="{% url 'application:signup' %}" class=" cl-white login-hover     decrt-none fs-14">  SIGN UP</a>
                                 </div>
+                                {% else %}
+                                <div class="form-button bgs-blue d-flex align-items-center ml-lg-2 ml-xl-4">
+                                    <a href="{% url 'application:account-dashboard' %}" class="cl-white login-hover decrt-none fs-14 ">DASHBOARD </a>
+                                    <span class="sign-bar cl-white ">  |  </span>
+                                    <a href="{% url 'application:logout' %}" class=" cl-white login-hover     decrt-none fs-14"> LOGOUT</a>
+                                </div>
+                                {% endif %}
                             </ul>
                         </div>
                     </nav> 
@@ -194,7 +202,7 @@
                                     <a href="{% url 'application:announcement' %}" class="fs-13 cl-light decrt-none footer_link-hover1">Announcement</a>
                                 </li>
                                 <li>
-                                    <a href="events.php" class="fs-13 cl-light decrt-none footer_link-hover1">Events</a>
+                                    <a href="{% url 'application:events' %}" class="fs-13 cl-light decrt-none footer_link-hover1">Events</a>
                                 </li>
                                 <li>
                                     <a href="{% url 'application:contact-us' %}" class="fs-13 cl-light decrt-none footer_link-hover1">Contact

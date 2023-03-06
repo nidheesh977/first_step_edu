@@ -14,6 +14,8 @@ urlpatterns = [
     path("logout",views.LogoutView.as_view(),name="logout"),
 
     path("dashboard",views.AccountDashboard.as_view(),name="account-dashboard"),
+    path("dashboard/enrolled-papers",views.EnrolledPapersView.as_view(),name="enrolled_papers"),
+    path("dashboard/registered-events",views.RegisterdEvents.as_view(),name="registered_events"),
 
     path("about-us",views.AboutUs.as_view(),name="about-us"),
     path("why-choose-us",views.WhyChooseUs.as_view(),name="why-choose-us"),
@@ -24,6 +26,14 @@ urlpatterns = [
     path("announcement",views.Announcement.as_view(),name="announcement"),
     path("contact-us",views.ContactUsView.as_view(),name="contact-us"),
     path("competitive",views.CompetitivePage.as_view(),name="competitive_page"),
-    path("class-<str:id>/papers",views.PapersView.as_view(),name="class_papers"),
+    path("school",views.SchoolPage.as_view(),name="school"),
+    path("subject-<str:pk>",views.SchoolSubjectWise.as_view(),name="school_subject_wise"),
+    path("papers",views.SchoolPageWise.as_view(),name="school_paper_wise"),
+    path("events",views.EventsPage.as_view(),name="events"),
+
+
+    # path("class-<str:id>/papers",views.PapersView.as_view(),name="class_papers"),
+
+    path("checkout",views.Checkout.as_view(),name="checkout"),
     
 ]

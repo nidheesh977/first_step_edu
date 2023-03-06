@@ -1,9 +1,10 @@
 {% extends 'application_base.html' %}
 {% load static %}
 {% block content %}
-<!-- The sidebar -->
+
 <div class="container dash-board-main-box">
-    <!-- <?php include 'inc/dashboard-menu.php' ?>  -->
+    {% include 'dashboard_side_menu.html' %}
+
     <span class=" hide-box  d-lg-none"><i class="fa fa-arrow-right"></i></span>
     <span class=" side-box  d-lg-none"><i class="fa fa-arrow-left"></i></span>
     <div class="dashboard-content bgs-lightgrey py-5" id="dashboard-box" >     
@@ -11,53 +12,59 @@
             <span class="edit_icon pl-2">  <i id="edit" class="far fa-edit cursor"></i> </span>
         </h1>
         <div class="section-account pt-4 px-xl-5">
-            <form action="" class="row course_form" id="subject3-form1" method="post">
+            <form class="row course_form" id="subject3-form1" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div class="form-groups col-12 input-file pb-4">
-                    <img id="file_upload" src="assets/images/profile-img.png" alt="your image" class="
+                    {% if request.user.profile_pic %}
+                    <img id="file_upload" src="{{ request.user.profile_pic.url}}" alt="your image" class="
                         upload-img" />
+                        {% else %}
+                        <img id="file_upload" src="{% static 'images/profile-img.png' %}" alt="your image" class="
+                        upload-img" />
+                        {% endif %}
                     <div class=" input-file-upload px-1 px-sm-4">
                         <span class="upload-label cl-grey fs-15">Upload Profile Image</span>
                         <input type='file' id="image" name="image" onchange="readURL(this);" accept="image/*">
                     </div>
                 </div>
                 <div class=" form-groups col-sm-6  pb-4 pt-1">
-                    <label for="">Name</label>
-                    <input type="text" id="name1" name="name1" value="John" class="form-control" readonly="readonly"
+                    <label for="">First Name</label>
+                    <input type="text" id="name1" name="first_name" value="{{request.user.first_name}}" class="form-control" readonly="readonly"
                         maxlength="250" required>
                 </div>
                 <div class=" form-groups col-sm-6  pb-4 pt-1">
                     <label for="">Last Name</label>
-                    <input type="text" id="name2" name="name2" value="Doe" class="form-control" readonly="readonly"
+                    <input type="text" id="name2" name="last_name" value="{{request.user.last_name}}" class="form-control" readonly="readonly"
                         maxlength="250" required>
                 </div>
                 <div class="form-groups col-sm-6 pb-4 pt-1">
                     <label for="">Email ID</label>
-                    <input type="email" id="email1" name="email1" value="info@nammakpsc.com" class="form-control"
+                    <input type="email" id="email1" name="email" value="{{request.user.email}}" class="form-control"
                         readonly="readonly" maxlength="250" required>
                 </div>
                 <div class="form-groups col-sm-6 pb-4 pt-1">
                     <label for="">Phone Number</label>
-                    <input type="tel" id="mobile1" name="mobile1" value="+91 7643523212" class="mobile form-control"
+                    <input type="tel" id="mobile1" name="mobile_number" value="{{request.user.mobile_number}}" class="mobile form-control"
                         readonly="readonly" minlength="7" maxlength="15" required>
                 </div>
                 <div class="form-groups col-sm-6 pb-4 pt-1">
                     <label for="">Class</label>
-                    <input type="text" id="class" name="class" value="Class 4" class="form-control" readonly="readonly"
+                    <input type="text" id="class" name="class_name" value="{{request.user.class_name}}" class="form-control" readonly="readonly"
                         maxlength="250" required>
                 </div>
                 <div class="form-groups col-sm-6 pb-4 pt-1">
                     <label for="">School Name</label>
-                    <input type="text" id="schname" name="schname" value="School Name" class="form-control" readonly="readonly"
+                    <input type="text" id="schname" name="school_name" value="{{request.user.school_name}}" class="form-control" readonly="readonly"
                         maxlength="250" required>
                 </div>
                 <div class=" form-groups col-sm-6 pb-4 pt-1">
                     <label for="">City</label>
-                    <input type="text" id="city" name="city" value="Bangalore" class="form-control"
+                    <input type="text" id="city" name="city" value="{{request.user.city}}" class="form-control"
                         readonly="readonly" maxlength="250" required>
                 </div>
                 <div class=" form-groups col-sm-6 pb-4 pt-1">
                     <label for="">State</label>
-                    <input type="text" id="state" name="state" value="Bangalore" class="form-control"
+                    <input type="text" id="state" name="state" value="{{request.user.state}}" class="form-control"
                         readonly="readonly" maxlength="250" required>
                 </div>
                 <div class="form-groups col-12  pt-4">
@@ -69,9 +76,9 @@
 </div>
 {% endblock content %}
 
-
+{% block script %}
 <script>
-    {% block script %}
+    
         $("#id-account").addClass('active');
         $('#id-account').addClass('active');
         $('.btn-submit').hide();
@@ -91,5 +98,5 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+    </script>
     {% endblock script %}
-</script>

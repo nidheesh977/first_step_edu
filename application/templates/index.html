@@ -95,17 +95,17 @@
                                     <h5 class="test-semibold  fs-18 cl-black">{{obj.title}}</h5>
                                     <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">{{obj.description}}</p>
                                     <div class="d-xl-flex justify-content-between  align-items-center">
-                                        <a href="{% url 'application:class_papers' obj.id %}"
+                                        <a href="{% url 'application:school_paper_wise' %}?class={{obj.id}}"
                                             class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy Paperwise</a>
                                         <a class="home-btn-olympiad decrt-none fs-15  cl-black bgs-yellow test-semibold"
-                                            href="subject.php">Buy Subjectwise
+                                            href="{% url 'application:school_subject_wise' obj.id %}">Buy Subjectwise
                                             <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
                                                 width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
                                                 <path id="btn-olympiad-size" data-name="Path 3"
                                                     d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
                                                     transform="translate(-3.278 -102.821)" fill="#fff"></path>
                                             </svg></a>
-                                        <a href="checkout.php"
+                                        <a href="{% url 'application:checkout' %}?class={{obj.id}}"
                                             class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Class
                                             <span class="arrow-spacing"></span>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622"
@@ -268,7 +268,7 @@
         <div class="d-flex align-items-center justify-content-between mb-4 mb-sm-5">
             <h2 class="test-bold head-size fs-45 cl-black mb-0 head-padding lh-55">Recent Blogs</h2>
             <a class="home-btn-olympiad decrt-none fs-15 test-semibold  py-3 px-4 cl-black bgs-yellow"
-                href="blog.php">VIEW
+                href="{% url 'application:blogs-page' %}">VIEW
                 MORE
                 <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622"
                     class="arrow-color" viewBox="0 0 16.7 8.622">
@@ -398,7 +398,7 @@
         </div>
         <div class="text-center pt-3 pt-sm-5 mt-lg-3">
             <a class="home-btn-olympiad decrt-none fs-15 test-semibold  py-3 px-4 cl-black bgs-yellow d-inline-block"
-                href="events.php">VIEW MORE EVENTS
+                href="{% url 'application:events' %}">VIEW MORE EVENTS
                 <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622"
                     class="arrow-color" viewBox="0 0 16.7 8.622">
                     <path id="btn-olympiad-size" data-name="Path 3"

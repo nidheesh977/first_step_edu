@@ -1,15 +1,24 @@
 {% extends 'application_base.html' %}
 
 {% block content %}
-<section class="section_class-banner bgs-lightblue py-4 py-sm-5">
+<section class="section_subject-banner bgs-lightblue py-4 py-sm-5">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 align-self-center">
-                <h2 class="test-bold fs-40 font-size cl-darkblue">Classes</h2>
+                <h2 class="test-bold fs-40 font-size cl-darkblue">10 Class Details</h2>
                 <p class="cl-blue-1 fs-15 py-4 right-padding">Loreum Ipsum is simply dummy text of the printing and
                     typesetting industry.</p>
-                <a href="#viewClass" class="text-white fs-15 bgs-black decrt-none px-5 d-inline-block py-2 lh-35 landing-links">View
-                    Class
+                <a href="#viewSubject"
+                    class="text-white fs-15 bgs-black decrt-none px-5 d-inline-block py-2 lh-35 landing-links">View
+                    Subjects
+                    <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7"
+                        height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                        <path id="arrow-color" data-name="Path 3"
+                            d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                            transform="translate(-3.278 -102.821)" fill="#fff"></path>
+                    </svg></a>
+                    <a href="checkout.php"
+                    class="text-white fs-15 bgs-dark decrt-none px-5 d-inline-block py-2 lh-35 ml-2">Buy All Subjects
                     <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7"
                         height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
                         <path id="arrow-color" data-name="Path 3"
@@ -23,50 +32,51 @@
         </div>
     </div>
 </section>
-<section class="section_home-olympiad-test py-3 py-sm-5" id="viewClass">
+<section class="section_home-olympiad-test py-3 py-sm-5" id="viewSubject">
     <div class="container">
         <div class="text-center">
-            <h2 class=" test-bold head-size fs-45 cl-black pb-1 lh-55">All Classes</h2>
+            <h2 class=" test-bold head-size fs-45 cl-black pb-1 lh-55">All Subjects</h2>
             <p class="fs-15 cl-dark px-0 col-md-8 m-auto pt-lg-1  pb-lg-4">Lorem ipsum dolor sit amet adipisicing elit.
                 Commodi aut recusandae illo. Voluptatibus illo delectus totam earum
                 quo unde provident exercitationem eligendi! provident exercitationem.</p>
         </div>
         <div class="d-flex justify-content-end py-4">
-            <select class="form-control" id="classDropDown">
-                <option selected disabled>Select Class</option>
-                {% for obj in objs %}
-                <option value={{obj.id}} >{{obj.title}}</option>
+            <select class="form-control">
+                <option selected disabled>Select Subject</option>
+                {% for obj in subjects %}
+                <option value="{{obj.id}}" >{{obj.title}}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="row pt-3">
 
-            {% for obj in objs %}
+            {% for obj in subjects %}
             <div class="col-md-6 pb-4 mb-md-2">
                 <div class="card card-over mb-2">
                     <div class="card-body">
-                    <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">{{obj.assigned_subjects.count}}</span></p>
+                        <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Papers : <span class="test-bold">{{obj.assigned_papers.count}}</span></p>
                         <h5 class="test-semibold  fs-18 cl-black">{{obj.title}}</h5>
                         <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">{{obj.description}}</p>
-                        <div class="d-xl-flex justify-content-between  align-items-center">
-                        <a href="{% url 'application:school_paper_wise' %}?class={{obj.id}}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy Paperwise</a>
-                        <a class="home-btn-olympiad decrt-none fs-15  cl-black bgs-yellow test-semibold" href="{% url 'application:school_subject_wise' obj.id %}">Buy Subjectwise
-                         <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
-                             <path id="btn-olympiad-size" data-name="Path 3" d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z" transform="translate(-3.278 -102.821)" fill="#fff"></path>
-                         </svg></a>
-                        <a href="{% url 'application:checkout' %}" class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Class
-                            <span class="arrow-spacing"></span>
-                            <svg xmlns="http://www.w3.org/2000/svg"  width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622"><path id="arrow-color" data-name="Path 3"
-                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
-                                        transform="translate(-3.278 -102.821)" fill="#fff" />
-                            </svg>
-                        </a>
+                        <div class="row align-items-center">
+                            <div class="col-sm-4 col-md-12 col-lg-4 pr-0">
+                                <p class="test-semibold mb-2 d-inline-block fs-18 cl-black">&#x20b9; {{obj.price}}</p>
+                            </div>                                              
+                            <div
+                                class="col-sm-8 col-md-12 col-lg-8 enroll-center pl-lg-0 d-flex justify-content-between justify-content-lg-end align-items-center">
+                                <a href="{% url 'application:school_paper_wise' %}?subject={{obj.id}}" class="mb-2 d-inline-block fs-15 test-bold cl-dark view-button mr-2 mr-xl-3">Buy Paperwise</a>
+                                <a href="checkout.php" class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Now
+                                    <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
+                                        width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                        <path id="arrow-color" data-name="Path 3"
+                                            d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                            transform="translate(-3.278 -102.821)" fill="#fff" />
+                                    </svg></a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             {% endfor %}
-            
         </div>
     </div>
 </section>
@@ -107,6 +117,8 @@
                                     <p class="fs-15 test-medium radius cl-black  pl-5 pr-5 py-3 mb-0">Lorem Ipsum is simply
                                         dummy text dummy?</P>
                                 </a>
+
+
                                 <div id="category1-1" class="collapse show" aria-labelledby="category1_one"
                                     data-parent="#category_1">
                                     <div class="card-body">
@@ -194,7 +206,9 @@
                             </div>
                         </div>
                         <div class="pt-4">
-                            <button class="text-white load-more fs-13 decrt-none cl-white bgs-black d-inline-block border-0 cursor py-2 lh-35">LOAD MORE</button>
+                            <button
+                                class="text-white load-more fs-13 decrt-none cl-white bgs-black d-inline-block border-0 cursor py-2 lh-35">LOAD
+                                MORE</button>
                         </div>
                     </div>
                 </div>
@@ -206,138 +220,100 @@
     </div>
 </section>
 <section class="section_home-student-say py-4 py-sm-5 mt-3">
-     <div class="container">
-         <div class="text-center">
-             <h2 class=" test-bold head-size fs-45 cl-black lh-55">What Students Say</h2>
-             <p class="fs-15 cl-dark px-0 col-md-8 m-auto pt-md-3 pt-1 student">Lorem ipsum dolor sit amet adipisicing
-                 elit. Commodi aut recusandae illo. Voluptatibus illo delectus totam earum
-                 quo unde provident exercitationem eligendi! provident exercitationem.</p>
-         </div>
-         <div class="review-slider owl-carousel owl-theme pt-lg-4">
-             <div class="item row">
-                 <div class="col-lg-2">
-                     <img src="assets\images\review-1.png" alt="John Doe" class="mr-5 rounded-circle"
-                         style="width:78px;">
-                 </div>
-                 <div class="col-lg-10 double-quates">
-                     <h6 class="feedback-font  test-bold cl-black padding fs-18">John Doe</h6>
-                     <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                     <div class="quates-img">
-                         <img src="assets\images\double-qts.png" alt="">
-                     </div>
-                     <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                         adipisicing elit. Distinctio minus voluptas
-                         similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
+    <div class="container">
+        <div class="text-center">
+            <h2 class=" test-bold head-size fs-45 cl-black lh-55">What Students Say</h2>
+            <p class="fs-15 cl-dark px-0 col-md-8 m-auto pt-md-3 pt-1 student">Lorem ipsum dolor sit amet adipisicing
+                elit. Commodi aut recusandae illo. Voluptatibus illo delectus totam earum
+                quo unde provident exercitationem eligendi! provident exercitationem.</p>
+        </div>
+        <div class="review-slider owl-carousel owl-theme pt-lg-4">
+            <div class="item row">
+                <div class="col-lg-2">
+                    <img src="assets\images\review-1.png" alt="John Doe" class="mr-5 rounded-circle"
+                        style="width:78px;">
+                </div>
+                <div class="col-lg-10 double-quates">
+                    <h6 class="feedback-font  test-bold cl-black padding fs-18">John Doe</h6>
+                    <p class="fs-13 cl-dark mb-0">JEE Student</p>
+                    <div class="quates-img">
+                        <img src="assets\images\double-qts.png" alt="">
+                    </div>
+                    <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
+                        adipisicing elit. Distinctio minus voluptas
+                        similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
 
-                 </div>
-             </div>
-             <div class="item row">
-                 <div class="col-lg-2">
-                     <img src="assets\images\review-2.png" alt="John Doe" class="mr-5 rounded-circle"
-                         style="width:78px;">
-                 </div>
-                 <div class="col-lg-10 double-quates">
-                     <h6 class="feedback-font  test-bold cl-black padding fs-18">John Doe</h6>
-                     <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                     <div class="quates-img">
-                         <img src="assets\images\double-qts.png" alt="">
-                     </div>
-                     <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                         adipisicing elit. Distinctio minus voluptas
-                         similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
+                </div>
+            </div>
+            <div class="item row">
+                <div class="col-lg-2">
+                    <img src="assets\images\review-2.png" alt="John Doe" class="mr-5 rounded-circle"
+                        style="width:78px;">
+                </div>
+                <div class="col-lg-10 double-quates">
+                    <h6 class="feedback-font  test-bold cl-black padding fs-18">John Doe</h6>
+                    <p class="fs-13 cl-dark mb-0">JEE Student</p>
+                    <div class="quates-img">
+                        <img src="assets\images\double-qts.png" alt="">
+                    </div>
+                    <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
+                        adipisicing elit. Distinctio minus voluptas
+                        similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
 
-                 </div>
-             </div>
-             <div class="item row">
-                 <div class="col-lg-2">
-                     <img src="assets\images\review-1.png" alt="John Doe" class="mr-5 rounded-circle"
-                         style="width:78px;">
-                 </div>
-                 <div class="col-lg-10 double-quates">
-                     <h6 class="feedback-font test-bold cl-black padding fs-18">John Doe</h6>
-                     <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                     <div class="quates-img">
-                         <img src="assets\images\double-qts.png" alt="">
-                     </div>
-                     <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                         adipisicing elit. Distinctio minus voluptas
-                         similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
+                </div>
+            </div>
+            <div class="item row">
+                <div class="col-lg-2">
+                    <img src="assets\images\review-1.png" alt="John Doe" class="mr-5 rounded-circle"
+                        style="width:78px;">
+                </div>
+                <div class="col-lg-10 double-quates">
+                    <h6 class="feedback-font test-bold cl-black padding fs-18">John Doe</h6>
+                    <p class="fs-13 cl-dark mb-0">JEE Student</p>
+                    <div class="quates-img">
+                        <img src="assets\images\double-qts.png" alt="">
+                    </div>
+                    <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
+                        adipisicing elit. Distinctio minus voluptas
+                        similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
 
-                 </div>
-             </div>
-             <div class="item row">
-                 <div class="col-lg-2">
-                     <img src="assets\images\review-2.png" alt="John Doe" class="mr-5 rounded-circle"
-                         style="width:78px;">
-                 </div>
-                 <div class="col-lg-10 double-quates">
-                     <h6 class="feedback-font test-bold cl-black padding fs-18">John Doe</h6>
-                     <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                     <div class="quates-img">
-                         <img src="assets\images\double-qts.png" alt="">
-                     </div>
-                     <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                         adipisicing elit. Distinctio minus voluptas
-                         similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
+                </div>
+            </div>
+            <div class="item row">
+                <div class="col-lg-2">
+                    <img src="assets\images\review-2.png" alt="John Doe" class="mr-5 rounded-circle"
+                        style="width:78px;">
+                </div>
+                <div class="col-lg-10 double-quates">
+                    <h6 class="feedback-font test-bold cl-black padding fs-18">John Doe</h6>
+                    <p class="fs-13 cl-dark mb-0">JEE Student</p>
+                    <div class="quates-img">
+                        <img src="assets\images\double-qts.png" alt="">
+                    </div>
+                    <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
+                        adipisicing elit. Distinctio minus voluptas
+                        similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
 
-                 </div>
-             </div>
-             <div class="item row">
-                 <div class="col-lg-2">
-                     <img src="assets\images\review-1.png" alt="John Doe" class="mr-5 rounded-circle"
-                         style="width:78px;">
-                 </div>
-                 <div class="col-lg-10 double-quates">
-                     <h6 class="feedback-font test-bold cl-black padding fs-18">John Doe</h6>
-                     <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                     <div class="quates-img">
-                         <img src="assets\images\double-qts.png" alt="">
-                     </div>
-                     <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                         adipisicing elit. Distinctio minus voluptas
-                         similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
+                </div>
+            </div>
+            <div class="item row">
+                <div class="col-lg-2">
+                    <img src="assets\images\review-1.png" alt="John Doe" class="mr-5 rounded-circle"
+                        style="width:78px;">
+                </div>
+                <div class="col-lg-10 double-quates">
+                    <h6 class="feedback-font test-bold cl-black padding fs-18">John Doe</h6>
+                    <p class="fs-13 cl-dark mb-0">JEE Student</p>
+                    <div class="quates-img">
+                        <img src="assets\images\double-qts.png" alt="">
+                    </div>
+                    <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
+                        adipisicing elit. Distinctio minus voluptas
+                        similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
 
-                 </div>
-             </div>
-
-
-         </div>
-     </div>
- </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock content %}
-
-{% block script %}
-<script>
-
-    $("#classDropDown").change(function(){
-        var choosedClass = $(this).val();
-
-        $.ajax({
-            type: 'post',
-            headers: {
-                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
-            },
-            data: {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                choosedClass:choosedClass
-            },
-            dataType: 'json',
-            success: function (response) {
-                console.log(response);
-            },
-            error: function(response) {
-               alert("Something Wrong");
-            }
-        });
-    });
-
-
-</script>
-
-
-
-{% endblock script %}
-
-
-
-

@@ -14,6 +14,8 @@ from django.core import serializers
 from .models import *
 from django.conf import settings
 import environ
+from django.shortcuts import get_object_or_404
+
 class SignUpView(View):
     def get(self,request, *args, **kwargs):
         return render(request, "sign-up.html")
@@ -115,9 +117,23 @@ class LogoutView(View):
         else:
             return redirect("application:index-page")
 
-class AccountDashboard(View):
+class AccountDashboard(LoginRequiredMixin,View):
     def get(self,request, *args, **kwargs):
         return render(request, "account.html")
+    
+    def post(self,request, *args, **kwargs):
+        obj = CustomUser.objects.get(id=request.user.id)
+        obj.profile_pic = request.FILES.get("image", obj.profile_pic)
+        obj.first_name = request.POST.get("first_name",obj.first_name)
+        obj.last_name = request.POST.get("last_name",obj.last_name)
+        obj.email = request.POST.get("email",obj.email)
+        obj.mobile_number = request.POST.get("mobile_number",obj.mobile_number)
+        obj.state = request.POST.get("state",obj.state)
+        obj.city = request.POST.get("city",obj.city)
+        obj.school_name = request.POST.get("school_name",obj.school_name)
+        obj.class_name = request.POST.get("class_name",obj.class_name)
+        obj.save()
+        return redirect("application:account-dashboard")
 
 class IndexView(View):
     def get(self,request, *args, **kwargs):
@@ -222,14 +238,82 @@ class CompetitivePage(View):
     def get(self, request, *args, **kwargs):
         return render(request, "competitive.html")
 
+    
+class EventsPage(View):
+    def get(self,request, *args,**kwargs):
+        objs = Events.objects.all()
+        context = {
+            "obj":objs
+        }
+        return render(request,"events.html", context)
+
+
+class EnrolledPapersView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        return render(request,"enrolled.html")
+    
+
+
+class RegisterdEvents(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        return render(request,"dash-events.html")
+    
+
+class Checkout(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        return render(request,"checkout.html")
+    
 class SchoolPage(View):
     def get(self, request, *args, **kwargs):
-        return render(request, "school.html")
-    
-class PapersView(ListView):
-    def get(self,request, *args,**kwargs):
-        choosed_class = Classes.objects.get(id = kwargs.get("id"))
+        classes_obj = Classes.objects.all().order_by("created_on")
         context = {
-            "obj":choosed_class
+            "objs":classes_obj
         }
-        return render(request,"paper.html", context )
+        return render(request, "school.html", context)
+
+    def post(self, request, *args, **kwargs):
+        objId = request.POST.get("choosedClass")
+        classes_obj = Classes.objects.get(id=objId)
+        
+        toReturn = {
+            "id":classes_obj.id,
+            "title":classes_obj.title,
+            "description":classes_obj.description,
+            "subjects_count":classes_obj.assigned_subjects.count(),
+            "buyPaperWise":"",
+            "buySubjectWise":"",
+            "buyClass":"",
+        }
+        
+        return JsonResponse(toReturn)
+class SchoolSubjectWise(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        choosed_class = Classes.objects.get(id = kwargs.get("pk"))
+        context = {
+            "subjects":choosed_class.assigned_subjects.all(),
+        }
+        return render(request,"subject.html",context)
+
+
+class SchoolPageWise(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        classId = request.GET.get("class")
+        subjectId = request.GET.get("subject")
+
+        if classId != None:
+            choosed_class = get_object_or_404(Classes, id = classId)
+            data = choosed_class.assigned_subjects.all()
+            listOfQuerySet = []
+            for d in data:
+                listOfQuerySet.extend(d.assigned_papers.all())
+            context = {
+                "papers":listOfQuerySet,
+            }
+        
+        else:
+            choosed_subject = get_object_or_404(Subjects, id = subjectId)
+            context = {
+                "papers":choosed_subject.assigned_papers.all(),
+            }
+        
+        return render(request,"paper.html",context)

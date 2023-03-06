@@ -58,7 +58,7 @@
                         <textarea rows="1"  name="class_description" class="form-control form-control-user" required></textarea>
                     </div>
                     <div class="form-group col-12">
-                        <label>Exam Price <span class="text-danger">*</span></label>
+                        <label>Price <span class="text-danger">*</span></label>
                         <input name="price" type="number" class="form-control form-control-user" required>
                     </div>
                     <div class="form-group col-12">
@@ -104,7 +104,7 @@
                         <textarea rows="1" id="class_description" name="class_description" class="form-control form-control-user" required></textarea>
                     </div>
                     <div class="form-group col-12">
-                        <label>Exam Price <span class="text-danger">*</span></label>
+                        <label>Price <span class="text-danger">*</span></label>
                         <input name="price" id="price" type="number" class="form-control form-control-user" required>
                     </div>
                     <div class="form-group col-12">
@@ -177,7 +177,7 @@
             dataType: 'json',
             success: function (response) {
                 //location.reload();
-                
+                console.log(response);
                 $("#class_title").val(response["obj"]["title"]);
                 $("#class_description").text(response["obj"]["description"]);
                 $("#meta_title").val(response["obj"]["meta_title"]);

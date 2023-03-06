@@ -619,6 +619,7 @@ class CMClassListView(View):
             obj = Classes.objects.filter(id=request.POST.get("objId")).values(
                 "id",
                 "title",
+                "price",
                 "description",
                 "meta_title",
                 "meta_description",
@@ -644,7 +645,7 @@ class CMClassListView(View):
                 price = request.POST.get("price"),
                 meta_title = request.POST.get("meta_title"),
                 meta_description = request.POST.get("meta_description"),
-                meta_keywords = request.POST.get("meta_keywords"),
+                meta_keywords = request.POST.get("meta_keywords"), 
             )
         return redirect("admin_dashboard:clsm-classes-list")
 
@@ -674,6 +675,7 @@ class CMSubjectsListView(View):
                 "id",
                 "title",
                 "description",
+                "price",
                 "meta_title",
                 "meta_description",
                 "meta_keywords",
@@ -685,6 +687,7 @@ class CMSubjectsListView(View):
             obj = get_object_or_404(Subjects,id=request.POST.get("id"))       
             obj.title = request.POST.get("subject_title",obj.title)
             obj.description = request.POST.get("subject_description",obj.description)
+            obj.price = request.POST.get("price",obj.price)
             obj.meta_title = request.POST.get("meta_title",obj.meta_title)
             obj.meta_description = request.POST.get("meta_description",obj.meta_description)
             obj.meta_keywords = request.POST.get("meta_keywords",obj.meta_keywords)
@@ -694,6 +697,7 @@ class CMSubjectsListView(View):
             sub_obj = Subjects.objects.create(
                 title = request.POST.get("subject_title"),
                 description = request.POST.get("subject_description"),
+                price = request.POST.get("price"),
                 meta_title = request.POST.get("meta_title"),
                 meta_description = request.POST.get("meta_description"),
                 meta_keywords = request.POST.get("meta_keywords"),
@@ -733,6 +737,7 @@ class CMPapersListView(View):
             obj = Papers.objects.filter(id=request.POST.get("objId")).values(
                 "id",
                 "title",
+                "price",
                 "description",
                 "instructions"
             )
@@ -744,6 +749,7 @@ class CMPapersListView(View):
             obj.title = request.POST.get("paper_title",obj.title)
             obj.description = request.POST.get("paper_description",obj.description)
             obj.instructions = request.POST.get("general_instructions",obj.instructions)
+            obj.price = request.POST.get("price",obj.price)
             obj.save()
             return redirect("admin_dashboard:clsm-papers-list",class_id=CLASS_ID,subject_id=SUBJECT_ID)
         else:
@@ -751,6 +757,7 @@ class CMPapersListView(View):
                 title = request.POST.get("paper_title"),
                 description = request.POST.get("paper_description"),
                 instructions = request.POST.get("general_instructions"),
+                price = request.POST.get("price"),
             )
             sub_obj.assigned_papers.add(paper_obj)
             return redirect("admin_dashboard:clsm-papers-list",class_id=CLASS_ID,subject_id=SUBJECT_ID)
@@ -940,6 +947,7 @@ class CompetitiveManagementPapersList(View):
             obj = Papers.objects.filter(id=request.POST.get("objId")).values(
                 "id",
                 "title",
+                "price",
                 "description",
                 "instructions"
             )
@@ -951,8 +959,9 @@ class CompetitiveManagementPapersList(View):
             obj.title = request.POST.get("paper_title",obj.title)
             obj.description = request.POST.get("paper_description",obj.description)
             obj.instructions = request.POST.get("general_instructions",obj.instructions)
+            obj.price = request.POST.get("price",obj.price)
             obj.save()
-            return redirect("admin_dashboard:competitve_papers_list")
+            return redirect("admin_dashboard:competitve_papers_list",exm_id=kwargs.get("exm_id"))
     
         else:
             com_obj = get_object_or_404(CompetitiveExam,id=kwargs.get("exm_id"))
@@ -960,6 +969,7 @@ class CompetitiveManagementPapersList(View):
                 title = request.POST.get("paper_title"),
                 description = request.POST.get("paper_description"),
                 instructions = request.POST.get("general_instructions"),
+                price = request.POST.get("price"),
                 is_competitive=True,
             )
             com_obj.assigned_papers.add(paper_obj)

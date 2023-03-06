@@ -1,0 +1,57 @@
+{% extends 'application_base.html' %}
+{% load static %}
+{% block content %}
+<div class="container px-0 mx-sm-0 dash-board-main-box">
+    {% include 'dashboard_side_menu.html' %}
+    <span class="hide-box  d-lg-none"><i class="fa fa-arrow-right"></i></span>
+    <span class="side-box  d-lg-none"><i class="fa fa-arrow-left"></i></span>
+    <div class="dashboard-content bgs-lightgrey pt-5 pb-3">
+        <h1 class="test-bold fs-25 lh-27 cl-grey pb-4">Events</h1>
+        <div class="section_home-olympiad-test">
+            <div class="row">
+                <div class="col-xl-6 pb-4 mb-md-2">
+                    <div class="card card-over mb-2">
+                        <div class="card-body">
+                            <div class="content-events">
+                                <div class="d-xl-flex justify-content-between align-items-center pt-xl-2 pb-3 border-bottom">
+                                    <p class="events-round bgs-lightgrey px-4 test-medium cl-darkblue p-1 br-30 mb-0 d-inline-block">
+                                        On Going</p>
+                                    <p class="test-semibold cl-blue mb-0"><i class="fa fa-calendar pr-2"
+                                            aria-hidden="true"></i>13 Jan 2022</p>
+                                </div>
+                                <h3 class="test-semibold fs-18 lh-25 cl-black my-3">Lorem ipsum dolor sit amet conse
+                                        ctetur
+                                        adipisicing elit.</h3>
+                               <p class="test-bold cl-yellow mb-0">Meeting Link : <span class="cl-blue"><a href="#" target="_blank" class="cl-blue text-decoration-underline">meet.google.com/mwy-mopz-zkp</a></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 pb-4 mb-md-2">
+                    <div class="card card-over mb-2">
+                        <div class="card-body">
+                            <div class="content-events">
+                                <div class="d-xl-flex justify-content-between align-items-center pt-xl-2 pb-3 border-bottom">
+                                    <p class="events-round bgs-lightgrey px-4 test-medium cl-darkblue p-1 br-30 mb-0 d-inline-block">
+                                        Coming Soon</p>
+                                    <p class="test-semibold cl-blue mb-0"><i class="fa fa-calendar pr-2"
+                                            aria-hidden="true"></i>31 Jan 2022</p>
+                                </div>
+                                <h3 class="test-semibold fs-18 lh-25 cl-black my-3">Lorem ipsum dolor sit amet conse
+                                        ctetur
+                                        adipisicing elit.</h3>
+                               <p class="test-bold cl-yellow mb-0">Meeting Link : <span class="cl-blue">Update Soon</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script>
+$("#id-events").addClass('active');
+</script>
+{% endblock script %}
