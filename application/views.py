@@ -236,16 +236,56 @@ class ContactUsView(View):
 
 class CompetitivePage(View):
     def get(self, request, *args, **kwargs):
-        return render(request, "competitive.html")
-
-    
-class EventsPage(View):
-    def get(self,request, *args,**kwargs):
-        objs = Events.objects.all()
+        obj = CompetitiveExam.objects.all()
         context = {
-            "obj":objs
+            "objs":obj
         }
-        return render(request,"events.html", context)
+        return render(request, "competitive.html",context)
+    
+    def post(self, request, *args, **kwargs):
+        objId = request.POST.get("choosedClass")
+        classes_obj = CompetitiveExam.objects.get(id=objId)
+
+        buyPaperWise = reverse("application:school_paper_wise")
+        buyPaperWise = request.build_absolute_uri(f"{buyPaperWise}?competitive={objId}")
+       
+        # FIXME -> CHECKOUT
+        buyClass = reverse("application:checkout")
+        buyClass = request.build_absolute_uri(buyClass)
+
+        toReturn = {
+            "id":classes_obj.id,
+            "title":classes_obj.exam_name,
+            "description":classes_obj.description,
+            "count":classes_obj.assigned_papers.count(),
+            "buyPaperWise":buyPaperWise,
+            "buyClass":buyClass,
+        }
+        
+        return JsonResponse(toReturn)
+
+
+
+class EventsPage(ListView):
+    template_name = "events.html"
+    model = Events
+    paginate_by = 3
+    ordering = "created_on"
+
+    def get_context_data(self,**kwargs):
+        context = super(EventsPage,self).get_context_data(**kwargs)
+        print(context)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        blog_count = request.POST.get("blogCount")
+        start_num = int(blog_count)
+        end_num = start_num + self.paginate_by
+        list_exam = Events.objects.all().order_by("created_on")
+        objs = list_exam[start_num:end_num]
+        data = serializers.serialize('json', objs, fields=("id","title","label","event_date","image","image_alt_name"))
+        res = {"data":data, "media_url":settings.MEDIA_URL}
+        return JsonResponse(res)
 
 
 class EnrolledPapersView(LoginRequiredMixin, View):
@@ -274,15 +314,24 @@ class SchoolPage(View):
     def post(self, request, *args, **kwargs):
         objId = request.POST.get("choosedClass")
         classes_obj = Classes.objects.get(id=objId)
-        
+
+        buyPaperWise = reverse("application:school_paper_wise")
+        buyPaperWise = request.build_absolute_uri(f"{buyPaperWise}?class={objId}")
+        buySubjectWise = reverse("application:school_subject_wise",kwargs={"pk":objId})
+        buySubjectWise = request.build_absolute_uri(buySubjectWise)
+
+        # FIXME -> CHECKOUT
+        buyClass = reverse("application:checkout")
+        buyClass = request.build_absolute_uri(buyClass)
+
         toReturn = {
             "id":classes_obj.id,
             "title":classes_obj.title,
             "description":classes_obj.description,
             "subjects_count":classes_obj.assigned_subjects.count(),
-            "buyPaperWise":"",
-            "buySubjectWise":"",
-            "buyClass":"",
+            "buyPaperWise":buyPaperWise,
+            "buySubjectWise":buySubjectWise,
+            "buyClass":buyClass,
         }
         
         return JsonResponse(toReturn)
@@ -293,12 +342,36 @@ class SchoolSubjectWise(LoginRequiredMixin, View):
             "subjects":choosed_class.assigned_subjects.all(),
         }
         return render(request,"subject.html",context)
+    
+    def post(self, request, *args, **kwargs):
+        objId = request.POST.get("choosedClass")
+        classes_obj = Subjects.objects.get(id=objId)
+
+        buyPaperWise = reverse("application:school_paper_wise")
+        buyPaperWise = request.build_absolute_uri(f"{buyPaperWise}?subject={objId}")
+        
+        # FIXME -> CHECKOUT
+        buyClass = reverse("application:checkout")
+        buySubjectWise = request.build_absolute_uri(buyClass)
+
+        toReturn = {
+            "id":classes_obj.id,
+            "title":classes_obj.title,
+            "description":classes_obj.description,
+            "price":classes_obj.price,
+            "counts":classes_obj.assigned_papers.count(),
+            "buyPaperWise":buyPaperWise,
+            "buyClass":buySubjectWise,
+        }
+        
+        return JsonResponse(toReturn)
 
 
 class SchoolPageWise(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         classId = request.GET.get("class")
         subjectId = request.GET.get("subject")
+        competitive = request.GET.get("competitive")
 
         if classId != None:
             choosed_class = get_object_or_404(Classes, id = classId)
@@ -310,10 +383,33 @@ class SchoolPageWise(LoginRequiredMixin, View):
                 "papers":listOfQuerySet,
             }
         
-        else:
+        if subjectId != None:
             choosed_subject = get_object_or_404(Subjects, id = subjectId)
+            context = {
+                "papers":choosed_subject.assigned_papers.all(),
+            }
+        if competitive != None:
+            choosed_subject = get_object_or_404(CompetitiveExam, id = competitive)
             context = {
                 "papers":choosed_subject.assigned_papers.all(),
             }
         
         return render(request,"paper.html",context)
+    
+    def post(self, request, *args, **kwargs):
+        objId = request.POST.get("choosedClass")
+        classes_obj = Papers.objects.get(id=objId)
+
+        # FIXME -> CHECKOUT
+        buyClass = reverse("application:checkout")
+        buySubjectWise = request.build_absolute_uri(buyClass)
+
+        toReturn = {
+            "id":classes_obj.id,
+            "title":classes_obj.title,
+            "description":classes_obj.description,
+            "price":classes_obj.price,
+            "buyClass":buySubjectWise,
+        }
+        
+        return JsonResponse(toReturn)

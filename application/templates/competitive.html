@@ -26,35 +26,32 @@
 <section class="section_home-olympiad-test py-3 py-sm-5" id="viewClass">
     <div class="container">
         <div class="text-center">
-            <h2 class=" test-bold head-size fs-45 cl-black pb-1 lh-55">All Classes</h2>
+            <h2 class=" test-bold head-size fs-45 cl-black pb-1 lh-55">All Competitive Exams</h2>
             <p class="fs-15 cl-dark px-0 col-md-8 m-auto pt-lg-1  pb-lg-4">Lorem ipsum dolor sit amet adipisicing elit.
                 Commodi aut recusandae illo. Voluptatibus illo delectus totam earum
                 quo unde provident exercitationem eligendi! provident exercitationem.</p>
         </div>
         <div class="d-flex justify-content-end py-4">
-            <select class="form-control">
-                <option selected disabled>Select Class</option>
-                <option>Class 4</option>
-                <option>Class 6</option>
-                <option>Class 8</option>
-                <option>Class 10</option>
+            <select class="form-control" id="classDropDown">
+                <option selected disabled>Select Exam</option>
+                {% for obj in objs %}
+                <option value="{{obj.id}}">{{obj.exam_name}}</option>
+                {% endfor %}
             </select>
         </div>
-        <div class="row pt-3">
+        <div class="row pt-3" id="classContainer">
+            {% for obj in objs %}
+            
             <div class="col-md-6 pb-4 mb-md-2">
                 <div class="card card-over mb-2">
                     <div class="card-body">
-                    <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">4</span></p>
-                        <h5 class="test-semibold  fs-18 cl-black">Class 4</h5>
-                        <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">Lorem ipsum dolor sit amet consectetur
-                            orem ipsum lorem ipsum dolor.</p>
+                    <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Papers : <span class="test-bold">{{obj.assigned_papers.count}}</span></p>
+                        <h5 class="test-semibold  fs-18 cl-black">{{obj.exam_name}}</h5>
+                        <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">{{obj.description}}</p>
                         <div class="d-xl-flex justify-content-between  align-items-center">
-                        <a href="paper.php" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy Paperwise</a>
-                        <a class="home-btn-olympiad decrt-none fs-15  cl-black bgs-yellow test-semibold" href="subject.php">Buy Subjectwise
-                         <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
-                             <path id="btn-olympiad-size" data-name="Path 3" d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z" transform="translate(-3.278 -102.821)" fill="#fff"></path>
-                         </svg></a>
-                        <a href="checkout.php" class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Class
+                        <a href="{% url 'application:school_paper_wise' %}?competitive={{obj.id}}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy Paperwise</a>
+                        {% comment %} FIXME  {% endcomment %}
+                        <a href="{% url 'application:checkout' %}" class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Exam
                             <span class="arrow-spacing"></span>
                             <svg xmlns="http://www.w3.org/2000/svg"  width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622"><path id="arrow-color" data-name="Path 3"
                                         d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
@@ -65,78 +62,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 pb-4 mb-md-2">
-                <div class="card card-over mb-2">
-                    <div class="card-body">
-                    <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">4</span></p>
-                        <h5 class="test-semibold  fs-18 cl-black">Class 6</h5>
-                        <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">Lorem ipsum dolor sit amet consectetur
-                            orem ipsum lorem ipsum dolor.</p>
-                        <div class="d-xl-flex justify-content-between  align-items-center">
-                        <a href="paper.php" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy Paperwise</a>
-                        <a class="home-btn-olympiad decrt-none fs-15  cl-black bgs-yellow test-semibold" href="subject.php">Buy Subjectwise
-                         <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
-                             <path id="btn-olympiad-size" data-name="Path 3" d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z" transform="translate(-3.278 -102.821)" fill="#fff"></path>
-                         </svg></a>
-                        <a href="checkout.php" class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Class
-                            <span class="arrow-spacing"></span>
-                            <svg xmlns="http://www.w3.org/2000/svg"  width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622"><path id="arrow-color" data-name="Path 3"
-                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
-                                        transform="translate(-3.278 -102.821)" fill="#fff" />
-                            </svg>
-                        </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 pb-4 mb-md-2">
-                <div class="card card-over mb-2">
-                    <div class="card-body">
-                    <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">4</span></p>
-                        <h5 class="test-semibold  fs-18 cl-black">Class 8</h5>
-                        <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">Lorem ipsum dolor sit amet consectetur
-                            orem ipsum lorem ipsum dolor.</p>
-                        <div class="d-xl-flex justify-content-between  align-items-center">
-                        <a href="paper.php" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy Paperwise</a>
-                        <a class="home-btn-olympiad decrt-none fs-15  cl-black bgs-yellow test-semibold" href="subject.php">Buy Subjectwise
-                         <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
-                             <path id="btn-olympiad-size" data-name="Path 3" d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z" transform="translate(-3.278 -102.821)" fill="#fff"></path>
-                         </svg></a>
-                        <a href="checkout.php" class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Class
-                            <span class="arrow-spacing"></span>
-                            <svg xmlns="http://www.w3.org/2000/svg"  width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622"><path id="arrow-color" data-name="Path 3"
-                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
-                                        transform="translate(-3.278 -102.821)" fill="#fff" />
-                            </svg>
-                        </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 pb-4 mb-md-2">
-                <div class="card card-over mb-2">
-                    <div class="card-body">
-                    <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">4</span></p>
-                        <h5 class="test-semibold  fs-18 cl-black">Class 10</h5>
-                        <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">Lorem ipsum dolor sit amet consectetur
-                            orem ipsum lorem ipsum dolor.</p>
-                        <div class="d-xl-flex justify-content-between  align-items-center">
-                        <a href="paper.php" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy Paperwise</a>
-                        <a class="home-btn-olympiad decrt-none fs-15  cl-black bgs-yellow test-semibold" href="subject.php">Buy Subjectwise
-                         <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
-                             <path id="btn-olympiad-size" data-name="Path 3" d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z" transform="translate(-3.278 -102.821)" fill="#fff"></path>
-                         </svg></a>
-                        <a href="checkout.php" class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Class
-                            <span class="arrow-spacing"></span>
-                            <svg xmlns="http://www.w3.org/2000/svg"  width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622"><path id="arrow-color" data-name="Path 3"
-                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
-                                        transform="translate(-3.278 -102.821)" fill="#fff" />
-                            </svg>
-                        </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
@@ -375,3 +301,61 @@
      </div>
  </section>
  {% endblock content %}
+
+
+ {% block script %}
+<script>
+
+    $("#classDropDown").change(function(){
+        var choosedClass = $(this).val();
+
+
+        $.ajax({
+            type: 'post',
+            headers: {
+                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                choosedClass:choosedClass
+            },
+            dataType: 'json',
+            success: function (response) {
+                $("#classContainer").empty();
+
+
+                var div = `<div class="col-md-6 pb-4 mb-md-2">
+                    <div class="card card-over mb-2">
+                        <div class="card-body">
+                        <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Papers : <span class="test-bold">${response["count"]}</span></p>
+                            <h5 class="test-semibold  fs-18 cl-black">${response["title"]}</h5>
+                            <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">${response["description"]}</p>
+                            <div class="d-xl-flex justify-content-between  align-items-center">
+                            <a href="${response["buyPaperWise"]}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy Paperwise</a>
+                            {% comment %} FIXME  {% endcomment %}
+                            <a href="${response["buyClass"]}" class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Exam
+                                <span class="arrow-spacing"></span>
+                                <svg xmlns="http://www.w3.org/2000/svg"  width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622"><path id="arrow-color" data-name="Path 3"
+                                            d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                            transform="translate(-3.278 -102.821)" fill="#fff" />
+                                </svg>
+                            </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                $("#classContainer").append(div);
+
+            },
+            error: function(response) {
+               alert("Something Wrong");
+            }
+        });
+    });
+
+
+</script>
+
+
+
+{% endblock script %}
