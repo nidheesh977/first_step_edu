@@ -105,7 +105,7 @@
                                                     d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
                                                     transform="translate(-3.278 -102.821)" fill="#fff"></path>
                                             </svg></a>
-                                        <a href="{% url 'application:checkout' %}?class={{obj.id}}"
+                                        <a href="{% url 'application:checkout' obj.id %}?type=class"
                                             class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Class
                                             <span class="arrow-spacing"></span>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622"
@@ -141,9 +141,9 @@
                                     </div>
                                     <div
                                         class="col-sm-8 col-md-12 col-lg-8 enroll-center pl-lg-0 d-flex justify-content-between justify-content-lg-end align-items-center">
-                                        <a href="subject.php"
+                                        <a href="{% url 'application:school_paper_wise' %}?competitive={{obj.id}}"
                                             class="fs-15 test-bold cl-dark view-button mr-2 mr-xl-3">View Papers</a>
-                                        <a href="checkout.php"
+                                        <a href="{% url 'application:checkout' obj.id %}?type=competitive-exam"
                                             class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Now
                                             <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
                                                 width="16.7" height="8.622" class="arrow-color"

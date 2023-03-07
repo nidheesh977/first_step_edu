@@ -48,7 +48,7 @@
             </select>
         </div>
         <div class="row pt-3" id="classContainer">
-            
+                
                 {% for paper  in papers  %}
                 <div class="col-md-6 pb-4 mb-md-2">
                     <div class="card card-over mb-2">
@@ -61,7 +61,14 @@
                                 </div>
                                 <div
                                     class="col-sm-8 col-md-12 col-lg-8 enroll-center pl-lg-0 d-flex justify-content-between justify-content-lg-end align-items-center">
-                                    <a href="checkout.php" class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Paper
+                                    <a 
+                                    {% if request.GET.competitive %}
+                                        href="{% url 'application:checkout' paper.id %}?type=competitive-paper" 
+                                    {% else %}
+                                        href="{% url 'application:checkout' paper.id %}?type=paper" 
+                                    {% endif %}
+
+                                    class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Paper
                                         <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
                                             width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
                                             <path id="arrow-color" data-name="Path 3"

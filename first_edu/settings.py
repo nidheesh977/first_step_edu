@@ -136,3 +136,12 @@ PHONENUMBER_DEFAULT_REGION = "IN"
 LOGIN_URL = 'application:signin'
 
 
+# FIXME -> RAZORPAY KEY
+RAZORPAY_KEY_ID = "rzp_test_p5Rb3UXKoOaDRm"
+RAZORPAY_KEY_SECRET = "BNVJBf3b91Y9qd6ZKkFUm6Qx"
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://api.razorpay.com',
+]
+

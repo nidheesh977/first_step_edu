@@ -1,0 +1,35 @@
+{% extends 'application_base.html' %}
+{% load static %}
+{% block content %}
+<form method="POST">
+    <input type="hidden" custom="Hidden Element" name="hidden">
+</form>
+{% endblock content %}
+
+{% block script %}
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+
+var options = {
+    key: "{{razorpay_key}}",
+    amount: parseFloat("{{price}}"), 
+    currency: "INR",
+    order_id: "{{order_id}}",
+    callback_url: "{{callback_url}}",
+    redirect: true,
+    modal: { 
+        escape: false,
+    },
+    handler: function (response){
+        console.log(response)
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.open();
+
+</script>
+
+
+{% endblock script %}

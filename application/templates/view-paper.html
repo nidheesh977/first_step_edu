@@ -1,0 +1,98 @@
+{% extends 'application_base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container dash-board-main-box">
+    {% include 'dashboard_side_menu.html' %}
+    <span class=" hide-box  d-lg-none"><i class="fa fa-arrow-right"></i></span>
+    <span class=" side-box  d-lg-none"><i class="fa fa-arrow-left"></i></span>
+    <div class="dashboard-content bgs-lightgrey py-5">
+
+        {% if obj.enrolled_type == "class" %}
+            <h1 class="test-bold fs-25 lh-27 cl-grey px-4 pb-4">{{obj.classes.title|title}} - {{request.GET.type|title}}</h1>
+        {% endif %}
+
+        {% if obj.enrolled_type == "subject" %}
+            <h1 class="test-bold fs-25 lh-27 cl-grey px-4 pb-4">{{obj.subjects.title|title}} - {{request.GET.type|title}}</h1>
+        {% endif %}
+        {% if obj.enrolled_type == "paper" %}
+            <h1 class="test-bold fs-25 lh-27 cl-grey px-4 pb-4">{{obj.paper.title|title}} - {{request.GET.type|title}}</h1>
+        {% endif %}
+        <div class="section_home-frequnt-questions">
+            <div class="section_courselanding-faq bgs-light px-4">
+                <div class="accordion" id="category_1">
+
+                    {% if obj.enrolled_type == "class" %}
+                        {% for sub in obj.classes.assigned_subjects.all %}
+                        <div class="card mb-3">
+                            <div class="card-header bgs-white " id="category1_one{{forloop.counter}}">
+                                <a href="#" class="btn-header-link collapsed decrt-none " data-toggle="collapse"
+                                    data-target="#category1-1{{forloop.counter}}" aria-expanded="true" aria-controls="category1-1{{forloop.counter}}">
+                                    <p class="fs-15 test-bold radius cl-black  pl-5 pr-5 py-3 mb-0">{{sub.title}}</p>
+                                </a>
+                                <div id="category1-1{{forloop.counter}}" class="collapse" aria-labelledby="category1_one{{forloop.counter}}"
+                                    data-parent="#category_1">
+                                    {% for paper in sub.assigned_papers.all %}
+                                    <div class="card-body">
+                                        <div class="bgs-sky p-3 mx-3 mb-3 br-10">
+                                            <div class="row mx-0">
+                                                <div class="col-lg-8">
+                                                    <p class="fs-15 cl-black test-bold mb-0">{{paper.title}}</p>
+                                                </div>
+                                                <div class="col-lg-4 text-center">
+                                                    <a href="exam.php" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+
+
+                    {% if obj.enrolled_type == "subject" %}
+                        
+                        <div class="card mb-3">
+                            <div class="card-header bgs-white " id="category1_one{{forloop.counter}}">
+                                <a href="#" class="btn-header-link collapsed decrt-none " data-toggle="collapse"
+                                    data-target="#category1-1{{forloop.counter}}" aria-expanded="true" aria-controls="category1-1{{forloop.counter}}">
+                                    <p class="fs-15 test-bold radius cl-black  pl-5 pr-5 py-3 mb-0">{{obj.subjects.title}}</p>
+                                </a>
+                                <div id="category1-1{{forloop.counter}}" class="collapse" aria-labelledby="category1_one{{forloop.counter}}"
+                                    data-parent="#category_1">
+                                    {% for paper in obj.subjects.assigned_papers.all %}
+                                    <div class="card-body">
+                                        <div class="bgs-sky p-3 mx-3 mb-3 br-10">
+                                            <div class="row mx-0">
+                                                <div class="col-lg-8">
+                                                    <p class="fs-15 cl-black test-bold mb-0">{{paper.title}}</p>
+                                                </div>
+                                                <div class="col-lg-4 text-center">
+                                                    <a href="exam.php" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                       
+                    {% endif %}
+
+
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script>
+    $("#id-enroll").addClass('active');
+</script>
+{% endblock script %}

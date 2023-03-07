@@ -68,9 +68,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
+    
+    profile_pic = models.ImageField(upload_to="ProfilePictures/", blank=True, default='profilePictures/user.png')
+
     created_on = models.DateTimeField(auto_now_add=True, null=True)
     updated_on = models.DateTimeField(auto_now=True, null=True)
-    profile_pic = models.ImageField(upload_to="ProfilePictures/", blank=True, default='profilePictures/user.png')
 
     objects = CustomAccountManager()
     USERNAME_FIELD = 'email'
@@ -122,9 +124,7 @@ class Events(ImportdantDates):
 
 class RegisterdEvents(ImportdantDates):
     student = models.ForeignKey("application.CustomUser", verbose_name=_("Student"), on_delete=models.CASCADE, blank=True, null=True)
-    event = models.ForeignKey("application.Events", verbose_name=_("Event"), on_delete=models.CASCADE, blank=True, null=True)
-    registered_date = models.DateField(_("Registered Date"), auto_now=False, auto_now_add=False, blank=True, null=True)
-    is_finished = models.BooleanField(_("Is Finished"), default=False)
+    event = models.ManyToManyField("application.Events", verbose_name=_("Event"), blank=True)
 
     class Meta:
         verbose_name = _("RegisterdEvents")
@@ -299,3 +299,36 @@ class Classes(MetaDetails):
 
     def get_absolute_url(self):
         return reverse("classes_detail", kwargs={"pk": self.pk})
+    
+
+    
+class StudentPayments(ImportdantDates):
+    ENROLL_CHOICES = [
+        ("class","class"),
+        ("subject","subject"),
+        ("paper","paper"),
+        ("competitive-exam","competitive-exam"),
+        ("competitive-paper","competitive-paper"),
+    ]
+    student = models.ForeignKey("application.CustomUser", verbose_name=_("Student"), on_delete=models.CASCADE, blank=True, null=True)
+    order_id = models.CharField(_("Order ID"), max_length=40, null=True, blank=True)
+    payment_id = models.CharField(_("Payment ID"), max_length=36, null=True, blank=True)
+    signature_id = models.CharField(_("Signature ID"), max_length=128, null=True, blank=True)
+    price = models.DecimalField(null=True, blank=True, decimal_places=2, max_digits=10, help_text="In Rupees")
+    
+    subjects = models.ForeignKey("application.Subjects", verbose_name=_("Subject"), blank=True, null=True, on_delete=models.CASCADE)
+    papers = models.ForeignKey("application.Papers", verbose_name=_("Paper"), blank=True, null=True, on_delete=models.CASCADE)
+    classes = models.ForeignKey("application.Classes", verbose_name=_("Classe"), blank=True, null=True, on_delete=models.CASCADE)
+    competitive_exam = models.ForeignKey("application.CompetitiveExam", verbose_name=_("Competitive Exam"), blank=True, null=True, on_delete=models.CASCADE)
+    competitive_paper = models.ForeignKey("application.Papers", verbose_name=_("Competitive Paper"), blank=True, null=True, on_delete=models.CASCADE, related_name="competitive_paper")
+
+    enrolled_type = models.CharField(_("Enrolled Type"), max_length=50, null=True, blank=True,choices=ENROLL_CHOICES)
+    class Meta:
+        verbose_name = _("StudentPayments")
+        verbose_name_plural = _("StudentPayments")
+
+    def __str__(self):
+        return f"{self.student.first_name} {self.enrolled_type}"
+
+    def get_absolute_url(self):
+        return reverse("enrolls_detail", kwargs={"pk": self.pk})

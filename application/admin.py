@@ -30,9 +30,11 @@ class CustomUserAdmin(UserAdmin):
             "city",
             "gender",
             )}),
+        (_('Enrolls'), {'fields': ('subjects', 'papers','classes',)}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff','is_superuser',)}),
         (_('Important dates'), {
-         'fields': ('last_login', 'created_on', 'updated_on')}),
+         'fields': ('last_login', 'created_on', 'updated_on')}
+         ),
     )
     add_fieldsets = (
         (None, {
@@ -74,4 +76,5 @@ admin.site.register(Questions)
 admin.site.register(Subjects)
 admin.site.register(Classes)
 admin.site.register(CompetitiveExam)
+admin.site.register(StudentPayments)
 

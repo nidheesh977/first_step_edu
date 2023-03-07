@@ -30,7 +30,19 @@
                              <h3 class="test-semibold fs-18 lh-25 cl-white mb-2">{{obj.title}}</h3>
                             <div class="d-xl-flex justify-content-between align-items-center pt-xl-2">
                             <p class="test-semibold cl-white mb-xl-0"><i class="fa fa-calendar pr-2" aria-hidden="true"></i>{{obj.event_date}}</p>
-                                <a class="decrt-none fs-15 test-semibold br-30 py-2 px-4 cl-black bgs-yellow d-inline-block" href="#">Register Now
+                                <a data={{obj.id}} class="decrt-none fs-15 test-semibold br-30 py-2 px-4 cl-black 
+                                {% if obj in registered_events %} 
+                                    bgs-white 
+                                {% else %}
+                                    registerEvent bgs-yellow 
+                                {% endif %}
+                                 d-inline-block" {% if obj not in registered_events %}  href="#" {% endif %}
+                                >
+                                    {% if obj in registered_events %}
+                                    Registered
+                                    {% else %}
+                                    Register Now
+                                    {% endif %}
                                  <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622"
                                     class="arrow-color" viewBox="0 0 16.7 8.622">
                                     <path id="btn-olympiad-size" data-name="Path 3"
@@ -43,7 +55,7 @@
                  </a>
             </div>
             {% endfor %}
-        
+
         </div>
     </div>
     <div class="col-12 text-center pt-4"> 
@@ -58,9 +70,8 @@
 
 <script>
 
-    $("#loadMore").click(function(){
+$("#loadMore").click(function(){
     var howManyBlogs = $(".blogDiv").length;
-    console.log(howManyBlogs)
     $.ajax({
         type: 'post',
         headers: {
@@ -73,46 +84,105 @@
         dataType: 'json',
         success:function(response){
             var parsedData = JSON.parse(response["data"]);
-            
+            var registerEvents = response["registerdEvents_ids"];
+
             for(var i=0;i<parsedData.length;i++){
-                var data = parsedData[i];
+                var id = parsedData[i]["pk"];
+                var data = parsedData[i]["fields"];
+
                 var eventDate = data["event_date"];
                 var img = response["media_url"]+data["image"];
                 var image_alt_name = data["image_alt_name"];
                 var label = data["label"];
                 var title = data["title"];
 
-                var div = `<div class="col-lg-4 col-sm-6 pb-4 mb-lg-2 blogDiv">
-                    <a href="#">
-                         <div class="events-content h-100 position-relative br-30">
-                             <img src="${img}" alt="${image_alt_name}" class="w-100 br-30">
-                             <div class="content-events px-4">
-                                 <p class="events-round bgs-lightgrey px-4 test-medium cl-darkblue p-1 br-30 d-inline-block">
-                                     ${label}</p>
-                                 <h3 class="test-semibold fs-18 lh-25 cl-white mb-2">${title}</h3>
-                                <div class="d-xl-flex justify-content-between align-items-center pt-xl-2">
-                                <p class="test-semibold cl-white mb-xl-0"><i class="fa fa-calendar pr-2" aria-hidden="true"></i>${eventDate}</p>
-                                    <a class="decrt-none fs-15 test-semibold br-30 py-2 px-4 cl-black bgs-yellow d-inline-block" href="#">Register Now
-                                     <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622"
-                                        class="arrow-color" viewBox="0 0 16.7 8.622">
-                                        <path id="btn-olympiad-size" data-name="Path 3"
-                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
-                                        transform="translate(-3.278 -102.821)" fill="#fff"></path>
-                                </svg></a>
-                                </div>
+                if(!registerEvents.includes(id)){
+                    var div = `<div class="col-lg-4 col-sm-6 pb-4 mb-lg-2 blogDiv">
+                        <a href="#">
+                             <div class="events-content h-100 position-relative br-30">
+                                 <img src="${img}" alt="${image_alt_name}" class="w-100 br-30">
+                                 <div class="content-events px-4">
+                                     <p class="events-round bgs-lightgrey px-4 test-medium cl-darkblue p-1 br-30 d-inline-block">
+                                         ${label}</p>
+                                     <h3 class="test-semibold fs-18 lh-25 cl-white mb-2">${title}</h3>
+                                    <div class="d-xl-flex justify-content-between align-items-center pt-xl-2">
+                                    <p class="test-semibold cl-white mb-xl-0"><i class="fa fa-calendar pr-2" aria-hidden="true"></i>${eventDate}</p>
+                                        <a data=${id} class="registerEvent decrt-none fs-15 test-semibold br-30 py-2 px-4 cl-black bgs-yellow d-inline-block" href="#">Register Now
+                                         <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622"
+                                            class="arrow-color" viewBox="0 0 16.7 8.622">
+                                            <path id="btn-olympiad-size" data-name="Path 3"
+                                            d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                            transform="translate(-3.278 -102.821)" fill="#fff"></path>
+                                    </svg></a>
+                                    </div>
+                                 </div> 
                              </div>
-                         </div>
-                     </a>
-                </div>`;
+                         </a>
+                    </div>`;
+                }
+                else{
+                    var div = `<div class="col-lg-4 col-sm-6 pb-4 mb-lg-2 blogDiv">
+                        <a href="#">
+                             <div class="events-content h-100 position-relative br-30">
+                                 <img src="${img}" alt="${image_alt_name}" class="w-100 br-30">
+                                 <div class="content-events px-4">
+                                     <p class="events-round bgs-lightgrey px-4 test-medium cl-darkblue p-1 br-30 d-inline-block">
+                                         ${label}</p>
+                                     <h3 class="test-semibold fs-18 lh-25 cl-white mb-2">${title}</h3>
+                                    <div class="d-xl-flex justify-content-between align-items-center pt-xl-2">
+                                    <p class="test-semibold cl-white mb-xl-0"><i class="fa fa-calendar pr-2" aria-hidden="true"></i>${eventDate}</p>
+                                        <a data=${id} class="decrt-none fs-15 test-semibold br-30 py-2 px-4 cl-black bgs-white d-inline-block">Registered
+                                         <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622"
+                                            class="arrow-color" viewBox="0 0 16.7 8.622">
+                                            <path id="btn-olympiad-size" data-name="Path 3"
+                                            d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                            transform="translate(-3.278 -102.821)" fill="#fff"></path>
+                                    </svg></a>
+                                    </div>
+                                 </div> 
+                             </div>
+                         </a>
+                    </div>`;
+                }
 
-
-                $("#blogContainer").append(div);
+                $(".blogContainer").append(div);
                 
             }
             
         }   
     });
 });
+
+$(".registerEvent").click(function(event){
+    event.preventDefault();
+    var eventId = $(this).attr("data");
+    $.ajax({
+        type: 'post',
+        headers: {
+            'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            action:"register",
+            eventId:eventId,
+        },
+        dataType: 'json',
+        success:function(response){
+            swal({
+                    title: "Success",
+                    text: response['msg'],
+                    icon: "success",
+                }).then(function() {
+                    window.location.reload();
+                });
+        }   
+    });
+
+
+
+});
+
+
 
 </script>
 

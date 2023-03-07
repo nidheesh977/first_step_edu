@@ -6,47 +6,165 @@
         <div class="row mx-0">
             <div class="col-lg-9 col-12 mx-auto bg-white  px-4 pb-5 pt-4 p-sm-5">
                 <h2 class="test-semibold fs-30 cl-black pb-3">Checkout</h2>
-                <div class="bgs-lightblue p-4">
-                    <div class="row align-items-center pb-3 pb-md-2">
-                        <div class="col-md-3">
-                            <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Class Name <span class="float-md-right test-bold">:</span></p> 
+
+
+                {% if request.GET.type == "class" %}
+                
+                    <div class="bgs-lightblue p-4">
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">{{request.GET.type|title}} Name <span class="float-md-right test-bold">:</span></p> 
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{obj.title}}</p> 
+                            </div>
                         </div>
-                        <div class="col-md-9">
-                            <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">class 6</p> 
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Subjects <span class="float-md-right test-bold">:</span></p>
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{obj.assigned_subjects.count}}</p>
+                            </div>
+                        </div>
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Papers <span class="float-md-right test-bold">:</span></p>
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{papers_count}}</p>
+                            </div>
+                        </div>
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Price <span class="float-md-right test-bold">:</span></p>
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">&#x20b9 {{obj.price}}</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="row align-items-center pb-3 pb-md-2">
-                        <div class="col-md-3">
-                            <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Subjects <span class="float-md-right test-bold">:</span></p>
+                
+                    {% endif %}
+                
+                    {% if request.GET.type == "subject" %}
+                
+                    <div class="bgs-lightblue p-4">
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">{{request.GET.type|title}} Name <span class="float-md-right test-bold">:</span></p> 
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{obj.title}}</p> 
+                            </div>
                         </div>
-                        <div class="col-md-9">
-                            <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">4</p>
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Papers <span class="float-md-right test-bold">:</span></p>
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{papers_count}}</p>
+                            </div>
+                        </div>
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Price <span class="float-md-right test-bold">:</span></p>
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">&#x20b9 {{obj.price}}</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="row align-items-center pb-3 pb-md-2">
-                        <div class="col-md-3">
-                            <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Papers <span class="float-md-right test-bold">:</span></p>
+                
+                    {% endif %}
+
+                    {% if request.GET.type == "paper" %}
+                
+                    <div class="bgs-lightblue p-4">
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">{{request.GET.type|title}} Name <span class="float-md-right test-bold">:</span></p> 
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{obj.title}}</p> 
+                            </div>
                         </div>
-                        <div class="col-md-9">
-                            <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">10</p>
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Price <span class="float-md-right test-bold">:</span></p>
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">&#x20b9 {{obj.price}}</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="row align-items-center pb-3 pb-md-2">
-                        <div class="col-md-3">
-                            <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Price <span class="float-md-right test-bold">:</span></p>
+                
+                    {% endif %}
+
+                    {% if request.GET.type == "competitive-exam" %}
+                
+                    <div class="bgs-lightblue p-4">
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Competitive Exam Name <span class="float-md-right test-bold">:</span></p> 
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{obj.exam_name}}</p> 
+                            </div>
                         </div>
-                        <div class="col-md-9">
-                            <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">&#x20b9 20000</p>
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Papers <span class="float-md-right test-bold">:</span></p>
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{papers_count}}</p>
+                            </div>
+                        </div>
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Price <span class="float-md-right test-bold">:</span></p>
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">&#x20b9 {{obj.price}}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                
+                    {% endif %}
+
+                    {% if request.GET.type == "competitive-paper" %}
+                
+                    <div class="bgs-lightblue p-4">
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Competitive Paper Name <span class="float-md-right test-bold">:</span></p> 
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{obj.title}}</p> 
+                            </div>
+                        </div>
+                        <div class="row align-items-center pb-3 pb-md-2">
+                            <div class="col-md-3">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Price <span class="float-md-right test-bold">:</span></p>
+                            </div>
+                            <div class="col-md-9">
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">&#x20b9 {{obj.price}}</p>
+                            </div>
+                        </div>
+                    </div>
+                
+                    {% endif %}
+
+                
+
+
                 <div class="py-4 py-sm-5 px-4">
                     <div class="row align-items-center pb-3 pb-md-2">
                         <div class="col-sm-4 col-md-3">
                             <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Name <span class="float-sm-right test-bold">:</span></p> 
                         </div>
                         <div class="col-sm-8 col-md-9">
-                            <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">John Doe</p> 
+                            <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{request.user.first_name}} {{request.user.last_name}}</p> 
                         </div>
                     </div>
                     <div class="row align-items-center pb-3 pb-md-2">
@@ -54,7 +172,7 @@
                             <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Mobile No <span class="float-sm-right test-bold">:</span></p>
                         </div>
                         <div class="col-sm-8 col-md-9">
-                            <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">+91 9876543212</p>
+                            <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{request.user.mobile_number}}</p>
                         </div>
                     </div>
                     <div class="row align-items-center pb-3 pb-md-2">
@@ -62,12 +180,14 @@
                             <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Email ID <span class="float-sm-right test-bold">:</span></p>
                         </div>
                         <div class="col-sm-8 col-md-9">
-                            <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">name@gmail.com</p>
+                            <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{request.user.email}}</p>
                         </div>
                     </div>
                 </div>
                 <div class="checkout-btm px-4">
-                    <a href="enrolled.php" class="text-white d-inline-block fs-15 checkout-bttn bgs-black decrt-none">Continue<span
+                    <a 
+                    href="{% url 'application:makepayment' obj.id %}?type={{request.GET.type}}" 
+                    class="text-white d-inline-block fs-15 checkout-bttn bgs-black decrt-none">Continue<span
                             class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7"
                             height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
                             <path id="arrow-color" data-name="Path 3"

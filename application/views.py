@@ -1,20 +1,28 @@
 
+import json
+
+import environ
+import razorpay
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core import serializers
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail.message import EmailMessage
+from django.http.response import  JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
-from django.http.response import JsonResponse
-from django.shortcuts import redirect, render
 from django.views.generic import DetailView, ListView, TemplateView, View
 
 from utils.constants import EmailContents, TextConstants
 from utils.functions import OTP_Gen, is_ajax
-from django.core import serializers
+
 from .models import *
-from django.conf import settings
-import environ
-from django.shortcuts import get_object_or_404
+
 
 class SignUpView(View):
     def get(self,request, *args, **kwargs):
@@ -250,8 +258,8 @@ class CompetitivePage(View):
         buyPaperWise = request.build_absolute_uri(f"{buyPaperWise}?competitive={objId}")
        
         # FIXME -> CHECKOUT
-        buyClass = reverse("application:checkout")
-        buyClass = request.build_absolute_uri(buyClass)
+        redirectUrl = reverse("application:checkout",kwargs={"id":objId})
+        redirectUrl = request.build_absolute_uri(f"{redirectUrl}?type=competitive-exam")
 
         toReturn = {
             "id":classes_obj.id,
@@ -259,7 +267,7 @@ class CompetitivePage(View):
             "description":classes_obj.description,
             "count":classes_obj.assigned_papers.count(),
             "buyPaperWise":buyPaperWise,
-            "buyClass":buyClass,
+            "buyClass":redirectUrl,
         }
         
         return JsonResponse(toReturn)
@@ -272,36 +280,74 @@ class EventsPage(ListView):
     paginate_by = 3
     ordering = "created_on"
 
+    def get_registeredEvents(self):
+        try:
+            registerdEvents = RegisterdEvents.objects.get(student = self.request.user)
+            events = registerdEvents.event.all()
+        except ObjectDoesNotExist as e:
+            events = []
+        finally:
+            return  events
+
     def get_context_data(self,**kwargs):
         context = super(EventsPage,self).get_context_data(**kwargs)
-        print(context)
+        context["registered_events"] = self.get_registeredEvents()
         return context
 
     def post(self, request, *args, **kwargs):
-        blog_count = request.POST.get("blogCount")
-        start_num = int(blog_count)
-        end_num = start_num + self.paginate_by
-        list_exam = Events.objects.all().order_by("created_on")
-        objs = list_exam[start_num:end_num]
-        data = serializers.serialize('json', objs, fields=("id","title","label","event_date","image","image_alt_name"))
-        res = {"data":data, "media_url":settings.MEDIA_URL}
+        if request.POST.get("action") == "register":
+            eventId = request.POST.get("eventId")
+            evnt = Events.objects.get(id=eventId)
+            obj,created = RegisterdEvents.objects.get_or_create(student = request.user)
+            obj.event.add(evnt)
+            res = {"msg":"Event Registered"}
+        else:
+            blog_count = request.POST.get("blogCount")
+            start_num = int(blog_count)
+            end_num = start_num + self.paginate_by
+            evnt = Events.objects.all().order_by("created_on")
+            objs = evnt[start_num:end_num]
+            data = serializers.serialize('json', objs, fields=("id","title","label","event_date","image","image_alt_name"))
+            registerdEvents_ids = self.get_registeredEvents()
+            res = {"data":data, "media_url":settings.MEDIA_URL,"registerdEvents_ids":registerdEvents_ids}
         return JsonResponse(res)
+    
 
-
-class EnrolledPapersView(LoginRequiredMixin, View):
+class RegisterdEventsView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        return render(request,"enrolled.html")
+        try:
+            registerdEvents = RegisterdEvents.objects.get(student = self.request.user)
+            events = registerdEvents.event.all()
+        except ObjectDoesNotExist as e:
+            events = []
+        finally:
+            context = {
+                "events":events,
+            }
+            return render(request,"dash-events.html", context)
+
+
+class EnrolledClassesView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        board_exams = StudentPayments.objects.filter(student=request.user).exclude(enrolled_type__in=["competitive-exam","competitive-paper"])
+        print(board_exams)
+        context = {
+            "board_exams":board_exams
+        }
+        return render(request,"enrolled.html",context)
     
 
 
-class RegisterdEvents(LoginRequiredMixin, View):
+class EnrolledSubjectsView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        return render(request,"dash-events.html")
+        obj = StudentPayments.objects.get(id=kwargs.get("id"))
+        context = {
+            "obj":obj
+        }
+        return render(request,"view-paper.html",context)
     
 
-class Checkout(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        return render(request,"checkout.html")
+
     
 class SchoolPage(View):
     def get(self, request, *args, **kwargs):
@@ -321,8 +367,8 @@ class SchoolPage(View):
         buySubjectWise = request.build_absolute_uri(buySubjectWise)
 
         # FIXME -> CHECKOUT
-        buyClass = reverse("application:checkout")
-        buyClass = request.build_absolute_uri(buyClass)
+        redirectUrl = reverse("application:checkout",kwargs={"id":objId})
+        redirectUrl = request.build_absolute_uri(f"{redirectUrl}?type=class")
 
         toReturn = {
             "id":classes_obj.id,
@@ -331,7 +377,7 @@ class SchoolPage(View):
             "subjects_count":classes_obj.assigned_subjects.count(),
             "buyPaperWise":buyPaperWise,
             "buySubjectWise":buySubjectWise,
-            "buyClass":buyClass,
+            "buyClass":redirectUrl,
         }
         
         return JsonResponse(toReturn)
@@ -351,8 +397,8 @@ class SchoolSubjectWise(LoginRequiredMixin, View):
         buyPaperWise = request.build_absolute_uri(f"{buyPaperWise}?subject={objId}")
         
         # FIXME -> CHECKOUT
-        buyClass = reverse("application:checkout")
-        buySubjectWise = request.build_absolute_uri(buyClass)
+        redirectUrl = reverse("application:checkout",kwargs={"id":objId})
+        redirectUrl = request.build_absolute_uri(f"{redirectUrl}?type=subject")
 
         toReturn = {
             "id":classes_obj.id,
@@ -361,7 +407,7 @@ class SchoolSubjectWise(LoginRequiredMixin, View):
             "price":classes_obj.price,
             "counts":classes_obj.assigned_papers.count(),
             "buyPaperWise":buyPaperWise,
-            "buyClass":buySubjectWise,
+            "buyClass":redirectUrl,
         }
         
         return JsonResponse(toReturn)
@@ -399,17 +445,170 @@ class SchoolPageWise(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         objId = request.POST.get("choosedClass")
         classes_obj = Papers.objects.get(id=objId)
-
+        competitive = request.GET.get("competitive")
+        
         # FIXME -> CHECKOUT
-        buyClass = reverse("application:checkout")
-        buySubjectWise = request.build_absolute_uri(buyClass)
+        if competitive == None:
+            redirectUrl = reverse("application:checkout",kwargs={"id":objId})
+            redirectUrl = request.build_absolute_uri(f"{redirectUrl}?type=paper")
+        else:
+            redirectUrl = reverse("application:checkout",kwargs={"id":objId})
+            redirectUrl = request.build_absolute_uri(f"{redirectUrl}?type=competitive-paper")
 
         toReturn = {
             "id":classes_obj.id,
             "title":classes_obj.title,
             "description":classes_obj.description,
             "price":classes_obj.price,
-            "buyClass":buySubjectWise,
+            "buyClass":redirectUrl,
         }
         
         return JsonResponse(toReturn)
+    
+
+
+class Checkout(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        
+        match request.GET.get("type"):
+            case "class":
+                obj = get_object_or_404(Classes,id=kwargs.get("id"))
+                subjects = obj.assigned_subjects.all()
+                papers_count = 0
+                for i in subjects:
+                    papers_count+=i.assigned_papers.all().count()
+            case "subject":
+                obj = get_object_or_404(Subjects,id=kwargs.get("id"))
+                papers_count = obj.assigned_papers.all().count()
+            case "paper":
+                obj = get_object_or_404(Papers,id=kwargs.get("id"))
+                papers_count = 0 
+            case "competitive-exam":
+                obj = get_object_or_404(CompetitiveExam,id=kwargs.get("id"))
+                papers_count = obj.assigned_papers.all().count()
+            case "competitive-paper":
+                obj = get_object_or_404(Papers,id=kwargs.get("id"))
+                papers_count = 0 
+            case _:
+                return redirect("application:index-page")
+                
+        context = {
+            "obj":obj,
+            "papers_count":papers_count,
+        }
+        return render(request,"checkout.html",context)
+
+
+
+
+
+class MakePayment(LoginRequiredMixin,View):
+    def get(self, request, *args, **kwargs):
+        forWhat = request.GET.get("type")
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        match forWhat:
+            case "class":
+                obj = Classes.objects.get(id=kwargs.get("id"))
+                resp = client.order.create(
+                    {"amount": float(obj.price) * 100, "currency": "INR", "payment_capture": "1"}
+                )
+            case "subject":
+                obj = Subjects.objects.get(id=kwargs.get("id"))
+                resp = client.order.create(
+                    {"amount": float(obj.price) * 100, "currency": "INR", "payment_capture": "1"}
+                )
+            case "paper":
+                obj = Papers.objects.get(id=kwargs.get("id"))
+                resp = client.order.create(
+                    {"amount": float(obj.price) * 100, "currency": "INR", "payment_capture": "1"}
+                )
+            case "competitive-exam":
+                obj = CompetitiveExam.objects.get(id=kwargs.get("id"))
+                resp = client.order.create(
+                    {"amount": float(obj.price) * 100, "currency": "INR", "payment_capture": "1"}
+                )
+            case "competitive-paper":
+                obj = Papers.objects.get(id=kwargs.get("id"))
+                resp = client.order.create(
+                    {"amount": float(obj.price) * 100, "currency": "INR", "payment_capture": "1"}
+                )
+            case _:
+                return redirect("application:index-page")
+            
+
+        callBackUrl = reverse("callback",kwargs={"id":obj.id,"uid":request.user.id})
+        callBackUrl = request.build_absolute_uri(f"{callBackUrl}?type={forWhat}")
+        
+        con = {
+            "callback_url":callBackUrl,
+            "objId":obj.id,
+            "razorpay_key": settings.RAZORPAY_KEY_ID,
+            "order_id": resp["id"],
+            "price":resp["amount"]
+            }
+        return render(request,"payment.html",con)
+
+
+@csrf_exempt
+def callback(request,*args, **kwargs):
+    ObjId = kwargs.get("id")
+    fromWhere = request.GET.get("type")
+    user = CustomUser.objects.get(id=kwargs.get("uid"))
+
+    def verify_signature(response_data):
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        b = client.utility.verify_payment_signature(response_data)
+        return b
+     
+    # Success
+    if "razorpay_signature" in request.POST:
+        if verify_signature(request.POST):
+            payment_id = request.POST.get("razorpay_payment_id")
+            order_id = request.POST.get("razorpay_order_id")
+            signature_id = request.POST.get("razorpay_signature")
+
+            match fromWhere:
+                case "class":
+                    obj = Classes.objects.get(id=ObjId)
+                case "subject":
+                    obj = Subjects.objects.get(id=ObjId)
+                case "paper":
+                    obj = Papers.objects.get(id=ObjId)
+                case "competitive-exam":
+                    obj = CompetitiveExam.objects.get(id=ObjId)
+                case "competitive-paper":
+                    obj = Papers.objects.get(id=ObjId)
+                case _:
+                    messages.error(request, "Payment Failure")
+                    return redirect("application:index-page")
+            
+            OBJ = StudentPayments.objects.create(
+                student = user,
+                order_id = order_id,
+                payment_id = payment_id,
+                signature_id = signature_id,
+                price = obj.price,
+                enrolled_type=fromWhere, 
+            )
+            match fromWhere:
+                case "class":
+                    OBJ.classes = obj
+                case "subject":
+                    OBJ.subjects = obj
+                case "paper":
+                    OBJ.papers = obj
+                case "competitive-exam":
+                    OBJ.competitive_exam = obj
+                case "competitive-paper":
+                    OBJ.competitive_paper = obj
+            
+            OBJ.save()
+            return redirect('application:enrolled_classes')
+                
+    #  payment error
+    else:            
+        redirectUrl = reverse("application:checkout",kwargs={"id":ObjId})
+        redirectUrl = request.build_absolute_uri(f"{redirectUrl}?type={fromWhere}")
+        messages.error(request, "Payment Failure")
+        return redirect(redirectUrl)
+     
