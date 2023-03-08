@@ -1,0 +1,263 @@
+<style>
+.section_header-marquee,
+.section-header,
+.section_footer,
+.section_footer-enquiry {
+    display: none;
+}
+</style>
+{% extends 'application_base.html' %}
+{% load static %}
+{% block content %}
+<section class="section-attend-test pt-4 pt-sm-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="text-right mb-3">
+                    <a class="fs-15 cl-grey under-line" href="#" onclick="goBack()">Back</a>
+                </div>
+                {% if class_obj and subject_obj %}
+                
+                <div class="row mx-0 bgs-lightgrey px-4 px-sm-5 pt-4 pb-2 mb-4">
+                    <div class="col-sm-6 px-0">
+                        <p> <span class="ts-name-title cl-black test-semibold ">Class Name</span> : <span
+                                class="pl-3 cl-grey ">{{class_obj.title}}</span> </p>
+                        <p> <span class="ts-name-title1 cl-black test-semibold">Paper Name</span> : <span
+                                class="pl-3 cl-grey ">{{paper_obj.title}}</span> </p>
+                    </div>
+                    <div class="col-sm-6 px-0">
+                        <p> <span class="pr-4  fs-15 cl-black test-semibold">Subject Name </span> : <span
+                                class="pl-4 fs-15 cl-grey "> {{subject_obj.title}}</span></p>
+                        <p> <span class="pr-4 fs-15 cl-black test-semibold">Date</span> : <span
+                                class="pl-4 fs-15 cl-grey" id="current-date"></span></p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if not class_obj and subject_obj %}
+                
+                <div class="row mx-0 bgs-lightgrey px-4 px-sm-5 pt-4 pb-2 mb-4">
+                    <div class="col-sm-6 px-0">
+                        <p> <span class="ts-name-title cl-black test-semibold ">Subject Name</span> : <span
+                                class="pl-3 cl-grey ">{{subject_obj.title}}</span> </p>
+                        <p> <span class="ts-name-title1 cl-black test-semibold">Paper Name</span> : <span
+                                class="pl-3 cl-grey ">{{paper_obj.title}}</span> </p>
+                    </div>
+                    <div class="col-sm-6 px-0">
+                        <p> <span class="pr-4 fs-15 cl-black test-semibold">Date</span> : <span
+                            class="pl-4 fs-15 cl-grey" id="current-date"></span></p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if competitive_exam_obj %}
+                
+                <div class="row mx-0 bgs-lightgrey px-4 px-sm-5 pt-4 pb-2 mb-4">
+                    <div class="col-sm-6 px-0">
+                        <p> <span class="ts-name-title cl-black test-semibold ">Exam Name</span> : <span
+                                class="pl-3 cl-grey ">{{competitive_exam_obj.exam_name}}</span> </p>
+                        <p> <span class="ts-name-title1 cl-black test-semibold">Paper Name</span> : <span
+                                class="pl-3 cl-grey ">{{paper_obj.title}}</span> </p>
+                    </div>
+                    <div class="col-sm-6 px-0">
+                        <p> <span class="pr-4 fs-15 cl-black test-semibold">Date</span> : <span
+                            class="pl-4 fs-15 cl-grey" id="current-date"></span></p>
+                    </div>
+                </div>
+                {% endif %}
+                {% if paper_only %}
+                <div class="row mx-0 bgs-lightgrey px-4 px-sm-5 pt-4 pb-2 mb-4">
+                    <div class="col-sm-6 px-0">
+                        <p> <span class="ts-name-title1 cl-black test-semibold">Paper Name</span> : <span
+                                class="pl-3 cl-grey ">{{paper_obj.title}}</span> </p>
+                    </div>
+                    <div class="col-sm-6 px-0">
+                        <p> <span class="pr-4 fs-15 cl-black test-semibold">Date</span> : <span
+                            class="pl-4 fs-15 cl-grey" id="current-date"></span></p>
+                    </div>
+                </div>
+                {% endif %}
+
+
+                <div class="bgs-sky p-3 p-sm-5">
+                    <div class="general-ins">
+                        <h2 class="fs-20 cl-black test-bold pb-2 ">General Instructions</h2>
+                        <div class="exam-instructions">
+                            {{paper_obj.instructions|safe}}
+                            {% comment %} <ul>
+                                <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos dolorem
+                                    ducimus
+                                    rem dicta</li>
+                                <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos dolorem
+                                    ducimus
+                                    rem dicta</li>
+                                <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos dolorem
+                                    ducimus
+                                    rem dicta</li>
+                                <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos dolorem
+                                    ducimus
+                                    rem dicta</li>
+                                <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos dolorem
+                                    ducimus
+                                    rem dicta</li>
+                            </ul> {% endcomment %}
+                        </div>
+                    </div>
+                    <div class="scheme-part pt-2">
+                        <h2 class="fs-20 cl-black test-bold pb-2 ">Marking Scheme For All Two Sections</h2>
+                        <div class="exam-instructions">
+                            {% for section_detail in section_details %}
+                            <p><b>{{section_detail.name}} (01 to 20) : </b> {{section_detail.description}}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button class="test-exam-btn bgs-black cl-white br-10 cursor start-test my-5">Start Test</button>
+                </div>
+                <div class="start-exam py-4 py-sm-5">
+                    <div class="exam-pagination">
+                        <ul class="mb-4">
+                            <li class="attend">1</li>
+                            <li class="pending">2</li>
+                            <li>3</li>
+                            <li>4</li>
+                            <li>5</li>
+                            <li>6</li>
+                            <li>7</li>
+                            <li>8</li>
+                            <li>9</li>
+                            <li>10</li>
+                            <li>11</li>
+                            <li>12</li>
+                            <li>13</li>
+                            <li>14</li>
+                            <li>15</li>
+                            <li>16</li>
+                            <li>17</li>
+                            <li>18</li>
+                            <li>19</li>
+                            <li>20</li>
+                            <li>21</li>
+                            <li>22</li>
+                            <li>23</li>
+                            <li>24</li>
+                            <li>25</li>
+                            <li>26</li>
+                            <li>27</li>
+                            <li>28</li>
+                            <li>29</li>
+                            <li>30</li>
+                            <li>31</li>
+                            <li>32</li>
+                            <li>33</li>
+                            <li>34</li>
+                            <li>35</li>
+                            <li>36</li>
+                            <li>37</li>
+                            <li>38</li>
+                            <li>39</li>
+                            <li>40</li>
+                            <li>41</li>
+                            <li>42</li>
+                            <li>43</li>
+                            <li>44</li>
+                            <li>45</li>
+                            <li>46</li>
+                            <li>47</li>
+                            <li>48</li>
+                            <li>49</li>
+                            <li>50</li>
+                        </ul>
+                    </div>
+                    <div class="d-lg-flex justify-content-between align-items-center pb-4 pb-sm-5">
+                        <div>
+                            <h2 class="fs-20 cl-black test-bold mb-1">Section-A</h2>
+                            <h6 class="fs-14 cl-black test-bold mb-3 mb-lg-0">Lorem ipsum dolor sit</h6>
+                        </div>
+                        <div class="d-sm-flex align-items-center justify-content-end">
+                            <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Current
+                                Q<span class="d-none d-md-inline test-bold">uestion</span>: 10</button>
+                            <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Pending
+                                Q<span class="d-none d-md-inline test-bold">uestion</span>: 40</button>
+                            <div class="count-down-box d-inline-flex align-items-center br-10 mt-3 mt-sm-0">
+                                <span class="cl-white">Time Left :</span>
+                                <p class="fs-20 mb-0 cl-white pl-2" id="ten-countdown"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row part-1-attend-test">
+                        <div class="col-12">
+                            <div class="ques-type position-relative">
+                                <div class="ques-option-type-1 bgs-white d-flex ques-br">
+                                    <div class="count-sec-box d-inline-flex align-items-center br-10">
+                                        <span class="cl-white"><i class="far fa-clock"></i> :</span>
+                                        <p class="fs-16 mb-0 cl-white pl-2" id="ten-countsec"></p>
+                                    </div>
+                                    <div class="num-test-ques">
+                                        <p>1.</p>
+                                    </div>
+                                    <div>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, temporibus
+                                            sit. Sit dolore omnis culpa veritatis aperiam quidem officiis incidunt modi,
+                                            enim temporibus harum animi voluptate pariatur asperiores atque illo?
+                                        </p>
+                                        <div class="choose-correct-one">
+                                            <div class="row mx-0 mx-sm-2">
+                                                <div class="label-title custom_radio col-md-5 col-12 my-3  ">
+                                                    <span class="checkmark bgs-black cl-white">A</span>
+                                                    <span class=" inpuy-label-value">0&#176;</span>
+                                                    <input type="radio" name="radiogroup" class="" id="zero">
+                                                    <label for="zero"></label>
+                                                </div>
+                                                <div class="label-title custom_radio col-md-5 col-12 offset-md-1 my-3 ">
+                                                    <span class="checkmark  bgs-black cl-white">B</span>
+                                                    <span class=" inpuy-label-value ">15&#176;</span>
+                                                    <input type="radio" name="radiogroup" class="" id="ten">
+                                                    <label for="ten"></label>
+                                                </div>
+                                                <div class="label-title custom_radio col-md-5 col-12 my-3 ">
+                                                    <span class="checkmark  bgs-black cl-white">C</span>
+                                                    <span class=" inpuy-label-value ">30&#176;</span>
+                                                    <input type="radio" name="radiogroup" class="" id="thrity">
+                                                    <label for="thrity"></label>
+                                                </div>
+                                                <div class="label-title custom_radio col-md-5 col-12 offset-md-1 my-3 ">
+                                                    <span class="checkmark  bgs-black cl-white">D</span>
+                                                    <span class=" inpuy-label-value ">None of these</span>
+                                                    <input type="radio" name="radiogroup" class="" id="none-all">
+                                                    <label for="none-all"></label>
+                                                </div>
+
+                                            </div>
+
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-groups col-12 text-center  pt-4 my-4 ">
+                            <button type="submit"
+                                class="cursor mt-1 px-4 px-sm-5 py-2 lh-35 border-0 bgs-black cl-white mr-3">Previous
+                                Q<span class="d-none d-sm-inline">uestion</span></button><button type="submit"
+                                class="cursor mt-1 px-5 py-2 lh-35 border-0 bgs-black cl-white">Next Q<span
+                                    class="d-none d-sm-inline">uestion</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+{% block script %}
+
+<script>
+    function goBack() {
+        window.history.back();
+     }
+</script>
+{% endblock script %}

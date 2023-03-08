@@ -8,6 +8,8 @@ from django_summernote.admin import SummernoteModelAdmin
 
 class SomeModelAdmin(SummernoteModelAdmin):
     summernote_fields = ('instructions',)
+    search_fields = ("title",)
+    list_display = ("id","title",)
 
 
 class BlogModelAdmin(SummernoteModelAdmin):

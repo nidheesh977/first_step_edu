@@ -76,25 +76,53 @@
                                 </div>
                             </div>
                         {% endif %}
+                        {% if obj.enrolled_type == "paper" %}
+                            <div class="col-xl-6 pb-4 mb-md-2">
+                                <div class="card card-over mb-2">
+                                    <div class="card-body">
+                                    
+                                        <h5 class="dash-view test-semibold fs-16 cl-black">{{obj.papers.title}}</h5>
+                                        <p class="fs-13 cl-dark col-xl-11 px-0">{{obj.papers.description}}</p>
+                                        <div class="row align-items-center">
+                                            <div class="col-4 pr-0">
+                                                <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; {{obj.papers.price}}</p>
+                                            </div>
+                                            <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
+                                                <a href="{% url 'application:exam' obj.id %}?type=paper" class="text-white fs-15 bgs-black decrt-none enroll-button">Attend Test
+                                                    <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
+                                                        width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                                        <path id="arrow-color" data-name="Path 3"
+                                                            d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                            transform="translate(-3.278 -102.821)" fill="#fff" />
+                                                    </svg></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
                         {% endfor %}
                         
                     </div>
                 </div>
+                
                 <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <div class="row">
+
+                        {% for obj in competitive_exams %}
+                        {% if obj.enrolled_type == "competitive-exam" %}
                         <div class="col-xl-6 pb-4 mb-md-2">
                             <div class="card card-over mb-2">
                                 <div class="card-body">
-                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">4</span></p>
-                                    <h5 class="test-semibold  fs-18 cl-black">JEE</h5>
-                                    <p class="fs-13 cl-dark col-xl-11 pl-0">Lorem ipsum dolor sit amet consectetur
-                                        orem ipsum lorem ipsum dolor.</p>
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Papers : <span class="test-bold">{{obj.competitive_exam.assigned_papers.count}}</span></p>
+                                    <h5 class="test-semibold  fs-18 cl-black">{{obj.competitive_exam.exam_name}}</h5>
+                                    <p class="fs-13 cl-dark col-xl-11 pl-0">{{obj.competitive_exam.description}}</p>
                                     <div class="row align-items-center">
                                         <div class="col-4 pr-0">
-                                            <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; 1000</p>
+                                            <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; {{obj.competitive_exam.price}}</p>
                                         </div>
                                         <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
-                                            <a href="#" class="text-white fs-15 bgs-black decrt-none enroll-button">View Paper
+                                            <a href="{% url 'application:enrolled_subject' obj.id %}?type=competitive-exams" class="text-white fs-15 bgs-black decrt-none enroll-button">View Paper
                                                 <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
                                                     width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
                                                     <path id="arrow-color" data-name="Path 3"
@@ -106,30 +134,33 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-6 pb-4 mb-md-2">
-                            <div class="card card-over mb-2">
-                                <div class="card-body">
-                                    <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">4</span></p>
-                                    <h5 class="test-semibold  fs-18 cl-black">NEET</h5>
-                                    <p class="fs-13 cl-dark col-xl-11 pl-0">Lorem ipsum dolor sit amet consectetur
-                                        orem ipsum lorem ipsum dolor.</p>
-                                    <div class="row align-items-center">
-                                        <div class="col-4 pr-0">
-                                            <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; 1000</p>
-                                        </div>
-                                        <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
-                                            <a href="#" class="text-white fs-15 bgs-black decrt-none enroll-button">View Paper
-                                                <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
-                                                    width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
-                                                    <path id="arrow-color" data-name="Path 3"
-                                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
-                                                        transform="translate(-3.278 -102.821)" fill="#fff" />
-                                                </svg></a>
+                        {% endif %}
+                        {% if obj.enrolled_type == "competitive-paper" %}
+                            <div class="col-xl-6 pb-4 mb-md-2">
+                                <div class="card card-over mb-2">
+                                    <div class="card-body">
+                                    
+                                        <h5 class="dash-view test-semibold fs-16 cl-black">{{obj.competitive_paper.title}}</h5>
+                                        <p class="fs-13 cl-dark col-xl-11 px-0">{{obj.competitive_paper.description}}</p>
+                                        <div class="row align-items-center">
+                                            <div class="col-4 pr-0">
+                                                <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; {{obj.competitive_paper.price}}</p>
+                                            </div>
+                                            <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
+                                                <a href="{% url 'application:exam' obj.id %}?type=paper" class="text-white fs-15 bgs-black decrt-none enroll-button">Attend Test
+                                                    <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
+                                                        width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                                        <path id="arrow-color" data-name="Path 3"
+                                                            d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                            transform="translate(-3.278 -102.821)" fill="#fff" />
+                                                    </svg></a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
             </div>

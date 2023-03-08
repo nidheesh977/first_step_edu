@@ -1,4 +1,5 @@
 
+import json
 from datetime import timedelta
 
 from django.contrib import messages
@@ -739,7 +740,8 @@ class CMPapersListView(View):
                 "title",
                 "price",
                 "description",
-                "instructions"
+                "instructions",
+                "section_details"
             )
             to_return = {"obj":list(obj)[0]}
             return JsonResponse(to_return,safe=True,)
@@ -753,11 +755,23 @@ class CMPapersListView(View):
             obj.save()
             return redirect("admin_dashboard:clsm-papers-list",class_id=CLASS_ID,subject_id=SUBJECT_ID)
         else:
+            section_name = request.POST.getlist("section_name")
+            section_description = request.POST.getlist("section_description")
+            final_list = []
+
+            for i in range(0, len(section_name)):
+                d = {
+                    "name":section_name[i],
+                    "description":section_description[i]
+                }
+                final_list.append(json.dumps(d))
+
             paper_obj = Papers.objects.create(
                 title = request.POST.get("paper_title"),
                 description = request.POST.get("paper_description"),
                 instructions = request.POST.get("general_instructions"),
                 price = request.POST.get("price"),
+                section_details=final_list,
             )
             sub_obj.assigned_papers.add(paper_obj)
             return redirect("admin_dashboard:clsm-papers-list",class_id=CLASS_ID,subject_id=SUBJECT_ID)
@@ -794,6 +808,73 @@ class CMQuestionsList(View):
                     }
         return JsonResponse(to_return,safe=True,)
 
+class CMAddPaper(View):
+    def get(self,request,*args, **kwargs):
+        return render(request,"class_management/papers/add_paper.html")
+
+    def post(self, request, *args, **kwargs):
+        SUBJECT_ID = kwargs.get("subject_id")
+        CLASS_ID = kwargs.get("class_id")
+        section_name = request.POST.getlist("section_name")
+        section_description = request.POST.getlist("section_description")
+        final_list = []
+        SUBJECT_OBJ = Subjects.objects.get(id=SUBJECT_ID)
+        for i in range(0, len(section_name)):
+            d = {
+                "name":section_name[i],
+                "description":section_description[i]
+            }
+            final_list.append(json.dumps(d))
+
+        paper_obj = Papers.objects.create(
+            title = request.POST.get("paper_title"),
+            description = request.POST.get("paper_description"),
+            instructions = request.POST.get("general_instructions"),
+            price = request.POST.get("price"),
+            section_details=final_list,
+        )
+        SUBJECT_OBJ.assigned_papers.add(paper_obj)
+        return redirect("admin_dashboard:clsm-papers-list",class_id=CLASS_ID,subject_id=SUBJECT_ID)
+
+
+
+class CMEditPaper(View):
+    def get(self,request,*args, **kwargs):
+        paper_id = kwargs.get("id")
+        paper_obj = Papers.objects.get(id = paper_id)
+        if paper_obj.section_details:
+            SECTION_DETAILS = [json.loads(i) for i in paper_obj.section_details]
+        else:
+            SECTION_DETAILS = []
+        context = {
+            "obj":paper_obj,
+            "section_details":SECTION_DETAILS,
+        }
+        return render(request,"class_management/papers/edit_paper.html", context)
+
+    def post(self, request, *args, **kwargs):
+        SUBJECT_ID = kwargs.get("subject_id")
+        CLASS_ID = kwargs.get("class_id")
+        paper_id = kwargs.get("id")
+        paper_obj = Papers.objects.get(id=paper_id)
+        section_name = request.POST.getlist("section_name")
+        section_description = request.POST.getlist("section_description",paper_obj.section_details)
+        final_list = []
+        for i in range(0, len(section_name)):
+            d = {
+                "name":section_name[i],
+                "description":section_description[i]
+            }
+            final_list.append(json.dumps(d))
+        paper_obj.title = request.POST.get("paper_title",paper_obj.title)
+        paper_obj.description = request.POST.get("paper_description",paper_obj.description)
+        paper_obj.instructions = request.POST.get("general_instructions",paper_obj.instructions)
+        paper_obj.price = request.POST.get("price",paper_obj.price)
+        paper_obj.section_details=final_list
+        paper_obj.save()
+        
+        return redirect("admin_dashboard:clsm-papers-list",class_id=CLASS_ID,subject_id=SUBJECT_ID)
+
 class CMAddQuestions(View):
     def get(self,request,*args, **kwargs):
 
@@ -801,12 +882,17 @@ class CMAddQuestions(View):
         CLASS_ID = kwargs.get("class_id")
         SUBJECT_ID = kwargs.get("subject_id")
         paper_obj = get_object_or_404(Papers,id=PAPER_ID)
+        if paper_obj.section_details:
+            SECTION_DETAILS = [json.loads(i) for i in paper_obj.section_details]
+        else:
+            SECTION_DETAILS = []
         if CLASS_ID and SUBJECT_ID:
             context = {
                 "cls_id":CLASS_ID,
                 "sub_id":SUBJECT_ID,
                 "paper_id":PAPER_ID,
                 "paper_name":paper_obj.title,
+                "section_details":SECTION_DETAILS,
             }
             return render(request,"class_management/papers/questions-add.html",context)
         else:
@@ -814,6 +900,7 @@ class CMAddQuestions(View):
                 'exm_id':kwargs.get("exm_id"),
                 "paper_id":PAPER_ID,
                 "paper_name":paper_obj.title,
+                "section_details":SECTION_DETAILS,
             }
             return render(request,"competitive_management/competitive_qus_add.html",context)
     

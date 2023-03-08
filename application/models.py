@@ -251,6 +251,9 @@ class Papers(MetaDetails):
     assigned_questions = models.ManyToManyField("application.Questions", verbose_name=_("Questions"), blank=True,)
     is_competitive = models.BooleanField(_("Is competitive"),default=False)
     price = models.DecimalField(_("Price"), max_digits=8, decimal_places=2,blank=True, null=True)
+    section_details = ArrayField(models.JSONField(null = True,blank = True), blank=True, null = True)
+
+
     class Meta:
         verbose_name = _("Papers")
         verbose_name_plural = _("Papers")

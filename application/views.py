@@ -282,12 +282,13 @@ class EventsPage(ListView):
 
     def get_registeredEvents(self):
         try:
-            registerdEvents = RegisterdEvents.objects.get(student = self.request.user)
+            registerdEvents = RegisterdEvents.objects.get(student__id = self.request.user.id)
             events = registerdEvents.event.all()
+            return events
+
         except ObjectDoesNotExist as e:
             events = []
-        finally:
-            return  events
+            return events
 
     def get_context_data(self,**kwargs):
         context = super(EventsPage,self).get_context_data(**kwargs)
@@ -329,10 +330,10 @@ class RegisterdEventsView(LoginRequiredMixin, View):
 
 class EnrolledClassesView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        board_exams = StudentPayments.objects.filter(student=request.user).exclude(enrolled_type__in=["competitive-exam","competitive-paper"])
-        print(board_exams)
+        board_exams = StudentPayments.objects.filter(student=request.user)
         context = {
-            "board_exams":board_exams
+            "board_exams":board_exams.exclude(enrolled_type__in=["competitive-exam","competitive-paper"]),
+            "competitive_exams":board_exams.exclude(enrolled_type__in=["class","subject","paper"])
         }
         return render(request,"enrolled.html",context)
     
@@ -347,6 +348,53 @@ class EnrolledSubjectsView(LoginRequiredMixin, View):
         return render(request,"view-paper.html",context)
     
 
+
+class ExamView(View):
+    def get(self,request, *args, **kwargs):
+        class_id = request.GET.get("class")
+        subject_id = request.GET.get("subject")
+        competitive_exam_id = request.GET.get("competitive-exam")
+        paper_id = kwargs.get("id")
+        paper_obj = get_object_or_404(Papers,id=paper_id)
+        
+        if paper_obj.section_details:
+            SECTION_DETAILS = [json.loads(i) for i in paper_obj.section_details]
+        else:
+            SECTION_DETAILS = []
+        
+        if class_id and subject_id:
+            print("CLASS AND SUBJECT ------------>")
+            class_obj = get_object_or_404(Classes,id=class_id)
+            subject_obj = get_object_or_404(Subjects,id=subject_id)
+            context = {
+            "class_obj":class_obj,
+            "subject_obj":subject_obj,
+            "paper_obj":paper_obj,
+            "section_details":SECTION_DETAILS,
+            }
+        elif not class_id and subject_id:
+            subject_obj = get_object_or_404(Subjects,id=subject_id)
+            context = {
+            "subject_obj":subject_obj,
+            "paper_obj":paper_obj,
+            "section_details":SECTION_DETAILS,
+
+            }
+        elif competitive_exam_id:
+            competitive_exam_obj = get_object_or_404(CompetitiveExam,id=competitive_exam_id)
+            context = {
+            "competitive_exam_obj":competitive_exam_obj,
+            "paper_obj":paper_obj,
+            "section_details":SECTION_DETAILS,
+
+            }
+        else:
+            context = {
+            "paper_obj":paper_obj,
+            "section_details":SECTION_DETAILS,
+            "paper_only":True,
+            }
+        return render(request, "exam.html",context)
 
     
 class SchoolPage(View):

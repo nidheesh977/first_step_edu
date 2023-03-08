@@ -40,7 +40,8 @@
                                                     <p class="fs-15 cl-black test-bold mb-0">{{paper.title}}</p>
                                                 </div>
                                                 <div class="col-lg-4 text-center">
-                                                    <a href="exam.php" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
+                                                    {{obj.classes.id}}
+                                                    <a href="{% url 'application:exam' paper.id %}?class={{obj.classes.id}}&subject={{sub.id}}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -71,7 +72,37 @@
                                                     <p class="fs-15 cl-black test-bold mb-0">{{paper.title}}</p>
                                                 </div>
                                                 <div class="col-lg-4 text-center">
-                                                    <a href="exam.php" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
+                                                    <a href="{% url 'application:exam' paper.id %}?subject={{obj.subjects.id}}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                       
+                    {% endif %}
+
+                    {% if obj.enrolled_type == "competitive-exam" %}
+                        
+                        <div class="card mb-3">
+                            <div class="card-header bgs-white " id="category1_one{{forloop.counter}}">
+                                <a href="#" class="btn-header-link collapsed decrt-none " data-toggle="collapse"
+                                    data-target="#category1-1{{forloop.counter}}" aria-expanded="true" aria-controls="category1-1{{forloop.counter}}">
+                                    <p class="fs-15 test-bold radius cl-black  pl-5 pr-5 py-3 mb-0">{{obj.competitive_exam.exam_name}}</p>
+                                </a>
+                                <div id="category1-1{{forloop.counter}}" class="collapse" aria-labelledby="category1_one{{forloop.counter}}"
+                                    data-parent="#category_1">
+                                    {% for paper in obj.competitive_exam.assigned_papers.all %}
+                                    <div class="card-body">
+                                        <div class="bgs-sky p-3 mx-3 mb-3 br-10">
+                                            <div class="row mx-0">
+                                                <div class="col-lg-8">
+                                                    <p class="fs-15 cl-black test-bold mb-0">{{paper.title}}</p>
+                                                </div>
+                                                <div class="col-lg-4 text-center">
+                                                    <a href="{% url 'application:exam' paper.id %}?competitive-exam={{obj.competitive_exam.id}}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
                                                 </div>
                                             </div>
                                         </div>

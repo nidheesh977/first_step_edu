@@ -118,7 +118,7 @@
                     <h3 class="fs-25 cl-black-1 mb-0 enquiry-h3 pt-3 pb-3">Do you want ask anything to us? Ask us here</h3>
                 </div>
                 <div class="col-xl-4 col-md-4 text-center text-md-right align-self-center py-2">
-                    <a href="contact.php#section_contact-keep-touch"
+                    <a href="{% url 'application:contact-us' %}"
                         class="bgs-black text-white arrow button-size1 fs-13 lh-16 decrt-none d-inline-block">CLICK HERE TO ASK <span
                             class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7"
                             height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
@@ -236,7 +236,7 @@
                    <p class="fs-13 cl-light mb-1 mb-sm-3">&copy; Copyright 2022 The Working School. All Rights Reserved | <a
                            href="#" class="fs-13 cl-yellow decrt-none footer_link-hover">Terms and
                            Conditions</a> |
-                       <a href="privacy-policy.php" class="fs-13 cl-yellow decrt-none footer_link-hover">Privacy Policy</a>
+                       <a href="{% url 'privacy-policy' %}" class="fs-13 cl-yellow decrt-none footer_link-hover">Privacy Policy</a>
                    </p>
                </div>
                <div class="col-md-5 pb-3 align-self-center px-4 text-left text-md-right">

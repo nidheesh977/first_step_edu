@@ -51,6 +51,10 @@ urlpatterns = [
     path("class-<str:class_id>/subjects", views.CMSubjectsListView.as_view(),name="clsm-subjects-list"),
     path("class-<str:class_id>/subjects-<str:subject_id>/papers", views.CMPapersListView.as_view(),name="clsm-papers-list"),
     path("class-<str:class_id>/subjects-<str:subject_id>/paper-<str:paper_id>/questions", views.CMQuestionsList.as_view(),name="clsm-questions-list"),
+    
+    path("class-<str:class_id>/subjects-<str:subject_id>/add-paper", views.CMAddPaper.as_view(),name="clsm-add-paper"),
+    path("class-<str:class_id>/subjects-<str:subject_id>/edit-paper-<str:id>", views.CMEditPaper.as_view(),name="clsm-edit-paper"),
+
     path("class-<str:class_id>/subjects-<str:subject_id>/paper-<str:paper_id>/add-question", views.CMAddQuestions.as_view(),name="clsm-paper-qus-add"),
     path("class-<str:class_id>/subjects-<str:subject_id>/paper-<str:paper_id>/edit-question/<str:qus_id>", views.CMEditQuestions.as_view(),name="clsm-paper-qus-edit"),
 

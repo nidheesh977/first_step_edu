@@ -18,6 +18,8 @@ urlpatterns = [
     path("dashboard/enrolls-<str:id>",views.EnrolledSubjectsView.as_view(),name="enrolled_subject"),
     path("dashboard/registered-events",views.RegisterdEventsView.as_view(),name="registered_events"),
 
+    path("exam/paper-<str:id>",views.ExamView.as_view(),name="exam"),
+
     path("about-us",views.AboutUs.as_view(),name="about-us"),
     path("why-choose-us",views.WhyChooseUs.as_view(),name="why-choose-us"),
     path("our-team",views.OurTeam.as_view(),name="our-team"),

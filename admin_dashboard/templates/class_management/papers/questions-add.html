@@ -26,6 +26,7 @@
                 <label>Select Section <span class="text-danger">*</span></label>
                 <select name="section" class="form-select w-100" required>
                     <option disabled{% if not request.GET.section %} selected {% endif %}>Select Section</option>
+                    
                     <option {% if request.GET.section == 'Section-A' %} selected {% endif %}value="Section-A">Section - A</option>
                     <option {% if request.GET.section == 'Section-B' %} selected {% endif %}value="Section-B">Section - B</option>
                     <option {% if request.GET.section == 'Section-C' %} selected {% endif %}value="Section-C">Section - C</option>
