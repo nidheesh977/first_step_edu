@@ -712,7 +712,7 @@ class CMPapersListView(View):
         SUBJECT_ID = kwargs.get("subject_id")
         CLASS_ID = kwargs.get("class_id")
         sub_obj = get_object_or_404(Subjects,id=SUBJECT_ID)
-        objs = sub_obj.assigned_papers.filter(is_competitive=False)
+        objs = sub_obj.assigned_papers.filter(is_competitive=False).order_by("created_on")
         context = {
             "cls_id":CLASS_ID,
             "sub_id":SUBJECT_ID,
@@ -810,6 +810,7 @@ class CMQuestionsList(View):
 
 class CMAddPaper(View):
     def get(self,request,*args, **kwargs):
+
         return render(request,"class_management/papers/add_paper.html")
 
     def post(self, request, *args, **kwargs):
@@ -891,15 +892,16 @@ class CMAddQuestions(View):
                 "cls_id":CLASS_ID,
                 "sub_id":SUBJECT_ID,
                 "paper_id":PAPER_ID,
-                "paper_name":paper_obj.title,
+                "paper_obj":paper_obj,
                 "section_details":SECTION_DETAILS,
+                
             }
             return render(request,"class_management/papers/questions-add.html",context)
         else:
             context = {
                 'exm_id':kwargs.get("exm_id"),
                 "paper_id":PAPER_ID,
-                "paper_name":paper_obj.title,
+                "paper_obj":paper_obj,
                 "section_details":SECTION_DETAILS,
             }
             return render(request,"competitive_management/competitive_qus_add.html",context)
@@ -951,7 +953,11 @@ class CMEditQuestions(View):
         SUBJECT_ID = kwargs.get("subject_id")
         qus_obj = get_object_or_404(Questions,id=kwargs.get("qus_id"))
         seconds = qus_obj.section_time_limit
-        
+        paper_obj = get_object_or_404(Papers,id=PAPER_ID)
+        if paper_obj.section_details:
+            SECTION_DETAILS = [json.loads(i) for i in paper_obj.section_details]
+        else:
+            SECTION_DETAILS = []
         if seconds != None:
             convert = str(timedelta(seconds = seconds.total_seconds()))
             OUTCOME = convert.split(":")
@@ -966,6 +972,7 @@ class CMEditQuestions(View):
                 "paper_id":PAPER_ID,
                 "obj":qus_obj,
                 "time_limit":TIME_LIMIT,
+                "section_details":SECTION_DETAILS,
             }
             return render(request,"class_management/papers/questions-edit.html",context)
         else:
@@ -973,6 +980,7 @@ class CMEditQuestions(View):
                 "paper_id":PAPER_ID,
                 "obj":qus_obj,
                 "time_limit":TIME_LIMIT,
+                "section_details":SECTION_DETAILS,
             }
             return render(request,"competitive_management/competitve_qus_edit.html",context)
     

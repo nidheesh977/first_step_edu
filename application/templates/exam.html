@@ -1,263 +1,418 @@
-<style>
-.section_header-marquee,
-.section-header,
-.section_footer,
-.section_footer-enquiry {
-    display: none;
-}
-</style>
-{% extends 'application_base.html' %}
-{% load static %}
-{% block content %}
-<section class="section-attend-test pt-4 pt-sm-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="text-right mb-3">
-                    <a class="fs-15 cl-grey under-line" href="#" onclick="goBack()">Back</a>
-                </div>
-                {% if class_obj and subject_obj %}
-                
-                <div class="row mx-0 bgs-lightgrey px-4 px-sm-5 pt-4 pb-2 mb-4">
-                    <div class="col-sm-6 px-0">
-                        <p> <span class="ts-name-title cl-black test-semibold ">Class Name</span> : <span
-                                class="pl-3 cl-grey ">{{class_obj.title}}</span> </p>
-                        <p> <span class="ts-name-title1 cl-black test-semibold">Paper Name</span> : <span
-                                class="pl-3 cl-grey ">{{paper_obj.title}}</span> </p>
+    <style>
+    .section_header-marquee,
+    .section-header,
+    .section_footer,
+    .section_footer-enquiry {
+        display: none;
+    }
+    </style>
+    {% extends 'application_base.html' %}
+    {% load custom_tags %}
+    {% block content %}
+    <section class="section-attend-test pt-4 pt-sm-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-right mb-3">
+                        <a class="fs-15 cl-grey under-line" href="#" onclick="goBack()">Back</a>
                     </div>
-                    <div class="col-sm-6 px-0">
-                        <p> <span class="pr-4  fs-15 cl-black test-semibold">Subject Name </span> : <span
-                                class="pl-4 fs-15 cl-grey "> {{subject_obj.title}}</span></p>
-                        <p> <span class="pr-4 fs-15 cl-black test-semibold">Date</span> : <span
+                    {% if class_obj and subject_obj %}
+                    
+                    <div class="row mx-0 bgs-lightgrey px-4 px-sm-5 pt-4 pb-2 mb-4">
+                        <div class="col-sm-6 px-0">
+                            <p> <span class="ts-name-title cl-black test-semibold ">Class Name</span> : <span
+                                    class="pl-3 cl-grey ">{{class_obj.title}}</span> </p>
+                            <p> <span class="ts-name-title1 cl-black test-semibold">Paper Name</span> : <span
+                                    class="pl-3 cl-grey ">{{paper_obj.title}}</span> </p>
+                        </div>
+                        <div class="col-sm-6 px-0">
+                            <p> <span class="pr-4  fs-15 cl-black test-semibold">Subject Name </span> : <span
+                                    class="pl-4 fs-15 cl-grey "> {{subject_obj.title}}</span></p>
+                            <p> <span class="pr-4 fs-15 cl-black test-semibold">Date</span> : <span
+                                    class="pl-4 fs-15 cl-grey" id="current-date"></span></p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if not class_obj and subject_obj %}
+                    
+                    <div class="row mx-0 bgs-lightgrey px-4 px-sm-5 pt-4 pb-2 mb-4">
+                        <div class="col-sm-6 px-0">
+                            <p> <span class="ts-name-title cl-black test-semibold ">Subject Name</span> : <span
+                                    class="pl-3 cl-grey ">{{subject_obj.title}}</span> </p>
+                            <p> <span class="ts-name-title1 cl-black test-semibold">Paper Name</span> : <span
+                                    class="pl-3 cl-grey ">{{paper_obj.title}}</span> </p>
+                        </div>
+                        <div class="col-sm-6 px-0">
+                            <p> <span class="pr-4 fs-15 cl-black test-semibold">Date</span> : <span
                                 class="pl-4 fs-15 cl-grey" id="current-date"></span></p>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if not class_obj and subject_obj %}
-                
-                <div class="row mx-0 bgs-lightgrey px-4 px-sm-5 pt-4 pb-2 mb-4">
-                    <div class="col-sm-6 px-0">
-                        <p> <span class="ts-name-title cl-black test-semibold ">Subject Name</span> : <span
-                                class="pl-3 cl-grey ">{{subject_obj.title}}</span> </p>
-                        <p> <span class="ts-name-title1 cl-black test-semibold">Paper Name</span> : <span
-                                class="pl-3 cl-grey ">{{paper_obj.title}}</span> </p>
-                    </div>
-                    <div class="col-sm-6 px-0">
-                        <p> <span class="pr-4 fs-15 cl-black test-semibold">Date</span> : <span
-                            class="pl-4 fs-15 cl-grey" id="current-date"></span></p>
-                    </div>
-                </div>
-                {% endif %}
-                
-                {% if competitive_exam_obj %}
-                
-                <div class="row mx-0 bgs-lightgrey px-4 px-sm-5 pt-4 pb-2 mb-4">
-                    <div class="col-sm-6 px-0">
-                        <p> <span class="ts-name-title cl-black test-semibold ">Exam Name</span> : <span
-                                class="pl-3 cl-grey ">{{competitive_exam_obj.exam_name}}</span> </p>
-                        <p> <span class="ts-name-title1 cl-black test-semibold">Paper Name</span> : <span
-                                class="pl-3 cl-grey ">{{paper_obj.title}}</span> </p>
-                    </div>
-                    <div class="col-sm-6 px-0">
-                        <p> <span class="pr-4 fs-15 cl-black test-semibold">Date</span> : <span
-                            class="pl-4 fs-15 cl-grey" id="current-date"></span></p>
-                    </div>
-                </div>
-                {% endif %}
-                {% if paper_only %}
-                <div class="row mx-0 bgs-lightgrey px-4 px-sm-5 pt-4 pb-2 mb-4">
-                    <div class="col-sm-6 px-0">
-                        <p> <span class="ts-name-title1 cl-black test-semibold">Paper Name</span> : <span
-                                class="pl-3 cl-grey ">{{paper_obj.title}}</span> </p>
-                    </div>
-                    <div class="col-sm-6 px-0">
-                        <p> <span class="pr-4 fs-15 cl-black test-semibold">Date</span> : <span
-                            class="pl-4 fs-15 cl-grey" id="current-date"></span></p>
-                    </div>
-                </div>
-                {% endif %}
-
-
-                <div class="bgs-sky p-3 p-sm-5">
-                    <div class="general-ins">
-                        <h2 class="fs-20 cl-black test-bold pb-2 ">General Instructions</h2>
-                        <div class="exam-instructions">
-                            {{paper_obj.instructions|safe}}
-                            {% comment %} <ul>
-                                <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos dolorem
-                                    ducimus
-                                    rem dicta</li>
-                                <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos dolorem
-                                    ducimus
-                                    rem dicta</li>
-                                <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos dolorem
-                                    ducimus
-                                    rem dicta</li>
-                                <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos dolorem
-                                    ducimus
-                                    rem dicta</li>
-                                <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos dolorem
-                                    ducimus
-                                    rem dicta</li>
-                            </ul> {% endcomment %}
                         </div>
                     </div>
-                    <div class="scheme-part pt-2">
-                        <h2 class="fs-20 cl-black test-bold pb-2 ">Marking Scheme For All Two Sections</h2>
-                        <div class="exam-instructions">
-                            {% for section_detail in section_details %}
-                            <p><b>{{section_detail.name}} (01 to 20) : </b> {{section_detail.description}}</p>
-                            {% endfor %}
+                    {% endif %}
+                    
+                    {% if competitive_exam_obj %}
+                    
+                    <div class="row mx-0 bgs-lightgrey px-4 px-sm-5 pt-4 pb-2 mb-4">
+                        <div class="col-sm-6 px-0">
+                            <p> <span class="ts-name-title cl-black test-semibold ">Exam Name</span> : <span
+                                    class="pl-3 cl-grey ">{{competitive_exam_obj.exam_name}}</span> </p>
+                            <p> <span class="ts-name-title1 cl-black test-semibold">Paper Name</span> : <span
+                                    class="pl-3 cl-grey ">{{paper_obj.title}}</span> </p>
+                        </div>
+                        <div class="col-sm-6 px-0">
+                            <p> <span class="pr-4 fs-15 cl-black test-semibold">Date</span> : <span
+                                class="pl-4 fs-15 cl-grey" id="current-date"></span></p>
                         </div>
                     </div>
-                </div>
-                <div class="text-center">
-                    <button class="test-exam-btn bgs-black cl-white br-10 cursor start-test my-5">Start Test</button>
-                </div>
-                <div class="start-exam py-4 py-sm-5">
-                    <div class="exam-pagination">
-                        <ul class="mb-4">
-                            <li class="attend">1</li>
-                            <li class="pending">2</li>
-                            <li>3</li>
-                            <li>4</li>
-                            <li>5</li>
-                            <li>6</li>
-                            <li>7</li>
-                            <li>8</li>
-                            <li>9</li>
-                            <li>10</li>
-                            <li>11</li>
-                            <li>12</li>
-                            <li>13</li>
-                            <li>14</li>
-                            <li>15</li>
-                            <li>16</li>
-                            <li>17</li>
-                            <li>18</li>
-                            <li>19</li>
-                            <li>20</li>
-                            <li>21</li>
-                            <li>22</li>
-                            <li>23</li>
-                            <li>24</li>
-                            <li>25</li>
-                            <li>26</li>
-                            <li>27</li>
-                            <li>28</li>
-                            <li>29</li>
-                            <li>30</li>
-                            <li>31</li>
-                            <li>32</li>
-                            <li>33</li>
-                            <li>34</li>
-                            <li>35</li>
-                            <li>36</li>
-                            <li>37</li>
-                            <li>38</li>
-                            <li>39</li>
-                            <li>40</li>
-                            <li>41</li>
-                            <li>42</li>
-                            <li>43</li>
-                            <li>44</li>
-                            <li>45</li>
-                            <li>46</li>
-                            <li>47</li>
-                            <li>48</li>
-                            <li>49</li>
-                            <li>50</li>
-                        </ul>
-                    </div>
-                    <div class="d-lg-flex justify-content-between align-items-center pb-4 pb-sm-5">
-                        <div>
-                            <h2 class="fs-20 cl-black test-bold mb-1">Section-A</h2>
-                            <h6 class="fs-14 cl-black test-bold mb-3 mb-lg-0">Lorem ipsum dolor sit</h6>
+                    {% endif %}
+                    {% if paper_only %}
+                    <div class="row mx-0 bgs-lightgrey px-4 px-sm-5 pt-4 pb-2 mb-4">
+                        <div class="col-sm-6 px-0">
+                            <p> <span class="ts-name-title1 cl-black test-semibold">Paper Name</span> : <span
+                                    class="pl-3 cl-grey ">{{paper_obj.title}}</span> </p>
                         </div>
-                        <div class="d-sm-flex align-items-center justify-content-end">
-                            <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Current
-                                Q<span class="d-none d-md-inline test-bold">uestion</span>: 10</button>
-                            <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Pending
-                                Q<span class="d-none d-md-inline test-bold">uestion</span>: 40</button>
-                            <div class="count-down-box d-inline-flex align-items-center br-10 mt-3 mt-sm-0">
-                                <span class="cl-white">Time Left :</span>
-                                <p class="fs-20 mb-0 cl-white pl-2" id="ten-countdown"></p>
+                        <div class="col-sm-6 px-0">
+                            <p> <span class="pr-4 fs-15 cl-black test-semibold">Date</span> : <span
+                                class="pl-4 fs-15 cl-grey" id="current-date"></span></p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+
+                    <div class="bgs-sky p-3 p-sm-5">
+                        <div class="general-ins">
+                            <h2 class="fs-20 cl-black test-bold pb-2 ">General Instructions</h2>
+                            <div class="exam-instructions">
+                                {{paper_obj.instructions|safe}}
+                            </div>
+                        </div>
+                        <div class="scheme-part pt-2">
+                            <h2 class="fs-20 cl-black test-bold pb-2 ">Marking Scheme For All Two Sections</h2>
+                            <div class="exam-instructions">
+                                {% for section_detail in section_details %}
+                                <p><b>{{section_detail.name}} ({{section_detail.section_questions_details}}) : </b> {{section_detail.description}}</p>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
-                    <div class="row part-1-attend-test">
-                        <div class="col-12">
-                            <div class="ques-type position-relative">
-                                <div class="ques-option-type-1 bgs-white d-flex ques-br">
-                                    <div class="count-sec-box d-inline-flex align-items-center br-10">
-                                        <span class="cl-white"><i class="far fa-clock"></i> :</span>
-                                        <p class="fs-16 mb-0 cl-white pl-2" id="ten-countsec"></p>
-                                    </div>
-                                    <div class="num-test-ques">
-                                        <p>1.</p>
-                                    </div>
-                                    <div>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, temporibus
-                                            sit. Sit dolore omnis culpa veritatis aperiam quidem officiis incidunt modi,
-                                            enim temporibus harum animi voluptate pariatur asperiores atque illo?
-                                        </p>
-                                        <div class="choose-correct-one">
-                                            <div class="row mx-0 mx-sm-2">
-                                                <div class="label-title custom_radio col-md-5 col-12 my-3  ">
-                                                    <span class="checkmark bgs-black cl-white">A</span>
-                                                    <span class=" inpuy-label-value">0&#176;</span>
-                                                    <input type="radio" name="radiogroup" class="" id="zero">
-                                                    <label for="zero"></label>
-                                                </div>
-                                                <div class="label-title custom_radio col-md-5 col-12 offset-md-1 my-3 ">
-                                                    <span class="checkmark  bgs-black cl-white">B</span>
-                                                    <span class=" inpuy-label-value ">15&#176;</span>
-                                                    <input type="radio" name="radiogroup" class="" id="ten">
-                                                    <label for="ten"></label>
-                                                </div>
-                                                <div class="label-title custom_radio col-md-5 col-12 my-3 ">
-                                                    <span class="checkmark  bgs-black cl-white">C</span>
-                                                    <span class=" inpuy-label-value ">30&#176;</span>
-                                                    <input type="radio" name="radiogroup" class="" id="thrity">
-                                                    <label for="thrity"></label>
-                                                </div>
-                                                <div class="label-title custom_radio col-md-5 col-12 offset-md-1 my-3 ">
-                                                    <span class="checkmark  bgs-black cl-white">D</span>
-                                                    <span class=" inpuy-label-value ">None of these</span>
-                                                    <input type="radio" name="radiogroup" class="" id="none-all">
-                                                    <label for="none-all"></label>
-                                                </div>
+                    <div class="text-center">
+                        <button class="test-exam-btn bgs-black cl-white br-10 cursor start-test my-5" id="startTest">Start Test</button>
+                    </div>
+                    <div class="start-exam py-4 py-sm-5">
 
-                                            </div>
-
-
-
-                                        </div>
-
-                                    </div>
+                         <div class="exam-pagination stepwizard">
+                            <div class="stepwizard-row setup-panel">
+                            <ul class="mb-4 stepwizard-step">
+                                {% for ques in all_ques %}
+                                <li class="{% if forloop.counter == 1 %}current{% endif %}"><a style="color:yellow;" class="quesCount" data="{{ques.id}}" href="#step-{{forloop.counter}}" type="button">{{forloop.counter}}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        </div> 
+                        <div class="d-lg-flex justify-content-between align-items-center pb-4 pb-sm-5">
+                            <div>
+                                {% with section_details|first as first_doc %}
+                                <h2 class="fs-20 cl-black test-bold mb-1">{{ first_doc.name }}</h2>
+                                {% endwith %}
+                            </div>
+                            <!-- FIXME | Current questions and Pending questions are calculated based on the total count of the questions -->
+                            <div class="d-sm-flex align-items-center justify-content-end">
+                                <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Current Question</span>: 1</button>
+                                <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Pending Question</span>: {{total_ques|subtract:1}}</button>
+                                <div class="count-down-box d-inline-flex align-items-center br-10 mt-3 mt-sm-0">
+                                    <span class="cl-white">Time Left :</span>
+                                    <p class="fs-20 mb-0 cl-white pl-2" id="ten-countdown"></p>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-groups col-12 text-center  pt-4 my-4 ">
-                            <button type="submit"
-                                class="cursor mt-1 px-4 px-sm-5 py-2 lh-35 border-0 bgs-black cl-white mr-3">Previous
-                                Q<span class="d-none d-sm-inline">uestion</span></button><button type="submit"
-                                class="cursor mt-1 px-5 py-2 lh-35 border-0 bgs-black cl-white">Next Q<span
-                                    class="d-none d-sm-inline">uestion</span></button>
+                        <div class="row part-1-attend-test">
+                            
+                            <div class="col-12 setup-content" id="step-1">
+                                <div class="ques-type position-relative">
+                                    <div class="ques-option-type-1 bgs-white d-flex ques-br">
+                                        <div class="count-sec-box d-inline-flex align-items-center br-10">
+                                            <span class="cl-white"><i class="far fa-clock"></i> :</span>
+                                            <p class="fs-16 mb-0 cl-white pl-2" id="ten-countsec"></p>
+                                        </div>
+                                        <div class="num-test-ques">
+                                            <p>1.</p>
+                                        </div>
+                                        <div>
+                                            <p id="quesText">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, temporibus
+                                                sit. Sit dolore omnis culpa veritatis aperiam quidem officiis incidunt modi,
+                                                enim temporibus harum animi voluptate pariatur asperiores atque illo?
+                                            </p>
+                                            <div class="choose-correct-one">
+                                                <div class="row mx-0 mx-sm-2">
+                                                    <div class="label-title custom_radio col-md-5 col-12 my-3  ">
+                                                        <span class="checkmark bgs-black cl-white">A</span>
+                                                        <span class=" inpuy-label-value" id="option1Value">0&#176;</span>
+                                                        <input type="radio" name="radiogroup" id="option1">
+                                                        <label for="option1"></label>
+                                                    </div>
+                                                    <div class="label-title custom_radio col-md-5 col-12 offset-md-1 my-3 ">
+                                                        <span class="checkmark  bgs-black cl-white">B</span>
+                                                        <span class=" inpuy-label-value" id="option2Value">15&#176;</span>
+                                                        <input type="radio" name="radiogroup"  id="option2">
+                                                        <label for="option2"></label>
+                                                    </div>
+                                                    <div class="label-title custom_radio col-md-5 col-12 my-3 ">
+                                                        <span class="checkmark  bgs-black cl-white">C</span>
+                                                        <span class=" inpuy-label-value " id="option3Value">30&#176;</span>
+                                                        <input type="radio" name="radiogroup" id="option3">
+                                                        <label for="option3"></label>
+                                                    </div>
+                                                    <div class="label-title custom_radio col-md-5 col-12 offset-md-1 my-3 ">
+                                                        <span class="checkmark  bgs-black cl-white">D</span>
+                                                        <span class=" inpuy-label-value" id="option4Value">None of these</span>
+                                                        <input type="radio" name="radiogroup" id="option4">
+                                                        <label for="option4"></label>
+                                                    </div>
+
+                                                </div>
+
+
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-groups col-12 text-center  pt-4 my-4 ">
+                                <button type="button" id="prev_ques" class="cursor mt-1 px-4 px-sm-5 py-2 lh-35 border-0 bgs-black cl-white mr-3">Previous Question</span>
+                                </button>
+                                <button type="button" id="next_ques" class="cursor mt-1 px-5 py-2 lh-35 border-0 bgs-black cl-white">Next Question</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-{% endblock content %}
-{% block script %}
+    </section>
+    {% endblock content %}
+    {% block script %}
 
-<script>
-    function goBack() {
-        window.history.back();
-     }
-</script>
-{% endblock script %}
+    <script>
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function countdown( elementName, hour, minutes, seconds ) {
+            var element, endTime, hours, mins, msLeft, time;
+            function twoDigits( n ){
+                return (n <= 9 ? "0" + n : n);
+            }
+            function updateTimer(){
+                msLeft = endTime - (+new Date);
+                if ( msLeft < 1000 ) {
+                    element.innerHTML = "Time is up!";
+                } else {
+                    time = new Date( msLeft );
+                    hours = time.getUTCHours();
+                    console.log(hours);
+                    mins = time.getUTCMinutes();
+                    element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
+                    setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+                }
+            }
+            element = document.getElementById( elementName );
+            endTime = (+new Date) + 1000 * (60*hour +60*minutes + seconds) + 500;
+            console.log(endTime);
+            updateTimer();
+        }
+
+        function countsec( elementName, minutes, seconds ) {
+            var element, endTime, hours, mins, msLeft, time;
+            function twoDigits( n )
+            {
+                return (n <= 9 ? "0" + n : n);
+            }
+            function updateTimer()
+            {
+                msLeft = endTime - (+new Date);
+                if ( msLeft < 1000 ) {
+                    element.innerHTML = "Time is up!";
+                } else {
+                    time = new Date( msLeft );
+                    hours = time.getUTCHours();
+                    mins = time.getUTCMinutes();
+                    element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
+                    setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+                }
+            }
+            element = document.getElementById( elementName );
+            endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;
+            updateTimer();
+        }
+        
+
+        function getQuestion(id){
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action:"getQues",
+                    quesId:id,
+                    
+                },
+                dataType: 'json',
+                success: function (response) {
+                    var quesText = response["question"];
+                    var option1 = response["option1"];
+                    var option2 = response["option2"];
+                    var option3 = response["option3"];
+                    var option4 = response["option4"];
+                    var timeLimit = response["time_limit"];
+                    $("#quesText").text(quesText);
+
+
+                    $("#option1Value").text(option1);
+                    $("#option2Value").text(option2);
+                    $("#option3Value").text(option3);
+                    $("#option4Value").text(option4);
+
+                    $("#option1").val(option1);
+                    $("#option2").val(option2);
+                    $("#option3").val(option3);
+                    $("#option4").val(option4);
+                    
+                },
+                error: function(response) {
+                   alert("Something Wrong");
+                }
+            });
+        }
+
+
+        function countdownTimeStart(countDownDate,elementName){
+            //var countDownDate = new Date("Sep 25, 2025 15:00:00").getTime();
+            var x = setInterval(function() {
+                var now = new Date().getTime();
+                var distance = countDownDate - now;
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                document.getElementById("elementName").innerHTML = hours + "h "+ minutes + "m " + seconds + "s ";
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("elementName").innerHTML = "EXPIRED";
+                }
+            }, 1000);
+        }
+        
+        $(document).ready(function(){
+            /*var s = "{{tot_time}}";
+            console.log(s);
+            var countDownDate = new Date("Jul 25, 2021 16:37:52").getTime();
+            console.log(countDownDate);*/
+
+            
+
+
+        });
+
+
+        $(document).on("click","#startTest", function(){
+            if (confirm("are you ready to start") == true) {
+                var g = $(".quesCount").attr("data");
+                getQuestion(g);
+                $('.start-exam').show();
+                $('.start-test').hide();
+            }
+            
+
+        });
+
+       /* $(".quesCount").click(function(event){
+            event.preventDefault();
+
+            var ans = $('input[name="radiogroup"]:checked').val();
+            var g = $(this).attr("data");
+            getQuestion(g);
+
+        });*/
+
+        $("#prev_ques").click(function(){
+            var ans = $('input[name="radiogroup"]:checked').val();
+            var currentQus;
+            var previousQus;
+            var totQues = $(".quesCount").length;
+            var limit;
+            
+            $.each($(".quesCount"), function(key, value) {
+                var hasclass = $(this).parent().hasClass("current");
+                if(hasclass){
+                    var currentQuesNum = parseInt($(this).text());
+                    var previousQues = currentQuesNum - 1; 
+
+                    currentQus = currentQuesNum;
+                    previousQus = previousQues;
+                }
+            });
+            if(previousQus == 1){
+                limit = true;
+            }
+
+            if(limit){
+               $("#prev_ques").attr("disabled",true);
+
+            }
+            if($(`.quesCount:eq(${currentQus-1})`).parent().hasClass("current attend")){
+                $(`.quesCount:eq(${currentQus-1})`).parent().removeClass("current attend").addClass("current");
+                var nextQusId = $(`.quesCount:eq(${currentQus-1})`).attr("data");
+                
+            }else{
+                $(`.quesCount:eq(${previousQus-1})`).parent().attr("class", "current");
+                $(`.quesCount:eq(${currentQus-1})`).parent().attr("class", "");
+                var nextQusId = $(`.quesCount:eq(${previousQus-1})`).attr("data");
+            }
+            getQuestion(nextQusId);
+        });
+
+        
+
+        
+        $("#next_ques").click(function(){
+            var ans = $('input[name="radiogroup"]:checked').val();
+            var currentQus;
+            var previousQus;
+            var totQues = $(".quesCount").length;
+
+            
+            $.each($(".quesCount"), function() {
+                var hasclass = $(this).parent().hasClass("current");
+                if(hasclass){
+                    var currentQuesNum = parseInt($(this).text());
+                    var previousQues = currentQuesNum - 1; 
+                    var nextQues = currentQuesNum; 
+
+                    currentQus = currentQuesNum;
+                    previousQus = previousQues;
+                }
+            });
+            
+            $(`.quesCount:eq(${previousQus})`).parent().addClass("attend");
+            $(`.quesCount:eq(${currentQus})`).parent().addClass("current");
+            
+
+            if(totQues-1 >= previousQus+1){
+                var nextQusId = $(`.quesCount:eq(${previousQus+1})`).attr("data");
+                getQuestion(nextQusId);
+            }
+            if($('#prev_ques').prop('disabled')){
+                $("#prev_ques").attr("disabled",false);
+            }
+            
+
+        });
+
+
+    </script>
+    {% endblock script %}

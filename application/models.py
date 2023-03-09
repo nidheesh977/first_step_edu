@@ -335,3 +335,31 @@ class StudentPayments(ImportdantDates):
 
     def get_absolute_url(self):
         return reverse("enrolls_detail", kwargs={"pk": self.pk})
+
+
+class StudentSubmittedAnswers(ImportdantDates):
+    student = models.ForeignKey("application.CustomUser", verbose_name=_("Student"), on_delete=models.CASCADE, blank=True, null=True)
+    question = models.ForeignKey("application.Questions", verbose_name=_("Question"), on_delete=models.CASCADE, blank=True, null=True)
+    submitted_answer = models.TextField(_("Correct Answer"), null=True, blank=True)
+    is_correct_answer = models.BooleanField(_("Is correct Answer"), default=False)
+    answered_time = models.DurationField(_("Answered Time"),default=timedelta, null=True, blank=True)
+    class Meta:
+        verbose_name = _("StudentSubmittedAnswers")
+        verbose_name_plural = _("StudentSubmittedAnswers")
+
+    def __str__(self):
+        return self.name
+
+    
+
+class AttendedPapers(ImportdantDates):
+    student = models.ForeignKey("application.CustomUser", verbose_name=_("Student"), on_delete=models.CASCADE, blank=True, null=True)
+    paper = models.ForeignKey("application.Papers", verbose_name=_("Paper"), blank=True, null=True, on_delete=models.CASCADE)
+    attended_questions = models.ManyToManyField("application.StudentSubmittedAnswers", verbose_name=_("Submitted Answers"),blank=True,)
+
+    class Meta:
+        verbose_name = _("AttendedPapers")
+        verbose_name_plural = _("AttendedPapers")
+
+    def __str__(self):
+        return self.name

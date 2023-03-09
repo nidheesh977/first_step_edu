@@ -36,9 +36,26 @@
             </div>
 
             <div class="customer_records form-group col-12">
-                {% for data in section_details %}
-               
-
+                
+                {% if section_details %}
+                    {% for data in section_details %}
+                        <div class="row items">
+                            <div class="form-group col-5">
+                                <label>Section Name <span class="text-danger">*</span></label>
+                                <input name="section_name" value="{{data.name}}" maxlength="20" type="text" class="form-control form-control-user" required>
+                            </div>
+                            <div class="form-group col-5">
+                                <label>Section Description <span class="text-danger">*</span></label>
+                                <textarea name="section_description" id="meta_keywords" rows="1" class="form-control form-control-user" required>{{data.description}}</textarea>
+                            </div>
+                            {% if forloop.counter == 1 %}
+                                <a href="#" class="addmore">Add More</a>
+                            {% else %}
+                                <a href="javascript:void(0);" class="removeItems" >remove</a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    {% else %}
                     <div class="row items">
                         <div class="form-group col-5">
                             <label>Section Name <span class="text-danger">*</span></label>
@@ -48,16 +65,12 @@
                             <label>Section Description <span class="text-danger">*</span></label>
                             <textarea name="section_description" id="meta_keywords" rows="1" class="form-control form-control-user" required>{{data.description}}</textarea>
                         </div>
-                        {% if forloop.counter == 1 %}
+                        
                             <a href="#" class="addmore">Add More</a>
-                        {% else %}
-                            <a href="javascript:void(0);" class="removeItems" >remove</a>
-                        {% endif %}
+                        
                     </div>
-
-               
-                    
-                {% endfor %}
+                        
+                {% endif %}
             </div>
             <div class="customer_records_dynamic form-group col-12"></div>
             

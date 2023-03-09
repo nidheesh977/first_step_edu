@@ -17,6 +17,8 @@
                             <th>S.No</th>
                             <th width="45%">Questions</th>
                             <th>Correct Option</th>
+                            <th>Section</th>
+                            <th>Time Limit</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -26,6 +28,8 @@
                             <td>{{forloop.counter}}</td>
                             <td>{{obj.question}}</td>
                             <td>{{obj.correct_answer}}</td>
+                            <td>{{obj.section}}</td>
+                            <td>{{obj.section_time_limit}}</td>
                             <td>
                                 <a href="{% url 'admin_dashboard:clsm-paper-qus-edit' cls_id sub_id paper_id obj.id %}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit fa-sm text-white-50"></i></a>
                                 <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-danger btn-circle btn-sm deleteItem"><i class="fas fa-trash"></i></a>

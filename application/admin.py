@@ -79,4 +79,6 @@ admin.site.register(Subjects)
 admin.site.register(Classes)
 admin.site.register(CompetitiveExam)
 admin.site.register(StudentPayments)
+admin.site.register(StudentSubmittedAnswers)
+admin.site.register(AttendedPapers)
 

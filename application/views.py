@@ -1,21 +1,19 @@
 
 import json
+from datetime import datetime
 
 import environ
 import razorpay
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail.message import EmailMessage
-from django.http.response import  JsonResponse
+from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, ListView, TemplateView, View
 
 from utils.constants import EmailContents, TextConstants
@@ -356,14 +354,35 @@ class ExamView(View):
         competitive_exam_id = request.GET.get("competitive-exam")
         paper_id = kwargs.get("id")
         paper_obj = get_object_or_404(Papers,id=paper_id)
+        questions = paper_obj.assigned_questions.all()
+
+        SECTION_DETAILS = []
+        TOTAL_QUES = 0
+        ALL_QUES = []
+
+    
         
         if paper_obj.section_details:
-            SECTION_DETAILS = [json.loads(i) for i in paper_obj.section_details]
-        else:
-            SECTION_DETAILS = []
-        
+            for count, section_detail in enumerate(paper_obj.section_details):
+                to_dict = json.loads(section_detail)
+                section_questions = questions.filter(section=to_dict["name"])
+                SECTION_QUES_COUNT = section_questions.count()
+                to_dict["questions"] = section_questions
+                to_dict["questions_count"] = SECTION_QUES_COUNT
+                TOTAL_QUES += SECTION_QUES_COUNT
+                SECTION_DETAILS.append(to_dict)
+                
+                if count == 0:
+                    to_dict["section_questions_details"] = f"1 - {SECTION_QUES_COUNT}"
+                else:
+                    previous_dict = SECTION_DETAILS[count]
+                    previous_el = previous_dict["questions_count"]
+                    previous_dict["section_questions_details"] = f"{previous_el+1} - {previous_el+SECTION_QUES_COUNT}"
+                ALL_QUES.extend(section_questions)
+
+
+        TOTAL_TIME =sum([ques.section_time_limit for ques in ALL_QUES],timedelta(0,0))
         if class_id and subject_id:
-            print("CLASS AND SUBJECT ------------>")
             class_obj = get_object_or_404(Classes,id=class_id)
             subject_obj = get_object_or_404(Subjects,id=subject_id)
             context = {
@@ -371,6 +390,9 @@ class ExamView(View):
             "subject_obj":subject_obj,
             "paper_obj":paper_obj,
             "section_details":SECTION_DETAILS,
+            "total_ques":TOTAL_QUES,
+            "all_ques":ALL_QUES,
+            "tot_time":TOTAL_TIME,
             }
         elif not class_id and subject_id:
             subject_obj = get_object_or_404(Subjects,id=subject_id)
@@ -378,6 +400,9 @@ class ExamView(View):
             "subject_obj":subject_obj,
             "paper_obj":paper_obj,
             "section_details":SECTION_DETAILS,
+            "total_ques":TOTAL_QUES,
+            "all_ques":ALL_QUES,
+            "tot_time":TOTAL_TIME,
 
             }
         elif competitive_exam_id:
@@ -386,6 +411,9 @@ class ExamView(View):
             "competitive_exam_obj":competitive_exam_obj,
             "paper_obj":paper_obj,
             "section_details":SECTION_DETAILS,
+            "total_ques":TOTAL_QUES,
+            "all_ques":ALL_QUES,
+            "tot_time":TOTAL_TIME,
 
             }
         else:
@@ -393,9 +421,36 @@ class ExamView(View):
             "paper_obj":paper_obj,
             "section_details":SECTION_DETAILS,
             "paper_only":True,
+            "total_ques":TOTAL_QUES,
+            "all_ques":ALL_QUES,
+            "tot_time":TOTAL_TIME,
+
             }
         return render(request, "exam.html",context)
 
+
+    def post(self, request, *args, **kwargs):
+    
+        paper_id = kwargs.get("id")
+        paper_obj = get_object_or_404(Papers,id=paper_id)
+
+        if request.POST.get("action") == "start":
+            print(paper_obj.assigned_questions.first())
+        if request.POST.get("action") == "getQues":
+            question_id = request.POST.get("quesId")
+            question_obj = get_object_or_404(Questions,id=question_id)
+            to_return = {
+                "question":question_obj.question,
+                "option1":question_obj.option1,
+                "option2":question_obj.option2,
+                "option3":question_obj.option3,
+                "option4":question_obj.option4,
+                "time_limit":question_obj.section_time_limit.total_seconds(),
+            }
+            return JsonResponse(to_return)
+
+
+        return JsonResponse({})
     
 class SchoolPage(View):
     def get(self, request, *args, **kwargs):
