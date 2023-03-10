@@ -104,7 +104,7 @@
                             <div class="stepwizard-row setup-panel">
                             <ul class="mb-4 stepwizard-step">
                                 {% for ques in all_ques %}
-                                <li class="{% if forloop.counter == 1 %}current{% endif %}"><a style="color:yellow;" class="quesCount" data="{{ques.id}}" href="#step-{{forloop.counter}}" type="button">{{forloop.counter}}</a></li>
+                                <li class="{% if forloop.counter == 1 %}current{% endif %}"><a style="color:yellow;" class="quesCount" data="{{ques.id}}" type="button">{{forloop.counter}}</a></li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -241,6 +241,10 @@
                 msLeft = endTime - (+new Date);
                 if ( msLeft < 1000 ) {
                     element.innerHTML = "Time is up!";
+                    $("#option1").attr("disabled", true);
+                    $("#option2").attr("disabled", true);
+                    $("#option3").attr("disabled", true);
+                    $("#option4").attr("disabled", true);
 
                 } else {
                     time = new Date( msLeft );
@@ -281,6 +285,15 @@
                     var sectionName = response["section_name"];
                     var time = parseFloat(timeLimit);
 
+                    var checkBox = $('input[name="radiogroup"]:checked')[0];
+                    if(checkBox != undefined){
+                        checkBox.checked = false;
+                    }
+                    $("#option1").attr("disabled", false);
+                    $("#option2").attr("disabled", false);
+                    $("#option3").attr("disabled", false);
+                    $("#option4").attr("disabled", false);
+
                     $("#quesText").text(quesText);
                     $("#sectionName").text(sectionName);
 
@@ -295,7 +308,7 @@
                     $("#option4").val(option4);
                     
 
-                    // inital state
+                    // initial state
                     if(TIMER == undefined){
                         countsec( "ten-countsec", time,00 );
                     }else{
@@ -387,15 +400,19 @@
         
         $("#next_ques").click(function(){
             var ans = $('input[name="radiogroup"]:checked').val();
+            var quesId;
+
             var currentQus;
             var previousQus;
             var totQues = $(".quesCount").length;
+            var clicked_time = $("#ten-countsec").text();
 
             
             $.each($(".quesCount"), function() {
                 var hasclass = $(this).parent().hasClass("current");
                 if(hasclass){
                     var currentQuesNum = parseInt($(this).text());
+                    quesId = $(this).attr("data");
                     if(currentQuesNum != totQues){
 
                         $("#currentQuesCount").text(currentQuesNum+1);
@@ -408,6 +425,30 @@
                 }
             });
             
+           $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action:"submit_ques",
+                    quesId:quesId,
+                    ans:ans,
+                    clicked_time:clicked_time
+                    
+                },
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    
+                },
+                error: function(response) {
+                   alert("Something Wrong");
+                }
+            });
+
+            
             $(`.quesCount:eq(${previousQus})`).parent().addClass("attend");
             $(`.quesCount:eq(${currentQus})`).parent().addClass("current");
             
@@ -416,11 +457,15 @@
                 var nextQusId = $(`.quesCount:eq(${previousQus+1})`).attr("data");
                 getQuestion(nextQusId);
             }
+
+            
             if($('#prev_ques').prop('disabled')){
                 $("#prev_ques").attr("disabled",false);
             }
+
             
 
+            
 
         });
 

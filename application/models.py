@@ -347,9 +347,6 @@ class StudentSubmittedAnswers(ImportdantDates):
         verbose_name = _("StudentSubmittedAnswers")
         verbose_name_plural = _("StudentSubmittedAnswers")
 
-    def __str__(self):
-        return self.name
-
     
 
 class AttendedPapers(ImportdantDates):
@@ -360,6 +357,3 @@ class AttendedPapers(ImportdantDates):
     class Meta:
         verbose_name = _("AttendedPapers")
         verbose_name_plural = _("AttendedPapers")
-
-    def __str__(self):
-        return self.name

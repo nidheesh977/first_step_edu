@@ -17,7 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, ListView, TemplateView, View
 
 from utils.constants import EmailContents, TextConstants
-from utils.functions import OTP_Gen, is_ajax
+from utils.functions import OTP_Gen, is_ajax, str_to_timedelta
 
 from .models import *
 
@@ -451,6 +451,24 @@ class ExamView(View):
                 "section_name":question_obj.section,
             }
             return JsonResponse(to_return)
+        
+        if request.POST.get("action") == "submit_ques":
+
+            question_id = request.POST.get("quesId")
+            question_obj = get_object_or_404(Questions,id=question_id)
+            answer = request.POST.get("ans")
+            is_correct_ans = True if question_obj.correct_answer == answer else False
+            submitted_time = request.POST.get("clicked_time")
+            time_delta = str_to_timedelta(str_time=submitted_time)
+            
+            obj = StudentSubmittedAnswers.objects.create(
+                student = request.user,
+                question = question_obj,
+                submitted_answer = answer,
+                is_correct_answer = is_correct_ans,
+                answered_time = time_delta,
+            )
+
         return JsonResponse({})
     
 class SchoolPage(View):
