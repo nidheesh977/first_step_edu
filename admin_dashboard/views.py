@@ -594,7 +594,7 @@ class ContactEnquiry(View):
 
 class RegistredUsers(View):
     def get(self,request,*args, **kwargs):
-        objs = CustomUser.objects.all().exclude(is_superuser=True)
+        objs = CustomUser.objects.all().exclude(is_superuser=True).order_by("created_on")
         context = {"objs":objs}
         return render(request,"registration.html",context)
 
@@ -742,7 +742,7 @@ class CMPapersListView(View):
                 "description",
                 "instructions",
                 "section_details"
-            )
+            ).order_by("created_on ")
             to_return = {"obj":list(obj)[0]}
             return JsonResponse(to_return,safe=True,)
 
@@ -786,7 +786,7 @@ class CMQuestionsList(View):
 
         if CLASS_ID and SUBJECT_ID:
             context = {
-                "qus_obj":paper_obj.assigned_questions.all(),
+                "qus_obj":paper_obj.assigned_questions.all().order_by("created_on"),
                 "cls_id":CLASS_ID,
                 "sub_id":SUBJECT_ID,
                 "paper_id":PAPER_ID,

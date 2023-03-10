@@ -135,6 +135,7 @@ $(document).ready(function () {
     });
 
     $(".side-box").hide();
+
     $(".hide-box").click(function () {
         $(".section-acc-sidebar").show();
         $(".hide-box").hide();

@@ -116,7 +116,6 @@ class ForgetPassword(View):
 class LogoutView(View):
     def get(self, request, *args, **kwargs):
         user_type = request.user.is_superuser
-        print(user_type)
         logout(request)
         if user_type:
             return redirect("admin_dashboard:admin-login")
@@ -381,7 +380,12 @@ class ExamView(View):
                 ALL_QUES.extend(section_questions)
 
 
+        
         TOTAL_TIME =sum([ques.section_time_limit for ques in ALL_QUES],timedelta(0,0))
+        TIME_IN_MIN = TOTAL_TIME.total_seconds()/60
+
+
+
         if class_id and subject_id:
             class_obj = get_object_or_404(Classes,id=class_id)
             subject_obj = get_object_or_404(Subjects,id=subject_id)
@@ -392,7 +396,7 @@ class ExamView(View):
             "section_details":SECTION_DETAILS,
             "total_ques":TOTAL_QUES,
             "all_ques":ALL_QUES,
-            "tot_time":TOTAL_TIME,
+            "tot_time":TIME_IN_MIN,
             }
         elif not class_id and subject_id:
             subject_obj = get_object_or_404(Subjects,id=subject_id)
@@ -402,7 +406,7 @@ class ExamView(View):
             "section_details":SECTION_DETAILS,
             "total_ques":TOTAL_QUES,
             "all_ques":ALL_QUES,
-            "tot_time":TOTAL_TIME,
+            "tot_time":TIME_IN_MIN,
 
             }
         elif competitive_exam_id:
@@ -413,7 +417,7 @@ class ExamView(View):
             "section_details":SECTION_DETAILS,
             "total_ques":TOTAL_QUES,
             "all_ques":ALL_QUES,
-            "tot_time":TOTAL_TIME,
+            "tot_time":TIME_IN_MIN,
 
             }
         else:
@@ -423,33 +427,30 @@ class ExamView(View):
             "paper_only":True,
             "total_ques":TOTAL_QUES,
             "all_ques":ALL_QUES,
-            "tot_time":TOTAL_TIME,
+            "tot_time":TIME_IN_MIN,
 
             }
         return render(request, "exam.html",context)
 
 
-    def post(self, request, *args, **kwargs):
-    
+    def post(self, request, *args, **kwargs):    
         paper_id = kwargs.get("id")
         paper_obj = get_object_or_404(Papers,id=paper_id)
 
-        if request.POST.get("action") == "start":
-            print(paper_obj.assigned_questions.first())
         if request.POST.get("action") == "getQues":
             question_id = request.POST.get("quesId")
             question_obj = get_object_or_404(Questions,id=question_id)
+            time_limit = question_obj.section_time_limit.total_seconds()/60
             to_return = {
                 "question":question_obj.question,
                 "option1":question_obj.option1,
                 "option2":question_obj.option2,
                 "option3":question_obj.option3,
                 "option4":question_obj.option4,
-                "time_limit":question_obj.section_time_limit.total_seconds(),
+                "time_limit":time_limit,
+                "section_name":question_obj.section,
             }
             return JsonResponse(to_return)
-
-
         return JsonResponse({})
     
 class SchoolPage(View):

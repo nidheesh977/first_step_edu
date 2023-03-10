@@ -112,13 +112,15 @@
                         <div class="d-lg-flex justify-content-between align-items-center pb-4 pb-sm-5">
                             <div>
                                 {% with section_details|first as first_doc %}
-                                <h2 class="fs-20 cl-black test-bold mb-1">{{ first_doc.name }}</h2>
+                                <h2 class="fs-20 cl-black test-bold mb-1" id="sectionName">{{ first_doc.name }}</h2>
                                 {% endwith %}
                             </div>
+
                             <!-- FIXME | Current questions and Pending questions are calculated based on the total count of the questions -->
+
                             <div class="d-sm-flex align-items-center justify-content-end">
-                                <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Current Question</span>: 1</button>
-                                <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Pending Question</span>: {{total_ques|subtract:1}}</button>
+                                <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Current Question : <span id="currentQuesCount">1</span></button>
+                                <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Pending Question : <span id="pendingQuesCount">{{total_ques|subtract:1}}</span></button>
                                 <div class="count-down-box d-inline-flex align-items-center br-10 mt-3 mt-sm-0">
                                     <span class="cl-white">Time Left :</span>
                                     <p class="fs-20 mb-0 cl-white pl-2" id="ten-countdown"></p>
@@ -196,13 +198,42 @@
     {% block script %}
 
     <script>
+        var TIMER;
+        window.onbeforeunload = function ()
+        {
+            return "";
+        };
 
         function goBack() {
             window.history.back();
         }
 
-        function countdown( elementName, hour, minutes, seconds ) {
+        function countdown(elementName, minutes, seconds) {
+           var element, endTime, hours, mins, msLeft, time;
+           function twoDigits(n) {
+               return (n <= 9 ? "0" + n : n);
+           }
+           function updateTimer() {
+               msLeft = endTime - (+new Date);
+               if (msLeft < 1000) {
+                   element.innerHTML = "Time is up!";
+               } else {
+                   time = new Date(msLeft);
+                   hours = time.getUTCHours();
+                   mins = time.getUTCMinutes();
+                   element.innerHTML = (hours ? hours + ':' + twoDigits(mins) : mins) + ':' + twoDigits(time.getUTCSeconds());
+                   setTimeout(updateTimer, time.getUTCMilliseconds() + 500);
+               }
+           }
+           element = document.getElementById(elementName);
+           endTime = (+new Date) + 1000 * (60 * minutes + seconds) + 500;
+           updateTimer();
+        }
+
+        function countsec( elementName, minutes, seconds ) {
+
             var element, endTime, hours, mins, msLeft, time;
+
             function twoDigits( n ){
                 return (n <= 9 ? "0" + n : n);
             }
@@ -210,43 +241,20 @@
                 msLeft = endTime - (+new Date);
                 if ( msLeft < 1000 ) {
                     element.innerHTML = "Time is up!";
-                } else {
-                    time = new Date( msLeft );
-                    hours = time.getUTCHours();
-                    console.log(hours);
-                    mins = time.getUTCMinutes();
-                    element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
-                    setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
-                }
-            }
-            element = document.getElementById( elementName );
-            endTime = (+new Date) + 1000 * (60*hour +60*minutes + seconds) + 500;
-            console.log(endTime);
-            updateTimer();
-        }
 
-        function countsec( elementName, minutes, seconds ) {
-            var element, endTime, hours, mins, msLeft, time;
-            function twoDigits( n )
-            {
-                return (n <= 9 ? "0" + n : n);
-            }
-            function updateTimer()
-            {
-                msLeft = endTime - (+new Date);
-                if ( msLeft < 1000 ) {
-                    element.innerHTML = "Time is up!";
                 } else {
                     time = new Date( msLeft );
                     hours = time.getUTCHours();
                     mins = time.getUTCMinutes();
                     element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
-                    setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+                    TIMER = setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+                    
                 }
             }
             element = document.getElementById( elementName );
             endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;
             updateTimer();
+            
         }
         
 
@@ -270,8 +278,11 @@
                     var option3 = response["option3"];
                     var option4 = response["option4"];
                     var timeLimit = response["time_limit"];
-                    $("#quesText").text(quesText);
+                    var sectionName = response["section_name"];
+                    var time = parseFloat(timeLimit);
 
+                    $("#quesText").text(quesText);
+                    $("#sectionName").text(sectionName);
 
                     $("#option1Value").text(option1);
                     $("#option2Value").text(option2);
@@ -283,6 +294,16 @@
                     $("#option3").val(option3);
                     $("#option4").val(option4);
                     
+
+                    // inital state
+                    if(TIMER == undefined){
+                        countsec( "ten-countsec", time,00 );
+                    }else{
+                        // while move to the next ques state
+                        window.clearTimeout(TIMER);
+                        countsec( "ten-countsec", time,00 );
+                    }
+                    
                 },
                 error: function(response) {
                    alert("Something Wrong");
@@ -290,32 +311,9 @@
             });
         }
 
-
-        function countdownTimeStart(countDownDate,elementName){
-            //var countDownDate = new Date("Sep 25, 2025 15:00:00").getTime();
-            var x = setInterval(function() {
-                var now = new Date().getTime();
-                var distance = countDownDate - now;
-                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                document.getElementById("elementName").innerHTML = hours + "h "+ minutes + "m " + seconds + "s ";
-                if (distance < 0) {
-                    clearInterval(x);
-                    document.getElementById("elementName").innerHTML = "EXPIRED";
-                }
-            }, 1000);
-        }
         
         $(document).ready(function(){
-            /*var s = "{{tot_time}}";
-            console.log(s);
-            var countDownDate = new Date("Jul 25, 2021 16:37:52").getTime();
-            console.log(countDownDate);*/
-
             
-
-
         });
 
 
@@ -323,8 +321,13 @@
             if (confirm("are you ready to start") == true) {
                 var g = $(".quesCount").attr("data");
                 getQuestion(g);
+    
                 $('.start-exam').show();
                 $('.start-test').hide();
+
+                var time = parseFloat("{{tot_time}}");
+                countdown( "ten-countdown", time, 00 );
+
             }
             
 
@@ -350,6 +353,9 @@
                 var hasclass = $(this).parent().hasClass("current");
                 if(hasclass){
                     var currentQuesNum = parseInt($(this).text());
+
+                    $("#currentQuesCount").text(currentQuesNum-1);
+
                     var previousQues = currentQuesNum - 1; 
 
                     currentQus = currentQuesNum;
@@ -390,6 +396,10 @@
                 var hasclass = $(this).parent().hasClass("current");
                 if(hasclass){
                     var currentQuesNum = parseInt($(this).text());
+                    if(currentQuesNum != totQues){
+
+                        $("#currentQuesCount").text(currentQuesNum+1);
+                    }
                     var previousQues = currentQuesNum - 1; 
                     var nextQues = currentQuesNum; 
 
@@ -411,7 +421,9 @@
             }
             
 
+
         });
+
 
 
     </script>

@@ -1,0 +1,8 @@
+1. after times up move to next question
+2. while click the next question button if any times left keep it 
+5. set pending question
+
+
+
+4. set current question
+3. counter should restart after move to next question vise versa for previous
