@@ -282,11 +282,11 @@
             {% for blogObj in blogs %}
             <div class="col-lg-4 col-sm-6 pb-lg-0 pb-4">
                 <div class="blog-content bgs-white h-100 p-3 br-20">
-                    <a href="bloglanding.php"><img src="{{blogObj.image.url}}" alt="{{blogObj.image_alt_name}}"
+                    <a href="{{blogObj.get_absolute_url}}"><img src="{{blogObj.image.url}}" alt="{{blogObj.image_alt_name}}"
                             class="img-fluid br-15"></a>
                     <h3 class="test-semibold fs-22 lh-28 cl-blue-2 my-3">{{blogObj.title}}</h3>
                     <p>{{blogObj.description}}</p>
-                    <a href="bloglanding.php" class="fs-16 test-bold decrt-none cl-darkblue d-inlne-block">Read More
+                    <a href="{{blogObj.get_absolute_url}}" class="fs-16 test-bold decrt-none cl-darkblue d-inlne-block">Read More
                         <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7"
                             height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
                             <path id="arrow-color" data-name="Path 3"

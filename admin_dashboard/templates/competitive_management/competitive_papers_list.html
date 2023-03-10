@@ -5,7 +5,7 @@
         <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary">Create Paper</h6>
             <div>
-                <a href="javascript:void(0);" data-toggle="modal" data-target="#paperAdd"  class="d-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50 pr-1"></i> Add Paper</a>
+                <a href="{% url 'admin_dashboard:competitve_add_paper' exm_id %}" class="d-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50 pr-1"></i> Add Paper</a>
                  <a href="{% url 'admin_dashboard:competitve_exams_list' %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a> 
             </div>
             </div>
@@ -27,7 +27,7 @@
                             <td>{{obj.title}}</td>
                             <td>{{obj.assigned_questions.count}}</td>
                             <td>
-                                <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-primary btn-circle btn-sm editItem"><i class="fas fa-edit fa-sm text-white-50"></i></a>
+                                <a href="{% url 'admin_dashboard:competitve_edit_paper' exm_id obj.id %}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit fa-sm text-white-50"></i></a>
                                 <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-danger btn-circle btn-sm deleteItem"><i class="fas fa-trash"></i></a>
                                 <a href="{% url 'admin_dashboard:comp_ques_list' exm_id obj.id %}" class="btn btn-success btn-sm">View Questions</a>
                             </td>

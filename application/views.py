@@ -1,6 +1,5 @@
 
 import json
-from datetime import datetime
 
 import environ
 import razorpay
@@ -254,7 +253,6 @@ class CompetitivePage(View):
         buyPaperWise = reverse("application:school_paper_wise")
         buyPaperWise = request.build_absolute_uri(f"{buyPaperWise}?competitive={objId}")
        
-        # FIXME -> CHECKOUT
         redirectUrl = reverse("application:checkout",kwargs={"id":objId})
         redirectUrl = request.build_absolute_uri(f"{redirectUrl}?type=competitive-exam")
 
@@ -507,6 +505,7 @@ class SchoolSubjectWise(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         choosed_class = Classes.objects.get(id = kwargs.get("pk"))
         context = {
+            "class_id":kwargs.get("pk"),
             "subjects":choosed_class.assigned_subjects.all(),
         }
         return render(request,"subject.html",context)
@@ -548,17 +547,20 @@ class SchoolPageWise(LoginRequiredMixin, View):
             for d in data:
                 listOfQuerySet.extend(d.assigned_papers.all())
             context = {
+                "subject_id":subjectId,
                 "papers":listOfQuerySet,
             }
         
         if subjectId != None:
             choosed_subject = get_object_or_404(Subjects, id = subjectId)
             context = {
+                "subject_id":subjectId,
                 "papers":choosed_subject.assigned_papers.all(),
             }
         if competitive != None:
             choosed_subject = get_object_or_404(CompetitiveExam, id = competitive)
             context = {
+                "subject_id":competitive,
                 "papers":choosed_subject.assigned_papers.all(),
             }
         

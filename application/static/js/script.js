@@ -219,3 +219,9 @@ $(document).ready(function () {
     let currentDate = `${day}-${month}-${year}`;
     document.getElementById("current-date").innerHTML = currentDate;
 });
+
+
+
+function goBack() {
+    window.history.back();
+}

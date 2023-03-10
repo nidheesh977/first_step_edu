@@ -1,0 +1,119 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+<style>
+    .form-check-input {
+        margin-top: 8px;
+        margin-left: -27px;
+        width: 20px;
+        height: 20px;
+    }
+    select {
+        background-color: #fff;
+        border: 1px solid #d1d3e2;
+        height: 50px;
+        padding: 12px;
+    }
+</style>
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Create <span>Paper</span></h1>
+        <a href="javascript:void(0);" onclick="goBack()" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a>
+    </div>
+    <div class="p-4">
+        <form class="user row" method="POST">
+            {% csrf_token %}
+            <div class="form-group col-sm-6">
+                <label>Paper Title <span class="text-danger">*</span></label>
+                <input id="duration-input" class="form-control form-control-user" name="paper_title" type="text" required>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Price<span class="text-danger">*</span></label>
+                <input id="duration-input" class="form-control form-control-user" name="price" type="number" required>
+            </div>
+            <div class="form-group col-12">
+                <label>Paper Description <span class="text-danger">*</span></label>
+                <textarea name="paper_description" rows="2" class="form-control form-control-user" required></textarea>
+            </div>
+
+            <div class="customer_records form-group col-12">
+                <div class="row">
+                    <div class="form-group col-6">
+                        <label>Section Name <span class="text-danger">*</span></label>
+                        <input name="section_name" maxlength="20" type="text" class="form-control form-control-user" required>
+                    </div>
+                    <div class="form-group col-6">
+                        <label>Section Description <span class="text-danger">*</span></label>
+                        <textarea name="section_description" id="meta_keywords" rows="1" class="form-control form-control-user" required></textarea>
+                    </div>
+                    
+                </div>
+                <div class="form-group col-2">
+                    <a class="extra-fields-customer" href="#">Add More Section</a>
+                </div>
+            </div>
+            <div class="customer_records_dynamic form-group col-12"></div>
+            
+            <div class="form-group col-12">
+                <label>General Description <span class="text-danger">*</span></label>
+                <div>
+                    <textarea class="form-control form-control-user" id="summernote"  autofocus="autofocus" name="general_instructions"></textarea>
+                </div>
+            </div>
+            <div class="col-12 text-center pt-4">
+                <input type="submit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+    
+    $(document).ready(function() {
+        $('textarea#summernote').summernote({
+            tabsize: 2,
+            height: 100,
+            toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'hr']],
+                    ['help', ['help']]
+                ],
+          });
+        
+        $("form").submit(function(event){
+            if($('textarea#summernote').summernote('isEmpty')) {
+                alert('over all description is empty, fill it!');
+                event.preventDefault();
+              }
+        });
+    });
+
+
+    $('.extra-fields-customer').click(function() {
+        $('.customer_records').clone().appendTo('.customer_records_dynamic');
+        $('.customer_records_dynamic .customer_records').addClass('single remove');
+        $('.single .extra-fields-customer').remove();
+        $('.single').append('<a href="#" class="remove-field btn-remove-customer">Remove Section</a>');
+        $('.customer_records_dynamic > .single').attr("class", "remove");
+      });
+      
+      $(document).on('click', '.remove-field', function(e) {
+        $(this).parent('.remove').remove();
+        
+        e.preventDefault();
+      });
+
+
+
+    </script>
+{% endblock script %}

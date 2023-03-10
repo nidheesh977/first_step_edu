@@ -778,7 +778,6 @@ class CMPapersListView(View):
 
 class CMQuestionsList(View):
     def get(self,request,*args, **kwargs):
-        print(kwargs)
         PAPER_ID = kwargs.get("paper_id")
         CLASS_ID = kwargs.get("class_id")
         SUBJECT_ID = kwargs.get("subject_id")
@@ -1017,6 +1016,73 @@ class CMEditQuestions(View):
             else:
                 return redirect("admin_dashboard:comp_ques_edit", paper_id=PAPER_ID, qus_id =kwargs.get("qus_id"))
             
+
+class CompetitiveManagementAddPaper(View):
+    def get(self,request,*args, **kwargs):
+        return render(request,"competitive_management/comp_add_paper.html")
+    
+    def post(self, request, *args, **kwargs):
+        EXAM_ID = kwargs.get("exm_id")
+        section_name = request.POST.getlist("section_name")
+        section_description = request.POST.getlist("section_description")
+        final_list = []
+        SUBJECT_OBJ = CompetitiveExam.objects.get(id=EXAM_ID)
+        for i in range(0, len(section_name)):
+            d = {
+                "name":section_name[i],
+                "description":section_description[i]
+            }
+            final_list.append(json.dumps(d))
+
+        paper_obj = Papers.objects.create(
+            title = request.POST.get("paper_title"),
+            description = request.POST.get("paper_description"),
+            instructions = request.POST.get("general_instructions"),
+            price = request.POST.get("price"),
+            section_details=final_list,
+        )
+        SUBJECT_OBJ.assigned_papers.add(paper_obj)
+        return redirect("admin_dashboard:competitve_papers_list",exm_id=EXAM_ID)
+
+
+class CompetitiveManagementEditPaper(View):
+    
+    def get(self,request,*args, **kwargs):
+        EXAM_ID = kwargs.get("exm_id")
+        paper_id = kwargs.get("id")
+        paper_obj = Papers.objects.get(id = paper_id)
+        if paper_obj.section_details:
+            SECTION_DETAILS = [json.loads(i) for i in paper_obj.section_details]
+        else:
+            SECTION_DETAILS = []
+        context = {
+            "exm_id":EXAM_ID,
+            "obj":paper_obj,
+            "section_details":SECTION_DETAILS,
+        }
+        return render(request,"competitive_management/comp_edit_paper.html", context)
+
+    def post(self, request, *args, **kwargs):
+        EXAM_ID = kwargs.get("exm_id")
+        paper_id = kwargs.get("id")
+        paper_obj = Papers.objects.get(id=paper_id)
+        section_name = request.POST.getlist("section_name")
+        section_description = request.POST.getlist("section_description",paper_obj.section_details)
+        final_list = []
+        for i in range(0, len(section_name)):
+            d = {
+                "name":section_name[i],
+                "description":section_description[i]
+            }
+            final_list.append(json.dumps(d))
+        paper_obj.title = request.POST.get("paper_title",paper_obj.title)
+        paper_obj.description = request.POST.get("paper_description",paper_obj.description)
+        paper_obj.instructions = request.POST.get("general_instructions",paper_obj.instructions)
+        paper_obj.price = request.POST.get("price",paper_obj.price)
+        paper_obj.section_details=final_list
+        paper_obj.save()
+        
+        return redirect("admin_dashboard:competitve_papers_list",exm_id=EXAM_ID)
 
 class CompetitiveManagementPapersList(View):
     def get(self,request,*args, **kwargs):
