@@ -116,11 +116,11 @@
                                 {% endwith %}
                             </div>
 
-                            <!-- FIXME | Current questions and Pending questions are calculated based on the total count of the questions -->
+                            <!-- TODO | Current questions and Pending questions are calculated based on the total count of the questions which is read from GET request -->
 
                             <div class="d-sm-flex align-items-center justify-content-end">
                                 <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Current Question : <span id="currentQuesCount">1</span></button>
-                                <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Pending Question : <span id="pendingQuesCount">{{total_ques|subtract:1}}</span></button>
+                                <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Pending Question : <span id="pendingQuesCount">0</span></button>
                                 <div class="count-down-box d-inline-flex align-items-center br-10 mt-3 mt-sm-0">
                                     <span class="cl-white">Time Left :</span>
                                     <p class="fs-20 mb-0 cl-white pl-2" id="ten-countdown"></p>
@@ -137,7 +137,7 @@
                                             <p class="fs-16 mb-0 cl-white pl-2" id="ten-countsec"></p>
                                         </div>
                                         <div class="num-test-ques">
-                                            <p>1.</p>
+                                            <p id="questionNumber">1.</p>
                                         </div>
                                         <div>
                                             <p id="quesText">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, temporibus
@@ -312,7 +312,7 @@
                     if(TIMER == undefined){
                         countsec( "ten-countsec", time,00 );
                     }else{
-                        // while move to the next ques state
+                        // while move to the next ques state we should clear the previous timer count
                         window.clearTimeout(TIMER);
                         countsec( "ten-countsec", time,00 );
                     }
@@ -362,12 +362,14 @@
             var totQues = $(".quesCount").length;
             var limit;
             
+
             $.each($(".quesCount"), function(key, value) {
                 var hasclass = $(this).parent().hasClass("current");
                 if(hasclass){
                     var currentQuesNum = parseInt($(this).text());
 
                     $("#currentQuesCount").text(currentQuesNum-1);
+                    $("#questionNumber").text(currentQuesNum-1);
 
                     var previousQues = currentQuesNum - 1; 
 
@@ -393,79 +395,112 @@
                 var nextQusId = $(`.quesCount:eq(${previousQus-1})`).attr("data");
             }
             getQuestion(nextQusId);
+
+            if($("#next_ques").text() == "Submit"){
+                $("#next_ques").text("Next Question");
+             }
+
         });
 
         
 
         
         $("#next_ques").click(function(){
-            var ans = $('input[name="radiogroup"]:checked').val();
-            var quesId;
 
-            var currentQus;
-            var previousQus;
-            var totQues = $(".quesCount").length;
-            var clicked_time = $("#ten-countsec").text();
+                var ans = $('input[name="radiogroup"]:checked').val();
+                var quesId;
+                
+                var pendingQuestions = 1;
 
-            
-            $.each($(".quesCount"), function() {
-                var hasclass = $(this).parent().hasClass("current");
-                if(hasclass){
-                    var currentQuesNum = parseInt($(this).text());
-                    quesId = $(this).attr("data");
-                    if(currentQuesNum != totQues){
+                var currentQus;
+                var previousQus;
+                var totQues = $(".quesCount").length;
+                var clicked_time = $("#ten-countsec").text();
 
-                        $("#currentQuesCount").text(currentQuesNum+1);
+
+                
+                $.each($(".quesCount"), function() {
+                    var hasclass = $(this).parent().hasClass("current");
+                    var pending = $(this).parent().hasClass("pending");
+                    
+                    if(pending){
+                        pendingQuestions++;
                     }
-                    var previousQues = currentQuesNum - 1; 
-                    var nextQues = currentQuesNum; 
 
-                    currentQus = currentQuesNum;
-                    previousQus = previousQues;
+                    if(hasclass){
+                        var currentQuesNum = parseInt($(this).text()); 
+                        quesId = $(this).attr("data");
+                        if(currentQuesNum != totQues){
+
+                            $("#currentQuesCount").text(currentQuesNum+1);
+                            $("#questionNumber").text(currentQuesNum+1);
+
+                            
+                            if(ans==undefined){
+
+                                $("#pendingQuesCount").text(pendingQuestions);
+                            }
+                        }
+                        var previousQues = currentQuesNum - 1; 
+                        var nextQues = currentQuesNum; 
+
+                        currentQus = currentQuesNum;
+                        previousQus = previousQues;
+                    }
+                });
+                
+
+            $.ajax({
+                    type: 'post',
+                    headers: {
+                        'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        action:"submit_ques",
+                        quesId:quesId,
+                        ans:ans,
+                        clicked_time:clicked_time
+                        
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        //console.log(response);
+                        
+                    },
+                    error: function(response) {
+                    alert("Something Wrong");
+                    }
+                });
+
+                if(ans != undefined){
+                    $(`.quesCount:eq(${previousQus})`).parent().addClass("attend");
+                }else{
+                    $(`.quesCount:eq(${previousQus})`).parent().addClass("pending");
                 }
-            });
-            
-           $.ajax({
-                type: 'post',
-                headers: {
-                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
-                },
-                data: {
-                    csrfmiddlewaretoken: '{{ csrf_token }}',
-                    action:"submit_ques",
-                    quesId:quesId,
-                    ans:ans,
-                    clicked_time:clicked_time
+                $(`.quesCount:eq(${currentQus})`).parent().addClass("current");
+                
+
+                if(totQues-1 >= previousQus+1){
+                    var nextQusId = $(`.quesCount:eq(${previousQus+1})`).attr("data");
+                    getQuestion(nextQusId);
                     
-                },
-                dataType: 'json',
-                success: function (response) {
-                    console.log(response);
-                    
-                },
-                error: function(response) {
-                   alert("Something Wrong");
+
                 }
-            });
 
-            
-            $(`.quesCount:eq(${previousQus})`).parent().addClass("attend");
-            $(`.quesCount:eq(${currentQus})`).parent().addClass("current");
-            
+                if(totQues-1 == previousQus+1){
+                    $(this).text("Submit");
 
-            if(totQues-1 >= previousQus+1){
-                var nextQusId = $(`.quesCount:eq(${previousQus+1})`).attr("data");
-                getQuestion(nextQusId);
-            }
 
-            
-            if($('#prev_ques').prop('disabled')){
-                $("#prev_ques").attr("disabled",false);
-            }
 
-            
 
-            
+                }
+
+                
+                if($('#prev_ques').prop('disabled')){
+                    $("#prev_ques").attr("disabled",false);
+                }
+           
 
         });
 

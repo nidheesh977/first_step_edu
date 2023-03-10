@@ -176,6 +176,7 @@ class OurTeam(TemplateView):
 class BlogsList(ListView):
     template_name = "blog.html"
     model = Blogs
+    # FIXME - > pagenated count for developement i just put 6 count  
     paginate_by = 6
     ordering = "created_on"
 
@@ -203,9 +204,8 @@ class BlogView(View):
             "objs":blogsObj,
         }
         return render(request,"blog.html",context)
+    
 
-    def post(self, request,*arg, **kwargs):
-        return render(request,"blog.html")
 class BlogDetailView(DetailView):
     template_name = "bloglanding.html"
     model = Blogs
@@ -272,6 +272,7 @@ class CompetitivePage(View):
 class EventsPage(ListView):
     template_name = "events.html"
     model = Events
+    # FIXME - > pagenated count.. for developement i just put 3  
     paginate_by = 3
     ordering = "created_on"
 
@@ -459,13 +460,13 @@ class ExamView(View):
             submitted_time = request.POST.get("clicked_time")
             time_delta = str_to_timedelta(str_time=submitted_time)
             
-            obj = StudentSubmittedAnswers.objects.create(
-                student = request.user,
-                question = question_obj,
-                submitted_answer = answer,
-                is_correct_answer = is_correct_ans,
-                answered_time = time_delta,
-            )
+            # obj = StudentSubmittedAnswers.objects.create(
+            #     student = request.user,
+            #     question = question_obj,
+            #     submitted_answer = answer,
+            #     is_correct_answer = is_correct_ans,
+            #     answered_time = time_delta,
+            # )
 
         return JsonResponse({})
     
@@ -486,7 +487,6 @@ class SchoolPage(View):
         buySubjectWise = reverse("application:school_subject_wise",kwargs={"pk":objId})
         buySubjectWise = request.build_absolute_uri(buySubjectWise)
 
-        # FIXME -> CHECKOUT
         redirectUrl = reverse("application:checkout",kwargs={"id":objId})
         redirectUrl = request.build_absolute_uri(f"{redirectUrl}?type=class")
 
@@ -516,8 +516,7 @@ class SchoolSubjectWise(LoginRequiredMixin, View):
 
         buyPaperWise = reverse("application:school_paper_wise")
         buyPaperWise = request.build_absolute_uri(f"{buyPaperWise}?subject={objId}")
-        
-        # FIXME -> CHECKOUT
+
         redirectUrl = reverse("application:checkout",kwargs={"id":objId})
         redirectUrl = request.build_absolute_uri(f"{redirectUrl}?type=subject")
 
@@ -571,7 +570,6 @@ class SchoolPageWise(LoginRequiredMixin, View):
         classes_obj = Papers.objects.get(id=objId)
         competitive = request.GET.get("competitive")
         
-        # FIXME -> CHECKOUT
         if competitive == None:
             redirectUrl = reverse("application:checkout",kwargs={"id":objId})
             redirectUrl = request.build_absolute_uri(f"{redirectUrl}?type=paper")
@@ -677,6 +675,10 @@ class MakePayment(LoginRequiredMixin,View):
 def callback(request,*args, **kwargs):
     ObjId = kwargs.get("id")
     fromWhere = request.GET.get("type")
+    
+    # fromWhere variable is used to find the obj that where its coming from.
+    # if the payment is for class that it should add to classes field of StudentPayments model.
+
     user = CustomUser.objects.get(id=kwargs.get("uid"))
 
     def verify_signature(response_data):

@@ -4,9 +4,10 @@
 
 
 
-# Project Details
+##  Project Details
 * application(application name) is an frontend integrated application
 * admin_dashboard application is for client admin
+
 #### Project application
 * for marquee text in home page just refer the first_edu/context_processors.py
 * root folder is first_edu
@@ -15,5 +16,6 @@
 * for blog prefix url i'm using the .env file. this blog prefix only will call globally in all of the blog listing and detail 
     pages(both appication views and html).
 
-### Admin Dashboard
+#### Admin Dashboard
+* console will ask mobile number while run createsuperuser where you have to enter mobile number with +91 or any other along with mobile number 
 * in admin dashboard image size(hxw) restrictions are there while uploading images. size configurations are in the utils/constants.py
