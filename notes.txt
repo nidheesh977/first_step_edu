@@ -1,13 +1,10 @@
-reset checked options while move to the next question
-after times up move to next question
-while click the next question button if any times left keep it 
-set pending question
+if global time is finished - autosubmit
+while submit ans should save and the answers should point to the paper obj
 
 
 
-set current question
-counter should restart after move to next question vise versa for previous
 
 
-admin username = admin@gmail.
+
+admin username = admin@gmail.com
 admin password = Admin@123

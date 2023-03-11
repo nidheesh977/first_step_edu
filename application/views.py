@@ -12,11 +12,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail.message import EmailMessage
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, ListView, TemplateView, View
 
 from utils.constants import EmailContents, TextConstants
-from utils.functions import OTP_Gen, is_ajax, str_to_timedelta
+from utils.functions import OTP_Gen, is_ajax
 
 from .models import *
 
@@ -354,11 +355,10 @@ class ExamView(View):
         paper_obj = get_object_or_404(Papers,id=paper_id)
         questions = paper_obj.assigned_questions.all()
 
+
         SECTION_DETAILS = []
         TOTAL_QUES = 0
         ALL_QUES = []
-
-    
         
         if paper_obj.section_details:
             for count, section_detail in enumerate(paper_obj.section_details):
@@ -378,11 +378,9 @@ class ExamView(View):
                     previous_dict["section_questions_details"] = f"{previous_el+1} - {previous_el+SECTION_QUES_COUNT}"
                 ALL_QUES.extend(section_questions)
 
-
         
         TOTAL_TIME =sum([ques.section_time_limit for ques in ALL_QUES],timedelta(0,0))
         TIME_IN_MIN = TOTAL_TIME.total_seconds()/60
-
 
 
         if class_id and subject_id:
@@ -439,7 +437,7 @@ class ExamView(View):
         if request.POST.get("action") == "getQues":
             question_id = request.POST.get("quesId")
             question_obj = get_object_or_404(Questions,id=question_id)
-            time_limit = question_obj.section_time_limit.total_seconds()/60
+            time_limit = question_obj.section_time_limit.total_seconds()
             to_return = {
                 "question":question_obj.question,
                 "option1":question_obj.option1,
@@ -451,14 +449,18 @@ class ExamView(View):
             }
             return JsonResponse(to_return)
         
-        if request.POST.get("action") == "submit_ques":
-
-            question_id = request.POST.get("quesId")
-            question_obj = get_object_or_404(Questions,id=question_id)
-            answer = request.POST.get("ans")
-            is_correct_ans = True if question_obj.correct_answer == answer else False
-            submitted_time = request.POST.get("clicked_time")
-            time_delta = str_to_timedelta(str_time=submitted_time)
+        if request.POST.get("action") == "finalSubmit":
+            print(request.POST)
+            DATA = request.POST.getlist("data[]")
+            for i in DATA:
+                loaded_json = json.loads(i)
+                print(loaded_json)
+            # question_id = request.POST.get("quesId")
+            # question_obj = get_object_or_404(Questions,id=question_id)
+            # answer = request.POST.get("ans")
+            # is_correct_ans = True if question_obj.correct_answer == answer else False
+            # submitted_time = request.POST.get("clicked_time")
+            # time_delta = str_to_timedelta(str_time=submitted_time)
             
             # obj = StudentSubmittedAnswers.objects.create(
             #     student = request.user,
@@ -467,7 +469,9 @@ class ExamView(View):
             #     is_correct_answer = is_correct_ans,
             #     answered_time = time_delta,
             # )
+            REDIRECT_URL = request.build_absolute_uri(reverse('application:enrolled_classes'))
 
+            return JsonResponse({"redirect_url":REDIRECT_URL})
         return JsonResponse({})
     
 class SchoolPage(View):

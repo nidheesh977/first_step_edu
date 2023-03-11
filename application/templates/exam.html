@@ -199,6 +199,8 @@
 
     <script>
         var TIMER;
+        var answersWithIds = [];
+
         window.onbeforeunload = function ()
         {
             return "";
@@ -217,6 +219,7 @@
                msLeft = endTime - (+new Date);
                if (msLeft < 1000) {
                    element.innerHTML = "Time is up!";
+                   finalSubmit();
                } else {
                    time = new Date(msLeft);
                    hours = time.getUTCHours();
@@ -241,10 +244,7 @@
                 msLeft = endTime - (+new Date);
                 if ( msLeft < 1000 ) {
                     element.innerHTML = "Time is up!";
-                    $("#option1").attr("disabled", true);
-                    $("#option2").attr("disabled", true);
-                    $("#option3").attr("disabled", true);
-                    $("#option4").attr("disabled", true);
+                    $('#next_ques').trigger('click');
 
                 } else {
                     time = new Date( msLeft );
@@ -259,6 +259,82 @@
             endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;
             updateTimer();
             
+        }
+
+        function addDataToAnswersWithIds(quesId,ans,clicked_time,ans_id){
+            const searchId = quesId;
+            const index = answersWithIds.findIndex(obj => obj.id === searchId);
+            if (index !== -1) {
+                var ob = answersWithIds[index];
+                ob["id"] = quesId;
+                ob["ans"] = ans;
+                ob["submitted_time"] = clicked_time;
+                ob["ans_id"] = ans_id;
+
+            } else {  
+                var stringFy = {
+                        "id":quesId,
+                        "ans":ans,
+                        "submitted_time":clicked_time,
+                        "ans_id":ans_id,
+                }; 
+                answersWithIds.push(stringFy);
+                    
+            }
+
+        }
+
+        function setCheckedOption(quesId){
+            const searchId = quesId;
+            const index = answersWithIds.findIndex(obj => obj.id === searchId);
+            if (index !== -1) {
+                var ob = answersWithIds[index];
+                if(ob["ans_id"] != undefined){
+                    var p = "#"+ob["ans_id"];
+                    $(p)[0].checked = true;
+                }
+                
+            }
+
+        }
+
+
+
+        function finalSubmit(){
+
+            var data=[];
+            for(var i=0;i<answersWithIds.length;i++){
+                var parse = JSON.stringify(answersWithIds[i]);
+                data.push(parse);
+            }
+
+
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action:"finalSubmit",
+                    data:data,
+                },
+                dataType: 'json',
+                success: function (response) {
+                    swal({
+                        title: "Paper Submitted",
+                        icon: "success",
+                    }).then(function(isConfirm) {
+                        if (isConfirm) {
+                            window.location = response["redirect_url"];
+                        }
+                    });
+                    
+                },
+                error: function(response) {
+                   alert("Something Wrong");
+                }
+            });
         }
         
 
@@ -276,6 +352,9 @@
                 },
                 dataType: 'json',
                 success: function (response) {
+
+                    var timesUp = false;
+
                     var quesText = response["question"];
                     var option1 = response["option1"];
                     var option2 = response["option2"];
@@ -307,14 +386,71 @@
                     $("#option3").val(option3);
                     $("#option4").val(option4);
                     
+                    
 
-                    // initial state
-                    if(TIMER == undefined){
-                        countsec( "ten-countsec", time,00 );
-                    }else{
-                        // while move to the next ques state we should clear the previous timer count
-                        window.clearTimeout(TIMER);
-                        countsec( "ten-countsec", time,00 );
+                    var totSeconds ;
+
+                    for(var i=0;i<answersWithIds.length;i++){
+                        var parsedJson = answersWithIds[i];
+                        if(id == parsedJson["id"]){
+                            var submitted_time = parsedJson["submitted_time"];
+                            if (submitted_time != "Time is up!"){
+                                var splitted_times = submitted_time.split(":");
+                                switch(splitted_times.length) {
+                                    case 2:
+                                    var minut = parseInt(splitted_times[0]); 
+                                    var sec = parseInt(splitted_times[1]);
+                                    var minToSec = minut * 60;
+                                    totSeconds = minToSec + sec;
+                                    
+                                    break;
+                
+                                    case 3:
+                                        var hour = parseInt(splitted_times[0]); 
+                                        var minut = parseInt(splitted_times[1]); 
+                                        var sec = parseInt(splitted_times[2]);
+                                        var hrsToSec =  (hour * 60) * 60;
+                                        var minToSec = minut * 60;
+                                        totSeconds = hrsToSec + minToSec + sec;
+
+                                    break;
+                
+                                    default:
+                                    // code block
+                                }
+
+
+                            }else{
+                                timesUp = true;
+                                window.clearTimeout(TIMER);
+                                $("#option1").attr("disabled", true);
+                                $("#option2").attr("disabled", true);
+                                $("#option3").attr("disabled", true);
+                                $("#option4").attr("disabled", true);
+                                $("#ten-countsec").text("Time is up!");
+                            }
+                        }
+                    }
+                    
+                    setCheckedOption(id);
+                    
+                    if(!timesUp){
+                        // first time loading
+                        if(TIMER == undefined){
+                            countsec( "ten-countsec",00, time );
+                        }else{
+                            // while move to the next ques state we should clear the previous timer count
+                            if(totSeconds != undefined){
+                                window.clearTimeout(TIMER);
+                                countsec( "ten-countsec",00,totSeconds );
+                            }else{
+
+                                window.clearTimeout(TIMER);
+                                countsec( "ten-countsec",00,time );
+                            }
+                            
+                        }
+
                     }
                     
                 },
@@ -325,10 +461,6 @@
         }
 
         
-        $(document).ready(function(){
-            
-        });
-
 
         $(document).on("click","#startTest", function(){
             if (confirm("are you ready to start") == true) {
@@ -357,16 +489,23 @@
 
         $("#prev_ques").click(function(){
             var ans = $('input[name="radiogroup"]:checked').val();
+            var ans_id = $('input[name="radiogroup"]:checked').attr("id");
+            var quesId;
             var currentQus;
             var previousQus;
             var totQues = $(".quesCount").length;
             var limit;
-            
+            var clicked_time = $("#ten-countsec").text();
+            var pendingQuestions = $("li." + "pending").find("*").length;
+
+
 
             $.each($(".quesCount"), function(key, value) {
                 var hasclass = $(this).parent().hasClass("current");
+                
                 if(hasclass){
                     var currentQuesNum = parseInt($(this).text());
+                    quesId = $(this).attr("data");
 
                     $("#currentQuesCount").text(currentQuesNum-1);
                     $("#questionNumber").text(currentQuesNum-1);
@@ -377,6 +516,8 @@
                     previousQus = previousQues;
                 }
             });
+
+
             if(previousQus == 1){
                 limit = true;
             }
@@ -387,18 +528,22 @@
             }
             if($(`.quesCount:eq(${currentQus-1})`).parent().hasClass("current attend")){
                 $(`.quesCount:eq(${currentQus-1})`).parent().removeClass("current attend").addClass("current");
-                var nextQusId = $(`.quesCount:eq(${currentQus-1})`).attr("data");
+                var QusId = $(`.quesCount:eq(${currentQus-1})`).attr("data");
                 
             }else{
                 $(`.quesCount:eq(${previousQus-1})`).parent().attr("class", "current");
                 $(`.quesCount:eq(${currentQus-1})`).parent().attr("class", "");
-                var nextQusId = $(`.quesCount:eq(${previousQus-1})`).attr("data");
+                var QusId = $(`.quesCount:eq(${previousQus-1})`).attr("data");
             }
-            getQuestion(nextQusId);
+            getQuestion(QusId);
+            addDataToAnswersWithIds(quesId, ans, clicked_time, ans_id);
 
             if($("#next_ques").text() == "Submit"){
                 $("#next_ques").text("Next Question");
-             }
+            }
+
+            $("#pendingQuesCount").text(pendingQuestions-1);
+            
 
         });
 
@@ -408,6 +553,7 @@
         $("#next_ques").click(function(){
 
                 var ans = $('input[name="radiogroup"]:checked').val();
+                var ans_id = $('input[name="radiogroup"]:checked').attr("id");
                 var quesId;
                 
                 var pendingQuestions = 1;
@@ -417,6 +563,9 @@
                 var totQues = $(".quesCount").length;
                 var clicked_time = $("#ten-countsec").text();
 
+               if($(this).text() == "Submit"){
+                    finalSubmit();
+                }
 
                 
                 $.each($(".quesCount"), function() {
@@ -436,10 +585,10 @@
                             $("#questionNumber").text(currentQuesNum+1);
 
                             
-                            if(ans==undefined){
+                            //if(ans==undefined){
 
-                                $("#pendingQuesCount").text(pendingQuestions);
-                            }
+                            //    $("#pendingQuesCount").text(pendingQuestions);
+                           // }
                         }
                         var previousQues = currentQuesNum - 1; 
                         var nextQues = currentQuesNum; 
@@ -448,30 +597,7 @@
                         previousQus = previousQues;
                     }
                 });
-                
-
-            $.ajax({
-                    type: 'post',
-                    headers: {
-                        'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
-                    },
-                    data: {
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                        action:"submit_ques",
-                        quesId:quesId,
-                        ans:ans,
-                        clicked_time:clicked_time
-                        
-                    },
-                    dataType: 'json',
-                    success: function (response) {
-                        //console.log(response);
-                        
-                    },
-                    error: function(response) {
-                    alert("Something Wrong");
-                    }
-                });
+            
 
                 if(ans != undefined){
                     $(`.quesCount:eq(${previousQus})`).parent().addClass("attend");
@@ -484,22 +610,21 @@
                 if(totQues-1 >= previousQus+1){
                     var nextQusId = $(`.quesCount:eq(${previousQus+1})`).attr("data");
                     getQuestion(nextQusId);
+                    addDataToAnswersWithIds(quesId, ans, clicked_time, ans_id);
                     
-
                 }
-
+               
                 if(totQues-1 == previousQus+1){
                     $(this).text("Submit");
 
-
-
-
                 }
-
                 
                 if($('#prev_ques').prop('disabled')){
                     $("#prev_ques").attr("disabled",false);
                 }
+
+                var pendingQuestions = $("li." + "pending").find("*").length;
+                $("#pendingQuesCount").text(pendingQuestions);
            
 
         });

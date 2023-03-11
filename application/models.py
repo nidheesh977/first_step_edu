@@ -353,6 +353,7 @@ class AttendedPapers(ImportdantDates):
     student = models.ForeignKey("application.CustomUser", verbose_name=_("Student"), on_delete=models.CASCADE, blank=True, null=True)
     paper = models.ForeignKey("application.Papers", verbose_name=_("Paper"), blank=True, null=True, on_delete=models.CASCADE)
     attended_questions = models.ManyToManyField("application.StudentSubmittedAnswers", verbose_name=_("Submitted Answers"),blank=True,)
+    attend_date = models.DateField(_("Attend Date"), auto_now=False, auto_now_add=False, null=True,blank=True)
 
     class Meta:
         verbose_name = _("AttendedPapers")
