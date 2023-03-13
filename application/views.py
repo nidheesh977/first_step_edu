@@ -1,4 +1,5 @@
 
+from datetime import datetime
 import json
 
 import environ
@@ -17,7 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, ListView, TemplateView, View
 
 from utils.constants import EmailContents, TextConstants
-from utils.functions import OTP_Gen, is_ajax
+from utils.functions import OTP_Gen, is_ajax, str_to_timedelta
 
 from .models import *
 
@@ -355,7 +356,6 @@ class ExamView(View):
         paper_obj = get_object_or_404(Papers,id=paper_id)
         questions = paper_obj.assigned_questions.all()
 
-
         SECTION_DETAILS = []
         TOTAL_QUES = 0
         ALL_QUES = []
@@ -378,10 +378,8 @@ class ExamView(View):
                     previous_dict["section_questions_details"] = f"{previous_el+1} - {previous_el+SECTION_QUES_COUNT}"
                 ALL_QUES.extend(section_questions)
 
-        
         TOTAL_TIME =sum([ques.section_time_limit for ques in ALL_QUES],timedelta(0,0))
         TIME_IN_MIN = TOTAL_TIME.total_seconds()/60
-
 
         if class_id and subject_id:
             class_obj = get_object_or_404(Classes,id=class_id)
@@ -450,27 +448,33 @@ class ExamView(View):
             return JsonResponse(to_return)
         
         if request.POST.get("action") == "finalSubmit":
-            print(request.POST)
             DATA = request.POST.getlist("data[]")
+            attend_paper_obj, create = AttendedPapers.objects.get_or_create(
+                    student = request.user,
+                    paper = paper_obj,
+                    attend_date = datetime.now().date(),
+                )
             for i in DATA:
                 loaded_json = json.loads(i)
-                print(loaded_json)
-            # question_id = request.POST.get("quesId")
-            # question_obj = get_object_or_404(Questions,id=question_id)
-            # answer = request.POST.get("ans")
-            # is_correct_ans = True if question_obj.correct_answer == answer else False
-            # submitted_time = request.POST.get("clicked_time")
-            # time_delta = str_to_timedelta(str_time=submitted_time)
-            
-            # obj = StudentSubmittedAnswers.objects.create(
-            #     student = request.user,
-            #     question = question_obj,
-            #     submitted_answer = answer,
-            #     is_correct_answer = is_correct_ans,
-            #     answered_time = time_delta,
-            # )
-            REDIRECT_URL = request.build_absolute_uri(reverse('application:enrolled_classes'))
+                question_id = loaded_json.get("id") 
+                question_obj = get_object_or_404(Questions,id=question_id)
+                answer = loaded_json.get("ans")
+                is_correct_ans = True if question_obj.correct_answer == answer else False
+                submitted_time = loaded_json.get("submitted_time")
+                time_delta = str_to_timedelta(str_time=submitted_time)
 
+                obj = StudentSubmittedAnswers.objects.create(
+                    student = request.user,
+                    question = question_obj,
+                    submitted_answer = answer,
+                    is_correct_answer = is_correct_ans,
+                    answered_time = time_delta,
+                )
+                attend_paper_obj.attended_questions.add(obj)
+            
+            # BUG: -> needs to mark it that the student is completed this paper.
+
+            REDIRECT_URL = request.build_absolute_uri(reverse('application:enrolled_classes'))
             return JsonResponse({"redirect_url":REDIRECT_URL})
         return JsonResponse({})
     
@@ -536,7 +540,6 @@ class SchoolSubjectWise(LoginRequiredMixin, View):
         
         return JsonResponse(toReturn)
 
-
 class SchoolPageWise(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         classId = request.GET.get("class")
@@ -591,8 +594,6 @@ class SchoolPageWise(LoginRequiredMixin, View):
         
         return JsonResponse(toReturn)
     
-
-
 class Checkout(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         
@@ -623,10 +624,6 @@ class Checkout(LoginRequiredMixin, View):
             "papers_count":papers_count,
         }
         return render(request,"checkout.html",context)
-
-
-
-
 
 class MakePayment(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):

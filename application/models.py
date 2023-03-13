@@ -253,6 +253,8 @@ class Papers(MetaDetails):
     price = models.DecimalField(_("Price"), max_digits=8, decimal_places=2,blank=True, null=True)
     section_details = ArrayField(models.JSONField(null = True,blank = True), blank=True, null = True)
 
+    completed_by = models.ManyToManyField("application.CustomUser", verbose_name=_("Completed By"), blank=True)
+
 
     class Meta:
         verbose_name = _("Papers")
