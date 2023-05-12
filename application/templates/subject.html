@@ -1,13 +1,12 @@
 {% extends 'application_base.html' %}
-
+{% load static %}
 {% block content %}
 <section class="section_subject-banner bgs-lightblue py-4 py-sm-5">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 align-self-center">
-                <h2 class="test-bold fs-40 font-size cl-darkblue">10 Class Details</h2>
-                <p class="cl-blue-1 fs-15 py-4 right-padding">Loreum Ipsum is simply dummy text of the printing and
-                    typesetting industry.</p>
+                <h2 class="test-bold fs-40 font-size cl-darkblue">{{class.title}}</h2>
+                <p class="cl-blue-1 fs-15 py-4 right-padding">{{class.description}}</p>
                 <a href="#viewSubject"
                     class="text-white fs-15 bgs-black decrt-none px-5 d-inline-block py-2 lh-35 landing-links">View
                     Subjects
@@ -27,7 +26,7 @@
                     </svg></a>
             </div>
             <div class="col-lg-6 about-banner text-lg-right text-center">
-                <img src="assets\images\test-banner.png" alt="" class="img-fluid">
+                <img src="{% static '\images\test-banner.png' %}" alt="" class="img-fluid">
             </div>
         </div>
     </div>
@@ -96,7 +95,7 @@
             </div>
 
             <div class="col-lg-6 col-12 pt-lg-0 pt-3 text-center text-lg-left">
-                <img src="assets\images\we-offer.png" class="img-fluid we-offer-img  ml-xl-5" alt="Los Angeles">
+                <img src="{% static '\images\we-offer.png' %}" class="img-fluid we-offer-img  ml-xl-5" alt="Los Angeles">
             </div>
         </div>
     </div>
@@ -214,7 +213,7 @@
                 </div>
             </div>
             <div class="col-lg-6 align-self-center questions-banner-img">
-                <img src="assets\images\ask-questions.png" class="img-fluid img-left questions-img " alt="Los Angeles">
+                <img src="{% static '\images\ask-questions.png' %}" class="img-fluid img-left questions-img " alt="Los Angeles">
             </div>
         </div>
     </div>
@@ -228,91 +227,22 @@
                 quo unde provident exercitationem eligendi! provident exercitationem.</p>
         </div>
         <div class="review-slider owl-carousel owl-theme pt-lg-4">
-            <div class="item row">
-                <div class="col-lg-2">
-                    <img src="assets\images\review-1.png" alt="John Doe" class="mr-5 rounded-circle"
-                        style="width:78px;">
-                </div>
-                <div class="col-lg-10 double-quates">
-                    <h6 class="feedback-font  test-bold cl-black padding fs-18">John Doe</h6>
-                    <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                    <div class="quates-img">
-                        <img src="assets\images\double-qts.png" alt="">
+            {% for testiObj in testimonials %}
+                <div class="item row">
+                    <div class="col-lg-2">
+                        <img src="{{testiObj.image.url}}" alt="{{testiObj.image_alt_name}}" class="mr-5 rounded-circle"
+                            style="width:78px;">
                     </div>
-                    <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                        adipisicing elit. Distinctio minus voluptas
-                        similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
-
-                </div>
-            </div>
-            <div class="item row">
-                <div class="col-lg-2">
-                    <img src="assets\images\review-2.png" alt="John Doe" class="mr-5 rounded-circle"
-                        style="width:78px;">
-                </div>
-                <div class="col-lg-10 double-quates">
-                    <h6 class="feedback-font  test-bold cl-black padding fs-18">John Doe</h6>
-                    <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                    <div class="quates-img">
-                        <img src="assets\images\double-qts.png" alt="">
+                    <div class="col-lg-10 double-quates">
+                        <h6 class="feedback-font  test-bold cl-black padding fs-18">{{testiObj.client_name}}</h6>
+                        <p class="fs-13 cl-dark mb-0">{{testiObj.client_role}}</p>
+                        <div class="quates-img">
+                            <img src="{% static 'images/double-qts.png' %}" alt="">
+                        </div>
+                        <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">{{testiObj.description}}</p>
                     </div>
-                    <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                        adipisicing elit. Distinctio minus voluptas
-                        similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
-
                 </div>
-            </div>
-            <div class="item row">
-                <div class="col-lg-2">
-                    <img src="assets\images\review-1.png" alt="John Doe" class="mr-5 rounded-circle"
-                        style="width:78px;">
-                </div>
-                <div class="col-lg-10 double-quates">
-                    <h6 class="feedback-font test-bold cl-black padding fs-18">John Doe</h6>
-                    <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                    <div class="quates-img">
-                        <img src="assets\images\double-qts.png" alt="">
-                    </div>
-                    <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                        adipisicing elit. Distinctio minus voluptas
-                        similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
-
-                </div>
-            </div>
-            <div class="item row">
-                <div class="col-lg-2">
-                    <img src="assets\images\review-2.png" alt="John Doe" class="mr-5 rounded-circle"
-                        style="width:78px;">
-                </div>
-                <div class="col-lg-10 double-quates">
-                    <h6 class="feedback-font test-bold cl-black padding fs-18">John Doe</h6>
-                    <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                    <div class="quates-img">
-                        <img src="assets\images\double-qts.png" alt="">
-                    </div>
-                    <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                        adipisicing elit. Distinctio minus voluptas
-                        similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
-
-                </div>
-            </div>
-            <div class="item row">
-                <div class="col-lg-2">
-                    <img src="assets\images\review-1.png" alt="John Doe" class="mr-5 rounded-circle"
-                        style="width:78px;">
-                </div>
-                <div class="col-lg-10 double-quates">
-                    <h6 class="feedback-font test-bold cl-black padding fs-18">John Doe</h6>
-                    <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                    <div class="quates-img">
-                        <img src="assets\images\double-qts.png" alt="">
-                    </div>
-                    <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                        adipisicing elit. Distinctio minus voluptas
-                        similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
-
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>

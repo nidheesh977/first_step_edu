@@ -15,9 +15,14 @@
     src: url(../font/Montserrat-Bold.ttf);
 }
 
+.question-image{
+    max-width: 100%;
+}
+
 html {
     scroll-behavior: smooth;
 }
+
 
 .clearfix::after {
     content: ' ';
@@ -335,7 +340,7 @@ color: transparent !important;
 }
 
   .section-header .navbar{
-      padding: 15px 0 !important;
+      padding: 5px 0 !important;
   }
   .section-header .navbar .navbar-nav .nav-link:hover::after {
     width: 100%;
@@ -393,6 +398,11 @@ color:#FFCB08;
     position: relative;
     top: -5px;
   }
+.section_home-banner{
+    background: #ECEBF6;
+    margin-bottom: 20px;
+  }
+
   .section_home-banner .owl-nav button.owl-next::before, .section_home-banner .owl-nav button.owl-prev::after {
     position: absolute;
     top: 45%;
@@ -793,6 +803,7 @@ justify-content: space-between;
     color: #001511 !important;
 }
 .section_home-events .content-events {
+    width: 100%;
     position: absolute;
     bottom: 25px;
 }
@@ -1108,6 +1119,10 @@ font-size: 18px !important;
     .head-size-1{
         font-size: 25px;
     }
+    .head-size-2{
+        font-size: 22px;
+        line-height: 25px;
+    }
     .padding{
         padding-top: 20px;
     }
@@ -1214,6 +1229,12 @@ font-size: 18px !important;
     width: 100% !important;
 }
 } 
+@media (max-width:1240px){
+    .section-header .nav-item{
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+}
 @media(max-width:992px){
     .section-olympiad-landing .olympiad-img-section{
         text-align: center !important;
@@ -1755,7 +1776,7 @@ span.hide-box, span.side-box {
     border: 1px solid #DEDEDE;
 }
 .leaderboard-section-table .leader-board-table {
-    width: 850px;
+    width: 100%;
     border: 1px solid #DEDEDE;
 }
 .leaderboard-section-table tr.br-box {
@@ -2116,7 +2137,7 @@ span.hide-box, span.side-box {
 }
   @media (max-width: 991px) {
     .section-header .navbar{
-        padding: 10px 0 !important;
+        padding: 5px 0 !important;
     }
     .section-olympiad-landing .test-lan-des-content{
         width: 100%;
@@ -2297,4 +2318,7 @@ span.hide-box, span.side-box {
 	100% {
 		transform: translateY(0px);
 	}
+}
+.home-banner-img{
+    width: initial !important;
 }

@@ -1,0 +1,331 @@
+{% extends 'application_base.html' %}
+{% load static %}
+{% block content %}
+{% now "Y-m-d" as today %}
+<section class="section_class-banner bgs-lightblue py-4 py-sm-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 align-self-center">
+                <h2 class="test-bold fs-40 font-size cl-darkblue">Olympiad Exams</h2>
+                <p class="cl-blue-1 fs-15 py-4 right-padding">Loreum Ipsum is simply dummy text of the printing and
+                    typesetting industry.</p>
+                <a href="#viewClass" class="text-white fs-15 bgs-black decrt-none px-5 d-inline-block py-2 lh-35 landing-links">View
+                    Exam
+                    <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7"
+                        height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                        <path id="arrow-color" data-name="Path 3"
+                            d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                            transform="translate(-3.278 -102.821)" fill="#fff"></path>
+                    </svg></a>
+            </div>
+            <div class="col-lg-6 about-banner text-lg-right text-center">
+                <img src="{% static 'images\test-banner.png' %}" alt="" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</section>
+<section class="section_home-olympiad-test py-3 py-sm-5" id="viewClass">
+    <div class="container">
+        <div class="text-center">
+            <h2 class=" test-bold head-size fs-45 cl-black pb-1 lh-55">All Olympiad Exams</h2>
+            <p class="fs-15 cl-dark px-0 col-md-8 m-auto pt-lg-1  pb-lg-4">Lorem ipsum dolor sit amet adipisicing elit.
+                Commodi aut recusandae illo. Voluptatibus illo delectus totam earum
+                quo unde provident exercitationem eligendi! provident exercitationem.</p>
+        </div>
+        <div class="d-flex justify-content-end py-4">
+            <select class="form-control" id="classDropDown">
+                <option selected disabled>Select Exam</option>
+                <option value="popular" >Popular</option>
+                {% for obj in objs %}
+                    <option value="{{obj.id}}">{{obj.paper.title}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="row pt-3" id="classContainer">
+            {% for obj in objs %}
+            
+            <div class="col-md-6 pb-4 mb-md-2">
+                <div class="card card-over mb-2">
+                    <div class="card-body">
+                      <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">{{obj.exam_date}} - {{obj.exam_time}}</p>
+                      <h5 class="test-semibold  fs-18 cl-black">{{obj.paper.title}}</h5>
+                      <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">{{obj.paper.description}}</p>
+                      <div class="d-xl-flex justify-content-between  align-items-center">
+                        <div class="col-sm-4 col-md-12 col-lg-4 pr-0">
+                          <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; {{obj.paper.price}}</p>
+                      </div>
+                      {% if today == obj.exam_date|date:"Y-m-d" %}
+                        <span
+                            class="text-white fs-15 bgs-black decrt-none enroll-button">Live
+                        </span>
+                      {% elif obj in olympiad_enrolled %}
+                          <span class="text-white fs-15 bgs-black decrt-none enroll-button">Registered</span>
+                      {% else %}
+                      <a href="{% url 'application:checkout' obj.id %}?type=olympiad-exam" class="text-white fs-15 bgs-black decrt-none enroll-button">Register
+                          <span class="arrow-spacing"></span>
+                          <svg xmlns="http://www.w3.org/2000/svg"  width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622"><path id="arrow-color" data-name="Path 3"
+                                      d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                      transform="translate(-3.278 -102.821)" fill="#fff" />
+                          </svg>
+                      </a>
+                      {% endif %}
+                      </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<section class="section_home-we-offer bgs-lightblue py-4 py-sm-5">
+    <div class="container py-3">
+        <div class="row">
+            <div class="col-lg-6 col-12 align-self-center">
+                <h2 class="test-bold fs-45  head-size cl-black  pb-md-3 lh-55">What we offer</h2>
+                <p class="fs-15 cl-dark  pr-lg-5">Lorem ipsum dolor sit ametLorem ipsulor sit amet consectetur
+                    adipisicing elit. Harum porro quae nam perferendis nostrum perspiciatis pariatur maiores doloremque
+                    sequi aliquam facere expedita facilis totam tempora, quas nesciunt illo cum fuga mollitia assumenda
+                    debitis omnis. Deserunt aut modi est inventore. Officia ratione quae aperiam sequi nisi accusantium
+                    placeat deser.</p>
+                <p class="fs-15 cl-dark right-padding">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sequi,
+                    labore nostrum, beatae molestiae adipisci, illo distinctio aliquid sapiente nemo aspernatur
+                    voluptate doloremque tempora itaque quia?</p>
+            </div>
+
+            <div class="col-lg-6 col-12 pt-lg-0 pt-3 text-center text-lg-left">
+                <img src="{% static 'images\we-offer.png' %}" class="img-fluid we-offer-img  ml-xl-5" alt="Los Angeles">
+            </div>
+        </div>
+    </div>
+</section>
+<section class="section_home-frequnt-questions pt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2 class="test-bold fs-35 head-size cl-black pb-2 pt-3 lh-55">Frequently Asked Question</h2>
+                <p class="fs-15 cl-dark pb-3 frequent-right">Lorem ipsum Lorem ipsum dolor sit dolor sit amet
+                    consectetur pisicing Quod deserunt quo totam dignissimos sint impedit.</p>
+                <div id="sections_courselanding-faq" class="section_courselanding-faq bgs-light">
+                    <div class="accordion" id="category_1">
+                        <div class="card pb-3">
+                            <div class="card-header bgs-lightblue " id="category1_one">
+                                <a href="#" class="btn-header-link decrt-none " data-toggle="collapse"
+                                    data-target="#category1-1" aria-expanded="true" aria-controls="category1-1">
+                                    <p class="fs-15 test-medium radius cl-black  pl-5 pr-5 py-3 mb-0">Lorem Ipsum is simply
+                                        dummy text dummy?</P>
+                                </a>
+                                <div id="category1-1" class="collapse show" aria-labelledby="category1_one"
+                                    data-parent="#category_1">
+                                    <div class="card-body">
+                                        <p class="fs-15 cl-dark pl-5 pr-5">Lorem Ipsum is simply dummy text of the
+                                            printing and typesetting industry. Lorem Ipsum has been the industry's
+                                            standard dummy text</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card pb-3">
+                            <div class="card-header bgs-lightblue" id="category1_two">
+                                <a href="#" class="btn-header-link collapsed decrt-none" data-toggle="collapse"
+                                    data-target="#category1-2" aria-expanded="true" aria-controls="category1-2">
+                                    <p class="fs-15 test-medium  cl-black pl-5 pr-5 py-3 mb-0">Lorem Ipsum is simply dummy
+                                        text dummy text dummy text</P>
+                                </a>
+
+
+                                <div id="category1-2" class="collapse" aria-labelledby="category1_two"
+                                    data-parent="#category_1">
+                                    <div class="card-body">
+                                        <p class="fs-15 cl-dark pl-5 pr-5">Lorem Ipsum is simply dummy text of the
+                                            printing and typesetting industry. Lorem Ipsum has been the industry's
+                                            standard dummy text</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card pb-3">
+                            <div class="card-header bgs-lightblue" id="category1_three">
+                                <a href="#" class="btn-header-link collapsed decrt-none" data-toggle="collapse"
+                                    data-target="#category1-3" aria-expanded="true" aria-controls="category1-3">
+                                    <p class="fs-15 test-medium  cl-black  pl-5 pr-5 py-3 mb-0">Lorem Ipsum is simply dummy
+                                        text dummy text dummy text</P>
+                                </a>
+
+
+                                <div id="category1-3" class="collapse" aria-labelledby="category1_three"
+                                    data-parent="#category_1">
+                                    <div class="card-body">
+                                        <p class="fs-15 cl-dark pl-5 pr-5">Lorem Ipsum is simply dummy text of the
+                                            printing and typesetting industry. Lorem Ipsum has been the industry's
+                                            standard dummy text</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card pb-3">
+                            <div class="card-header bgs-lightblue" id="category1_four">
+                                <a href="#" class="btn-header-link collapsed decrt-none" data-toggle="collapse"
+                                    data-target="#category1-4" aria-expanded="true" aria-controls="category1-4">
+                                    <p class="fs-15 test-medium cl-black  pl-5 pr-5 py-3 mb-0">Lorem Ipsum is simply dummy
+                                        text dummy text dummy text</P>
+                                </a>
+
+
+                                <div id="category1-4" class="collapse" aria-labelledby="category1_four"
+                                    data-parent="#category_1">
+                                    <div class="card-body">
+                                        <p class="fs-15 cl-dark pl-5 pr-5">Lorem Ipsum is simply dummy text of the
+                                            printing and typesetting industry. Lorem Ipsum has been the industry's
+                                            standard dummy text</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card pb-3">
+                            <div class="card-header bgs-lightblue" id="category1_five">
+                                <a href="#" class="btn-header-link collapsed decrt-none" data-toggle="collapse"
+                                    data-target="#category1-5" aria-expanded="true" aria-controls="category1-5">
+                                    <p class="fs-15 test-medium cl-black  pl-5 pr-5 py-3 mb-0">Lorem Ipsum is simply dummy
+                                        text dummy text dummy text</P>
+                                </a>
+
+
+                                <div id="category1-5" class="collapse" aria-labelledby="category1_five"
+                                    data-parent="#category_1">
+                                    <div class="card-body">
+                                        <p class="fs-15 cl-dark pl-5 pr-5">Lorem Ipsum is simply dummy text of the
+                                            printing and typesetting industry. Lorem Ipsum has been the industry's
+                                            standard dummy text</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4">
+                            <button class="text-white load-more fs-13 decrt-none cl-white bgs-black d-inline-block border-0 cursor py-2 lh-35">LOAD MORE</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 align-self-center questions-banner-img">
+                <img src="{% static 'images\ask-questions.png' %}" class="img-fluid img-left questions-img " alt="Los Angeles">
+            </div>
+        </div>
+    </div>
+</section>
+<section class="section_home-student-say py-4 py-sm-5 mt-3">
+     <div class="container">
+         <div class="text-center">
+             <h2 class=" test-bold head-size fs-45 cl-black lh-55">What Students Say</h2>
+             <p class="fs-15 cl-dark px-0 col-md-8 m-auto pt-md-3 pt-1 student">Lorem ipsum dolor sit amet adipisicing
+                 elit. Commodi aut recusandae illo. Voluptatibus illo delectus totam earum
+                 quo unde provident exercitationem eligendi! provident exercitationem.</p>
+         </div>
+         <div class="review-slider owl-carousel owl-theme pt-lg-4">
+            {% for testiObj in testimonials %}
+            <div class="item row">
+                <div class="col-lg-2">
+                    <img src="{{testiObj.image.url}}" alt="{{testiObj.image_alt_name}}" class="mr-5 rounded-circle"
+                        style="width:78px;">
+                </div>
+                <div class="col-lg-10 double-quates">
+                    <h6 class="feedback-font  test-bold cl-black padding fs-18">{{testiObj.client_name}}</h6>
+                    <p class="fs-13 cl-dark mb-0">{{testiObj.client_role}}</p>
+                    <div class="quates-img">
+                        <img src="{% static 'images/double-qts.png' %}" alt="">
+                    </div>
+                    <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">{{testiObj.description}}</p>
+                </div>
+            </div>
+        {% endfor %}
+         </div>
+     </div>
+ </section>
+ {% endblock content %}
+
+
+ {% block script %}
+<script>
+
+    $("#classDropDown").change(function(){
+        var choosedClass = $(this).val();
+
+
+        $.ajax({
+            type: 'post',
+            headers: {
+                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                choosedClass:choosedClass
+            },
+            dataType: 'json',
+            success: function (response) {
+                $("#classContainer").empty();
+                if (response.data){
+                    var data = response.data
+                    for (var i = 0; i < data.length; i++){
+                        var div = `<div class="col-md-6 pb-4 mb-md-2">
+                            <div class="card card-over mb-2">
+                                <div class="card-body">
+                                <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">${data[i].exam_date} - ${data[i].exam_time}</p>
+                                  <h5 class="test-semibold  fs-18 cl-black">${data[i].title}</h5>
+                                  <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">${data[i].description}</p>
+                                  <div class="d-xl-flex justify-content-between  align-items-center">
+                                    <div class="col-sm-4 col-md-12 col-lg-4 pr-0">
+                                      <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; ${data[i].price}</p>
+                                  </div>
+                                  {% comment %} FIXME  {% endcomment %}
+                                  <a href="${data[i].buyClass}?type=olympiad-exam" class="text-white fs-15 bgs-black decrt-none enroll-button">Register
+                                      <span class="arrow-spacing"></span>
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622"><path id="arrow-color" data-name="Path 3"
+                                                  d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                  transform="translate(-3.278 -102.821)" fill="#fff" />
+                                      </svg>
+                                  </a>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>`;
+                        $("#classContainer").append(div);
+                    }
+                }
+                else{
+                    var div = `<div class="col-md-6 pb-4 mb-md-2">
+                        <div class="card card-over mb-2">
+                            <div class="card-body">
+                            <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">${response["exam_date"]} - ${response["exam_time"]}</p>
+                                <h5 class="test-semibold  fs-18 cl-black">${response["title"]}</h5>
+                                <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">${response["description"]}</p>
+                                <div class="d-xl-flex justify-content-between  align-items-center">
+                                  <div class="col-sm-4 col-md-12 col-lg-4 pr-0">
+                                    <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; ${response["price"]}</p>
+                                </div>
+                                {% comment %} FIXME  {% endcomment %}
+                                <a href="${response["buyClass"]}" class="text-white fs-15 bgs-black decrt-none enroll-button">Register
+                                    <span class="arrow-spacing"></span>
+                                    <svg xmlns="http://www.w3.org/2000/svg"  width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622"><path id="arrow-color" data-name="Path 3"
+                                                d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                transform="translate(-3.278 -102.821)" fill="#fff" />
+                                    </svg>
+                                </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                    $("#classContainer").append(div);
+                }
+
+            },
+            error: function(response) {
+               alert("Something Wrong");
+            }
+        });
+    });
+
+
+</script>
+
+
+
+{% endblock script %}

@@ -10,22 +10,30 @@
         <div class="section_home-olympiad-test">
             <div class="row">
                 {% for event in events %}
-                <div class="col-xl-6 pb-4 mb-md-2">
-                    <div class="card card-over mb-2">
-                        <div class="card-body">
-                            <div class="content-events">
-                                <div class="d-xl-flex justify-content-between align-items-center pt-xl-2 pb-3 border-bottom">
-                                    <p class="events-round bgs-lightgrey px-4 test-medium cl-darkblue p-1 br-30 mb-0 d-inline-block">
-                                        {{event.label}}</p>
-                                    <p class="test-semibold cl-blue mb-0"><i class="fa fa-calendar pr-2"
-                                            aria-hidden="true"></i>{{event.event_date}}</p>
+                    <div class="col-xl-6 pb-4 mb-md-2">
+                        <div class="card card-over mb-2">
+                            <div class="card-body">
+                                <div class="content-events">
+                                    <div class="d-xl-flex justify-content-between align-items-center pt-xl-2 pb-3 border-bottom">
+                                        <p class="events-round bgs-lightgrey px-4 test-medium cl-darkblue p-1 br-30 mb-0 d-inline-block">
+                                            {{event.event.label}}</p>
+                                        <p class="test-semibold cl-blue mb-0"><i class="fa fa-calendar pr-2"
+                                                aria-hidden="true"></i>{{event.event.event_date|date:"d M Y"}}</p>
+                                    </div>
+                                    <h3 class="test-semibold fs-18 lh-25 cl-black my-3">{{event.event.title}}</h3>
+                                <p class="test-bold cl-yellow mb-0">Meeting Link : <span class="cl-blue"><a href="https://{{event.event.event_meeting_link}}" target="_blank" class="cl-blue text-decoration-underline">{{event.event.event_meeting_link}}</a></span></p>
+                                    <label>
+                                        {% if event.document %}
+                                            <button class="btn btn-primary mt-2 disabled">Already uploaded</button>
+                                        {% else %}
+                                            <input type="file" name="document" class="document" style = "display: none;" onchange="readURL(this, '{{event.event.id}}');"/>
+                                            <span class="btn btn-primary mt-2">Upload document</span>
+                                        {% endif %}
+                                    </label>
                                 </div>
-                                <h3 class="test-semibold fs-18 lh-25 cl-black my-3">{{event.title}}</h3>
-                               <p class="test-bold cl-yellow mb-0">Meeting Link : <span class="cl-blue"><a href="https://{{event.event_meeting_link}}" target="_blank" class="cl-blue text-decoration-underline">{{event.event_meeting_link}}</a></span></p>
                             </div>
                         </div>
                     </div>
-                </div>
                 {% endfor %}
             </div>
         </div>
@@ -34,6 +42,42 @@
 {% endblock content %}
 {% block script %}
 <script>
-$("#id-events").addClass('active');
+    $("#id-events").addClass('active');
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                        }
+                }
+        }
+        return cookieValue;
+    }
+    function readURL(input, id) {
+        if (input.files && input.files[0]) {
+            var formData = new FormData();
+            formData.append("document", input.files[0])
+            formData.append("eventId", id)
+            const csrftoken = getCookie('csrftoken');
+            $.ajax({
+                type: "POST",
+                headers: {'X-CSRFToken': csrftoken},
+                data: formData,
+                processData: false, // tell jQuery not to process the data
+                contentType: false, // tell jQuery not to set contentType
+                success: function (response) {
+                    alert("Document uploaded successfully")
+                },
+                error: function(response) {
+                    alert("Failed to upload Document. Try again")
+                }
+            });
+        }
+    }
 </script>
 {% endblock script %}

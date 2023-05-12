@@ -17,13 +17,12 @@ urlpatterns = [
     # dashboard
     path("dashboard",views.AccountDashboard.as_view(),name="account-dashboard"),
     path("dashboard/enrolls",views.EnrolledClassesView.as_view(),name="enrolled_classes"), # enrolled papers list
+    path("dashboard/result",views.DashboardResult.as_view(),name="dashboard_result"), # dashboard result
     path("dashboard/enrolls-<str:id>",views.EnrolledSubjectsView.as_view(),name="enrolled_subject"), # enrolled paper subject detail view
     path("dashboard/registered-events",views.RegisterdEventsView.as_view(),name="registered_events"), # registered events 
 
     path("exam/paper-<str:id>",views.ExamView.as_view(),name="exam"),
 
-
-    
     path("about-us",views.AboutUs.as_view(),name="about-us"),
     path("why-choose-us",views.WhyChooseUs.as_view(),name="why-choose-us"),
     path("our-team",views.OurTeam.as_view(),name="our-team"),
@@ -35,15 +34,14 @@ urlpatterns = [
 
     # classes, subjects and papers related
     path("competitive",views.CompetitivePage.as_view(),name="competitive_page"),
+    path("olympiad",views.OlympiadPage.as_view(),name="olympiad_page"),
     path("school",views.SchoolPage.as_view(),name="school"),
     path("subject-<str:pk>",views.SchoolSubjectWise.as_view(),name="school_subject_wise"),
     path("papers",views.SchoolPageWise.as_view(),name="school_paper_wise"),
     path("events",views.EventsPage.as_view(),name="events"),
 
-
-
     # buy paper
     path("make-payment-<str:id>",views.MakePayment.as_view(),name="makepayment"),
     path("checkout/<str:id>",views.Checkout.as_view(),name="checkout"),
-    
+    path("importance-of-exam",views.ImportanceOfExam.as_view(),name="importance-of-exam"),
 ]

@@ -28,6 +28,7 @@ class CustomUserAdmin(UserAdmin):
             "parent_name",
             "class_name",
             "school_name",
+            "country",
             "state",
             "city",
             "gender",
@@ -49,13 +50,14 @@ class CustomUserAdmin(UserAdmin):
                 "parent_name",
                 "class_name",
                 "school_name",
+                "country",
                 "state",
                 "city",
                 "gender",
                 'password1', 
                 'password2',
                 ), }),)
-    list_display = ("id", 'email', "mobile_number",'is_active',)
+    list_display = ("id", 'email', "mobile_number",'is_active', "country")
     list_display_links = ("email",)
 
     readonly_fields = ("created_on", "updated_on", 'id')
@@ -81,4 +83,5 @@ admin.site.register(CompetitiveExam)
 admin.site.register(StudentPayments)
 admin.site.register(StudentSubmittedAnswers)
 admin.site.register(AttendedPapers)
-
+admin.site.register(TempImages)
+admin.site.register(OlympiadExam)

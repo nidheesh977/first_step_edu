@@ -66,6 +66,10 @@
                         <input name="price" type="number" class="form-control form-control-user" required>
                     </div>
                     <div class="form-group col-12">
+                        <label>Repay Price <span class="text-danger">*</span></label>
+                        <input name="repay_price" type="number" class="form-control form-control-user" required>
+                    </div>
+                    <div class="form-group col-12">
                         <label>Meta Title <span class="text-danger">*</span></label>
                         <input name="meta_title"  maxlength="50" type="text" class="form-control form-control-user" required>
                     </div>
@@ -110,6 +114,10 @@
                     <div class="form-group col-12">
                         <label>Price <span class="text-danger">*</span></label>
                         <input name="price" id="price" type="number" class="form-control form-control-user" required>
+                    </div>
+                    <div class="form-group col-12">
+                        <label>Repay Price <span class="text-danger">*</span></label>
+                        <input name="repay_price" id="repay_price" type="number" class="form-control form-control-user" required>
                     </div>
                     <div class="form-group col-12">
                         <label>Meta Title <span class="text-danger">*</span></label>
@@ -179,11 +187,10 @@
             },
             dataType: 'json',
             success: function (response) {
-                
                 $("#subject_title").val(response["obj"]["title"]);
                 $("#subject_description").text(response["obj"]["description"]);
                 $("#price").val(response["obj"]["price"]);
-
+                $("#repay_price").val(response["obj"]["repay_price"]);
                 $("#meta_title").val(response["obj"]["meta_title"]);
                 $("#meta_description").text(response["obj"]["meta_description"]);
                 $("#meta_keywords").text(response["obj"]["meta_keywords"]);

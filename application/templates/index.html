@@ -1,22 +1,32 @@
 {% extends 'application_base.html' %}
 {% load static %}
 {% block content %}
+{% now "Y-m-d" as today %}
 
-<section class="section_home-banner pt-4 py-sm-5">
+<section class="section_home-banner">
     <div class="container pt-sm-4">
         <div class="banner-slider owl-carousel owl-theme px-xl-4">
             {% for obj in bannerObj %}
             <div class="row px-1">
                 <div class="col-lg-6 align-self-center ">
-                    <p class="cl-blue  fs-14 ">{{obj.title}}</p>
-                    <h2 class="test-bold fs-40 head-size cl-darkblue pb-1 lh-md-55">{{obj.main_title}}</h2>
-                    <p class="cl-blue-1 fs-15 pb-3 pt-lg-4 btm right-padding">{{obj.description}}.</p>
+                    {% if obj.title %}
+                        <p class="cl-blue  fs-14 ">{{obj.title}}</p>
+                    {% endif %}
+                    <h2 class="test-bold fs-30 head-size cl-darkblue pb-1 lh-md-55">{{obj.main_title}}</h2>
+                    <div class="cl-blue-1 fs-15 pb-3 pt-lg-4 btm right-padding">{{obj.description|safe}}</div>
+                    {% if obj.button_url %}
+                        <a class="home-btn-olympiad decrt-none fs-13 cl-black bgs-yellow" href = "{{ obj.button_url }}" target = "_blank">VIEW LINK
+                            <span class="arrow-spacing"></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                <path id="btn-olympiad-size" data-name="Path 3" d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z" transform="translate(-3.278 -102.821)" fill="#fff" />
+                            </svg>
+                        </a>
+                    {% endif %}
                 </div>
                 <div class="col-lg-6 pt-5 pt-lg-0">
-                    <img src="{{obj.image.url}}" alt="" class="img-fluid">
+                    <img src="{{obj.image.url}}" alt="" class="img-fluid home-banner-img">
                 </div>
             </div>
-
             {% endfor %}
         </div>
     </div>
@@ -63,28 +73,27 @@
 
         <div class="text-center">
             <h2 class=" test-bold head-size fs-45 cl-black pb-1 lh-55">Popular Exam</h2>
-            <p class="fs-15 cl-dark px-0 col-md-8 m-auto pt-lg-1  pb-lg-4">Lorem ipsum dolor sit amet adipisicing elit.
-                Commodi aut recusandae illo. Voluptatibus illo delectus totam earum
-                quo unde provident exercitationem eligendi! provident exercitationem.</p>
+            <p class="fs-15 cl-dark px-0 col-md-8 m-auto pt-lg-1  pb-lg-4">This will contain links to exams which are popular. Initially, we will decide, however, later on the exams which are taken in the highest number will come under this section.</p>
         </div>
 
         <div class="oly-tap px-md-5 text-center">
             <ul class="nav nav-pills mb-5 mt-4 tab-width olympaind-tab " id="pills-tab" role="tablist">
 
                 <li class="nav-item active olympaid">
-                    <a class="nav-link  fs-13  cl-black" id="pills-home-tab" data-toggle="pill" href="#pills-home"
-                        role="tab" aria-controls="pills-home" aria-selected="true">Board Exam</a>
+                    <a class="nav-link  fs-13  cl-black" id="board-exam-tab" data-toggle="pill" href="#board-exam"
+                        role="tab" aria-controls="board-exam" aria-selected="true">Board Exam</a>
                 </li>
                 <li class="nav-item olympaid">
-                    <a class="nav-link olympaid fs-13 cl-black" id="pills-profile-tab" data-toggle="pill"
-                        href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Competitive
-                        Exam</a>
+                    <a class="nav-link olympaid fs-13 cl-black" id="competitive-exam-tab" data-toggle="pill" href="#competitive-exam" role="tab" aria-controls="competitive-exam" aria-selected="false">Competitive Exam</a>
+                </li>
+                <li class="nav-item olympaid">
+                    <a class="nav-link olympaid fs-13 cl-black" id="olympiad-exam-tab" data-toggle="pill" href="#olympiad-exam" role="tab" aria-controls="olympiad-exam" aria-selected="false">Olympiad Exam</a>
                 </li>
             </ul>
         </div>
         <div class="tab-content pb-2" id="pills-tabContent">
 
-            <div class="tab-pane fade show active " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+            <div class="tab-pane fade show active " id="board-exam" role="tabpanel" aria-labelledby="board-exam-tab">
                 <div class="row">
                     {% for obj in classesObj %}
                         <div class="col-md-6 pb-4 mb-md-2">
@@ -120,12 +129,10 @@
                             </div>
                         </div>
                     {% endfor %}
-                    
                 </div>
             </div>
 
-
-            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+            <div class="tab-pane fade" id="competitive-exam" role="tabpanel" aria-labelledby="competitive-exam-tab">
                 <div class="row">
                     {% for obj in competitiveExamObj %}
                     <div class="col-md-6 pb-4 mb-md-2">
@@ -158,9 +165,52 @@
                         </div>
                     </div>
                     {% endfor %}
-                    
-                    
+                </div>
+            </div>
 
+            <div class="tab-pane fade" id="olympiad-exam" role="tabpanel" aria-labelledby="olympiad-exam-tab">
+                <div class="row">
+                    {% if olympiadExamObj|length == 0 %}
+                    <h3 style = "color: #c5c5c5; width: 100%; text-align: center;">No exams.</h3>
+                    {% endif %}
+                    {% for obj in olympiadExamObj %}
+                        <div class="col-md-6 pb-4 mb-md-2">
+                            <div class="card card-over mb-2">
+                                <div class="card-body">
+                                    <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">{{obj.exam_date}} - {{obj.exam_time}}</p>
+                                    <h5 class="test-semibold  fs-18 cl-black">{{obj.paper.title}}</h5>
+                                    <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">{{obj.paper.description}}</p>
+                                    <div class="row align-items-center">
+                                        <div class="col-sm-4 col-md-12 col-lg-4 pr-0">
+                                            <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; {{obj.paper.price}}</p>
+                                        </div>
+                                        <div
+                                            class="col-sm-8 col-md-12 col-lg-8 enroll-center pl-lg-0 d-flex justify-content-between justify-content-lg-end align-items-center">
+                                            {% if today == obj.exam_date|date:"Y-m-d" %}
+                                                <span
+                                                    class="text-white fs-15 bgs-black decrt-none enroll-button">Live
+                                                </span>
+                                            {% elif obj in olympiad_enrolled %}
+                                                <span class="text-white fs-15 bgs-black decrt-none enroll-button">Registered</span>
+                                            {% else %}
+                                                <a href="{% url 'application:checkout' obj.id %}?type=olympiad-exam"
+                                                    class="text-white fs-15 bgs-black decrt-none enroll-button">Register
+                                                    <span class="arrow-spacing"></span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        width="16.7" height="8.622" class="arrow-color"
+                                                        viewBox="0 0 16.7 8.622">
+                                                        <path id="arrow-color" data-name="Path 3"
+                                                            d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                            transform="translate(-3.278 -102.821)" fill="#fff" />
+                                                    </svg>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
 
@@ -278,26 +328,23 @@
                 </svg></a>
         </div>
         <div class="row">
-
             {% for blogObj in blogs %}
-            <div class="col-lg-4 col-sm-6 pb-lg-0 pb-4">
-                <div class="blog-content bgs-white h-100 p-3 br-20">
-                    <a href="{{blogObj.get_absolute_url}}"><img src="{{blogObj.image.url}}" alt="{{blogObj.image_alt_name}}"
-                            class="img-fluid br-15"></a>
-                    <h3 class="test-semibold fs-22 lh-28 cl-blue-2 my-3">{{blogObj.title}}</h3>
-                    <p>{{blogObj.description}}</p>
-                    <a href="{{blogObj.get_absolute_url}}" class="fs-16 test-bold decrt-none cl-darkblue d-inlne-block">Read More
-                        <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7"
-                            height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
-                            <path id="arrow-color" data-name="Path 3"
-                                d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
-                                transform="translate(-3.278 -102.821)" fill="#022a4b" />
-                        </svg></a>
+                <div class="col-lg-4 col-sm-6 pb-lg-0 pb-4">
+                    <div class="blog-content bgs-white h-100 p-3 br-20">
+                        <a href="{{blogObj.get_absolute_url}}"><img src="{{blogObj.image.url}}" alt="{{blogObj.image_alt_name}}"
+                                class="img-fluid br-15"></a>
+                        <h3 class="test-semibold fs-22 lh-28 cl-blue-2 my-3">{{blogObj.title}}</h3>
+                        <p>{{blogObj.description}}</p>
+                        <a href="{{blogObj.get_absolute_url}}" class="fs-16 test-bold decrt-none cl-darkblue d-inlne-block">Read More
+                            <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7"
+                                height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                <path id="arrow-color" data-name="Path 3"
+                                    d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                    transform="translate(-3.278 -102.821)" fill="#022a4b" />
+                            </svg></a>
+                    </div>
                 </div>
-            </div>
-
             {% endfor %}
-
         </div>
     </div>
 </section>
@@ -311,28 +358,22 @@
                 quo unde provident exercitationem eligendi! provident exercitationem.</p>
         </div>
         <div class="review-slider owl-carousel owl-theme pt-lg-4">
-
             {% for testiObj in testimonials %}
-            <div class="item row">
-                <div class="col-lg-2">
-                    <img src="{{testiObj.image.url}}" alt="{{testiObj.image_alt_name}}" class="mr-5 rounded-circle"
-                        style="width:78px;">
-                </div>
-                <div class="col-lg-10 double-quates">
-                    <h6 class="feedback-font  test-bold cl-black padding fs-18">{{testiObj.client_name}}</h6>
-                    <p class="fs-13 cl-dark mb-0">{{testiObj.client_role}}</p>
-                    <div class="quates-img">
-                        <img src="{% static 'images/double-qts.png' %}" alt="">
+                <div class="item row">
+                    <div class="col-lg-2">
+                        <img src="{{testiObj.image.url}}" alt="{{testiObj.image_alt_name}}" class="mr-5 rounded-circle"
+                            style="width:78px;">
                     </div>
-                    <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">{{testiObj.description}}</p>
-
+                    <div class="col-lg-10 double-quates">
+                        <h6 class="feedback-font  test-bold cl-black padding fs-18">{{testiObj.client_name}}</h6>
+                        <p class="fs-13 cl-dark mb-0">{{testiObj.client_role}}</p>
+                        <div class="quates-img">
+                            <img src="{% static 'images/double-qts.png' %}" alt="">
+                        </div>
+                        <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">{{testiObj.description}}</p>
+                    </div>
                 </div>
-            </div>
             {% endfor %}
-            
-            
-
-
         </div>
     </div>
 </section>
@@ -370,7 +411,7 @@
         <div class="row pt-4 pt-sm-5 px-xl-4 justify-content-center">
             {% for event in events %}
             <div class="col-lg-4 col-md-6 pb-4 pb-lg-0">
-                <a href="#">
+                <a href="{% url 'application:events' %}">
                     <div class="events-content h-100 position-relative br-30">
                         <img src="{{event.image.url}}" alt="{{event.image_alt_name}}" class="w-100 br-30">
                         <div class="content-events px-4">
@@ -378,16 +419,31 @@
                                 {{event.label}}</p>
                             <h3 class="test-semibold fs-18 lh-25 cl-white mb-2">{{event.title}}</h3>
                             <div class="d-xl-flex justify-content-between align-items-center pt-xl-2">
-                                <p class="test-semibold cl-white mb-xl-0"><i class="fa fa-calendar pr-2"
-                                        aria-hidden="true"></i>{{event.event_date}}</p>
-                                <a class="decrt-none fs-15 test-semibold br-30 py-2 px-4 cl-black bgs-yellow d-inline-block"
-                                    href="#">Register Now
+                                <p class="test-semibold cl-white mb-xl-0">
+                                    <i class="fa fa-calendar pr-2" aria-hidden="true"></i>
+                                    {{event.event_date|date:"d M Y" }}
+                                </p>
+                                <a data={{event.id}} class="decrt-none fs-15 test-semibold br-30 py-2 px-4 cl-black 
+                                {% if event in registered_events %}
+                                    bgs-white 
+                                {% elif user.is_authenticated %}
+                                    registerEvent bgs-yellow 
+                                {% else %}
+                                    bgs-yellow 
+                                {% endif %}
+                                d-inline-block" {% if not user.is_authenticated %}href="/signin"{% elif event in registered_events %} href="{% url 'application:events' %}" {% else %} href="#" {% endif %}>
+                                    {% if event in registered_events %}
+                                        Registered
+                                    {% else %}
+                                        Register Now
+                                    {% endif %}
                                     <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
                                         width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
                                         <path id="btn-olympiad-size" data-name="Path 3"
                                             d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
                                             transform="translate(-3.278 -102.821)" fill="#fff"></path>
-                                    </svg></a>
+                                    </svg>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -411,3 +467,59 @@
 
 
 {% endblock content %}
+
+
+{% block script %}
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+
+
+    $(".registerEvent").click(function(event){
+        event.preventDefault();
+        var eventId = $(this).attr("data");
+        $.ajax({
+            type: 'post',
+            headers: {
+                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action:"register",
+                eventId:eventId,
+            },
+            dataType: 'json',
+            success:function(response){
+                console.log(response)
+                var options = {
+                    key: response.razorpay_key,
+                    amount: response.price, 
+                    currency: "INR",
+                    order_id: response.order_id,
+                    callback_url: response.callback_url,
+                    redirect: true,
+                    modal: { 
+                        escape: false,
+                    },
+                    handler: function (response){
+                        console.log(response)
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+                rzp1.open();
+                //swal({
+                //        title: "Success",
+                //        text: response['msg'],
+                //        icon: "success",
+                //    }).then(function() {
+                //        window.location.reload();
+                //    });
+            }   
+        });
+
+    });
+
+</script>
+
+{% endblock script %}

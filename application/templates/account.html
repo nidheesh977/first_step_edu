@@ -67,6 +67,10 @@
                     <input type="text" id="state" name="state" value="{{request.user.state}}" class="form-control"
                         readonly="readonly" maxlength="250" required>
                 </div>
+                <div class=" form-groups col-sm-6 pb-4 pt-1">
+                    <label for="">Country</label>
+                    <input type="text" id="country" name="country" value="{{request.user.country}}" class="form-control" readonly="readonly" maxlength="1000" required>
+                </div>
                 <div class="form-groups col-12  pt-4">
                     <input type="submit" value="Save & Update" class=" mt-1 btn btn-submit acc-btn bgs-black cl-white">
                 </div>

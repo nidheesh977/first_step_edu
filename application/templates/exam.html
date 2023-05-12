@@ -89,9 +89,13 @@
                         <div class="scheme-part pt-2">
                             <h2 class="fs-20 cl-black test-bold pb-2 ">Marking Scheme For All Two Sections</h2>
                             <div class="exam-instructions">
+                                {% if not competitive_exam_obj and subject_obj %}
                                 {% for section_detail in section_details %}
                                 <p><b>{{section_detail.name}} ({{section_detail.section_questions_details}}) : </b> {{section_detail.description}}</p>
                                 {% endfor %}
+                                {% else %}
+                                    <p><b>Total questions : {{total_ques}}</p>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -104,7 +108,7 @@
                             <div class="stepwizard-row setup-panel">
                             <ul class="mb-4 stepwizard-step">
                                 {% for ques in all_ques %}
-                                <li class="{% if forloop.counter == 1 %}current{% endif %}"><a style="color:yellow;" class="quesCount" data="{{ques.id}}" type="button">{{forloop.counter}}</a></li>
+                                <li class="{% if forloop.counter == 1 %}current{% endif %}"><a style="color:rgb(255, 255, 0);" class="quesCount" data="{{ques.id}}" type="button">{{forloop.counter}}</a></li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -144,6 +148,7 @@
                                                 sit. Sit dolore omnis culpa veritatis aperiam quidem officiis incidunt modi,
                                                 enim temporibus harum animi voluptate pariatur asperiores atque illo?
                                             </p>
+                                            <img src = "https://dummyimage.com/50x50/000/fff" id = "question-image" class = "question-image"/>
                                             <div class="choose-correct-one">
                                                 <div class="row mx-0 mx-sm-2">
                                                     <div class="label-title custom_radio col-md-5 col-12 my-3  ">
@@ -244,7 +249,11 @@
                 msLeft = endTime - (+new Date);
                 if ( msLeft < 1000 ) {
                     element.innerHTML = "Time is up!";
-                    $('#next_ques').trigger('click');
+                    if($("#next_ques").text() != "Submit"){
+                        $('#next_ques').trigger('click');
+                    }else{
+                        $('#prev_ques').trigger('click');
+                    }
 
                 } else {
                     time = new Date( msLeft );
@@ -252,7 +261,6 @@
                     mins = time.getUTCMinutes();
                     element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
                     TIMER = setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
-                    
                 }
             }
             element = document.getElementById( elementName );
@@ -271,13 +279,13 @@
                 ob["submitted_time"] = clicked_time;
                 ob["ans_id"] = ans_id;
 
-            } else {  
+            } else {
                 var stringFy = {
                         "id":quesId,
                         "ans":ans,
                         "submitted_time":clicked_time,
                         "ans_id":ans_id,
-                }; 
+                };
                 answersWithIds.push(stringFy);
                     
             }
@@ -297,8 +305,6 @@
             }
 
         }
-
-
 
         function finalSubmit(){
 
@@ -325,9 +331,7 @@
                         title: "Paper Submitted",
                         icon: "success",
                     }).then(function(isConfirm) {
-                        if (isConfirm) {
-                            window.location = response["redirect_url"];
-                        }
+                        window.location = response["redirect_url"];
                     });
                     
                 },
@@ -348,7 +352,6 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}',
                     action:"getQues",
                     quesId:id,
-                    
                 },
                 dataType: 'json',
                 success: function (response) {
@@ -385,8 +388,14 @@
                     $("#option2").val(option2);
                     $("#option3").val(option3);
                     $("#option4").val(option4);
-                    
-                    
+
+                    if (response["image"]){
+                        $("#question-image").show()
+                        $("#question-image").attr("src", response["image"])
+                    }
+                    else{
+                        $("#question-image").hide()
+                    }
 
                     var totSeconds ;
 

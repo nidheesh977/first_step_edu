@@ -1,4 +1,5 @@
 {% extends 'application_base.html' %}
+{% load static %}
 
 {% block content %}
 <section class="section_class-banner bgs-lightblue py-4 py-sm-5">
@@ -18,7 +19,7 @@
                     </svg></a>
             </div>
             <div class="col-lg-6 about-banner text-lg-right text-center">
-                <img src="assets\images\test-banner.png" alt="" class="img-fluid">
+                <img src="{% static 'images\test-banner.png' %}" alt="" class="img-fluid">
             </div>
         </div>
     </div>
@@ -34,6 +35,7 @@
         <div class="d-flex justify-content-end py-4">
             <select class="form-control" id="classDropDown">
                 <option selected disabled>Select Class</option>
+                <option value="popular" >Popular</option>
                 {% for obj in objs %}
                 <option value={{obj.id}} >{{obj.title}}</option>
                 {% endfor %}
@@ -86,7 +88,7 @@
             </div>
 
             <div class="col-lg-6 col-12 pt-lg-0 pt-3 text-center text-lg-left">
-                <img src="assets\images\we-offer.png" class="img-fluid we-offer-img  ml-xl-5" alt="Los Angeles">
+                <img src="{% static 'images\we-offer.png' %}" class="img-fluid we-offer-img  ml-xl-5" alt="Los Angeles">
             </div>
         </div>
     </div>
@@ -200,7 +202,7 @@
                 </div>
             </div>
             <div class="col-lg-6 align-self-center questions-banner-img">
-                <img src="assets\images\ask-questions.png" class="img-fluid img-left questions-img " alt="Los Angeles">
+                <img src="{% static 'images\ask-questions.png' %}" class="img-fluid img-left questions-img " alt="Los Angeles">
             </div>
         </div>
     </div>
@@ -214,91 +216,22 @@
                  quo unde provident exercitationem eligendi! provident exercitationem.</p>
          </div>
          <div class="review-slider owl-carousel owl-theme pt-lg-4">
-             <div class="item row">
-                 <div class="col-lg-2">
-                     <img src="assets\images\review-1.png" alt="John Doe" class="mr-5 rounded-circle"
-                         style="width:78px;">
-                 </div>
-                 <div class="col-lg-10 double-quates">
-                     <h6 class="feedback-font  test-bold cl-black padding fs-18">John Doe</h6>
-                     <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                     <div class="quates-img">
-                         <img src="assets\images\double-qts.png" alt="">
-                     </div>
-                     <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                         adipisicing elit. Distinctio minus voluptas
-                         similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
-
-                 </div>
-             </div>
-             <div class="item row">
-                 <div class="col-lg-2">
-                     <img src="assets\images\review-2.png" alt="John Doe" class="mr-5 rounded-circle"
-                         style="width:78px;">
-                 </div>
-                 <div class="col-lg-10 double-quates">
-                     <h6 class="feedback-font  test-bold cl-black padding fs-18">John Doe</h6>
-                     <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                     <div class="quates-img">
-                         <img src="assets\images\double-qts.png" alt="">
-                     </div>
-                     <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                         adipisicing elit. Distinctio minus voluptas
-                         similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
-
-                 </div>
-             </div>
-             <div class="item row">
-                 <div class="col-lg-2">
-                     <img src="assets\images\review-1.png" alt="John Doe" class="mr-5 rounded-circle"
-                         style="width:78px;">
-                 </div>
-                 <div class="col-lg-10 double-quates">
-                     <h6 class="feedback-font test-bold cl-black padding fs-18">John Doe</h6>
-                     <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                     <div class="quates-img">
-                         <img src="assets\images\double-qts.png" alt="">
-                     </div>
-                     <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                         adipisicing elit. Distinctio minus voluptas
-                         similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
-
-                 </div>
-             </div>
-             <div class="item row">
-                 <div class="col-lg-2">
-                     <img src="assets\images\review-2.png" alt="John Doe" class="mr-5 rounded-circle"
-                         style="width:78px;">
-                 </div>
-                 <div class="col-lg-10 double-quates">
-                     <h6 class="feedback-font test-bold cl-black padding fs-18">John Doe</h6>
-                     <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                     <div class="quates-img">
-                         <img src="assets\images\double-qts.png" alt="">
-                     </div>
-                     <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                         adipisicing elit. Distinctio minus voluptas
-                         similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
-
-                 </div>
-             </div>
-             <div class="item row">
-                 <div class="col-lg-2">
-                     <img src="assets\images\review-1.png" alt="John Doe" class="mr-5 rounded-circle"
-                         style="width:78px;">
-                 </div>
-                 <div class="col-lg-10 double-quates">
-                     <h6 class="feedback-font test-bold cl-black padding fs-18">John Doe</h6>
-                     <p class="fs-13 cl-dark mb-0">JEE Student</p>
-                     <div class="quates-img">
-                         <img src="assets\images\double-qts.png" alt="">
-                     </div>
-                     <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">Lorem ipsum dolor sit, amet consectetur
-                         adipisicing elit. Distinctio minus voluptas
-                         similique quasi reprehenderit ipsam illo quo corrupti sapiente hic!</p>
-
-                 </div>
-             </div>
+            {% for testiObj in testimonials %}
+                <div class="item row">
+                    <div class="col-lg-2">
+                        <img src="{{testiObj.image.url}}" alt="{{testiObj.image_alt_name}}" class="mr-5 rounded-circle"
+                            style="width:78px;">
+                    </div>
+                    <div class="col-lg-10 double-quates">
+                        <h6 class="feedback-font  test-bold cl-black padding fs-18">{{testiObj.client_name}}</h6>
+                        <p class="fs-13 cl-dark mb-0">{{testiObj.client_role}}</p>
+                        <div class="quates-img">
+                            <img src="{% static 'images/double-qts.png' %}" alt="">
+                        </div>
+                        <p class="fs-14 cl-dark col-lg-10 pl-0 pr-0 pr-lg-4">{{testiObj.description}}</p>
+                    </div>
+                </div>
+            {% endfor %}
 
 
          </div>
@@ -324,34 +257,65 @@
             },
             dataType: 'json',
             success: function (response) {
-                $("#classContainer").empty();
-
-
-                var div = `<div class="col-md-6 pb-4 mb-md-2">
-                    <div class="card card-over mb-2">
-                        <div class="card-body">
-                        <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">${response["subjects_count"]}</span></p>
-                            <h5 class="test-semibold  fs-18 cl-black">${response["title"]}</h5>
-                            <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">${response["description"]}</p>
-                            <div class="d-xl-flex justify-content-between  align-items-center">
-                            <a href="${response["buyPaperWise"]}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy Paperwise</a>
-                            <a class="home-btn-olympiad decrt-none fs-15  cl-black bgs-yellow test-semibold" href="${response["buySubjectWise"]}">Buy Subjectwise
-                             <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
-                                 <path id="btn-olympiad-size" data-name="Path 3" d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z" transform="translate(-3.278 -102.821)" fill="#fff"></path>
-                             </svg></a>
-                            <a href="${response['buyClass']}" class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Class
-                                <span class="arrow-spacing"></span>
-                                <svg xmlns="http://www.w3.org/2000/svg"  width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622"><path id="arrow-color" data-name="Path 3"
-                                            d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
-                                            transform="translate(-3.278 -102.821)" fill="#fff" />
-                                </svg>
-                            </a>
+                if (response.data){
+                    var parsedData = JSON.parse(response.data);
+                    $("#classContainer").empty();
+                    for (var i = 0; i < parsedData.length; i++){
+                        var div = `
+                            <div class="col-md-6 pb-4 mb-md-2">
+                                <div class="card card-over mb-2">
+                                    <div class="card-body">
+                                    <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">${parsedData[i].fields.assigned_subjects.length}</span></p>
+                                        <h5 class="test-semibold  fs-18 cl-black">${parsedData[i].fields.title}</h5>
+                                        <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">${parsedData[i].fields.description}</p>
+                                        <div class="d-xl-flex justify-content-between  align-items-center">
+                                        <a href="/papers?class=${parsedData[i].pk}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy Paperwise</a>
+                                        <a class="home-btn-olympiad decrt-none fs-15  cl-black bgs-yellow test-semibold" href="/subject-${parsedData[i].pk}">Buy Subjectwise
+                                        <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                            <path id="btn-olympiad-size" data-name="Path 3" d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z" transform="translate(-3.278 -102.821)" fill="#fff"></path>
+                                        </svg></a>
+                                        <a href="/checkout/${parsedData[i].pk}?type=class" class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Class
+                                            <span class="arrow-spacing"></span>
+                                            <svg xmlns="http://www.w3.org/2000/svg"  width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622"><path id="arrow-color" data-name="Path 3"
+                                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                        transform="translate(-3.278 -102.821)" fill="#fff" />
+                                            </svg>
+                                        </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                        $("#classContainer").append(div);
+                    }
+                }
+                else{
+                    var div = `<div class="col-md-6 pb-4 mb-md-2">
+                        <div class="card card-over mb-2">
+                            <div class="card-body">
+                            <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">Subjects : <span class="test-bold">${response["subjects_count"]}</span></p>
+                                <h5 class="test-semibold  fs-18 cl-black">${response["title"]}</h5>
+                                <p class="fs-13 cl-dark col-xl-7 col-12 pl-0">${response["description"]}</p>
+                                <div class="d-xl-flex justify-content-between  align-items-center">
+                                <a href="${response["buyPaperWise"]}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3 d-inline-block mb-2">Buy Paperwise</a>
+                                <a class="home-btn-olympiad decrt-none fs-15  cl-black bgs-yellow test-semibold" href="${response["buySubjectWise"]}">Buy Subjectwise
+                                 <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                     <path id="btn-olympiad-size" data-name="Path 3" d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z" transform="translate(-3.278 -102.821)" fill="#fff"></path>
+                                 </svg></a>
+                                <a href="${response['buyClass']}" class="text-white fs-15 bgs-black decrt-none enroll-button">Buy Class
+                                    <span class="arrow-spacing"></span>
+                                    <svg xmlns="http://www.w3.org/2000/svg"  width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622"><path id="arrow-color" data-name="Path 3"
+                                                d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                transform="translate(-3.278 -102.821)" fill="#fff" />
+                                    </svg>
+                                </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>`;
-                $("#classContainer").append(div);
-
+                    </div>`;
+                    $("#classContainer").empty();
+                    $("#classContainer").append(div);
+                }
             },
             error: function(response) {
                alert("Something Wrong");

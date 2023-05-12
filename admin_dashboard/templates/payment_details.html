@@ -1,0 +1,46 @@
+{% extends 'admin_dashboard_base.html' %} {% block content %}
+
+<div class="container-fluid">
+  <div class="card shadow mb-4 mt-2">
+    <div
+      class="card-header py-3 d-sm-flex align-items-center justify-content-between"
+    >
+      <h6 class="m-0 font-weight-bold text-primary">Payment details</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table
+          class="table table-bordered"
+          id="dataTable"
+          width="100%"
+          cellspacing="0"
+        >
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Amount</th>
+              <th>Payment for</th>
+              <th>Is repay</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for obj in payments %}
+              <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{obj.student.first_name}}</td>
+                <td>{{obj.student.email}}</td>
+                <td>{{obj.price}}</td>
+                <td>{{obj.payment_for}}</td>
+                <td>{{obj.is_repay_prop}}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %} {% block script %} {% endblock script %}

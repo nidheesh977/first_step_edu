@@ -1,0 +1,151 @@
+{% extends 'application_base.html' %}
+{% load static %}
+{% block content %}
+  <div class="container px-0 mx-sm-0 dash-board-main-box"> 
+      {% include 'dashboard_side_menu.html' %}
+      <span class="hide-box  d-lg-none"><i class="fa fa-arrow-right"></i></span>
+      <span class="side-box  d-lg-none"><i class="fa fa-arrow-left"></i></span>
+      <div class="dashboard-content bgs-lightgrey pt-5 pb-3"> 
+          <h1 class="test-bold fs-25 lh-27 cl-grey pb-4">Result</h1>   
+          <div class="section_home-olympiad-test">
+              <div class="oly-tap">
+                  <ul class="nav nav-pills mb-5 tab-width olympaind-tab " id="pills-tab" role="tablist">
+
+                      <li class="nav-item active olympaid">
+                          <a class="nav-link  fs-13  cl-black" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Board Exam</a>
+                      </li>
+                      <li class="nav-item olympaid">
+                          <a class="nav-link olympaid fs-13 cl-black" id="pills-profile-tab" data-toggle="pill"
+                              href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Competitive Exam</a>
+                      </li>
+                      <li class="nav-item olympaid">
+                          <a class="nav-link olympaid fs-13 cl-black" id="olympiad-tab" data-toggle="pill" href="#olympiad" role="tab" aria-controls="olympiad" aria-selected="false">
+                            Olympiad Exam
+                          </a>
+                      </li>
+                  </ul>
+              </div>
+              <div style = "text-align: right;">
+                  <button class = "btn btn-primary mb-2 ml-auto" id="convert">Download result</button>
+              </div>
+              <div class="tab-content pb-2" id="pills-tabContent">
+                  <div class="tab-pane fade show active " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                      <div class="leaderboard-section-table  table-responsive">
+                          <table class="leader-board-table bgs-lightgrey" id="myTable">
+                              <thead class="leaderboard-head">                                 
+                                  <tr class="table-title-top ">
+                                      <th class="t-br-left bgs-blue">Class</th>
+                                      <th class="bgs-blue"> Paper Name</th>
+                                      <th class="bgs-blue">Marks</th>
+                                      <th class="bgs-blue"> Correct answers Q.no</th>
+                                      <th class="bgs-blue"> Wrong answers Q.no</th>
+                                      <th class="t-br-right bgs-blue">Percentile</th>
+                                      <th class="t-br-right bgs-blue">Students scored more</th>
+                                  </tr>
+                              </thead>
+                              <tbody>         
+                                  {% for obj in attended_papers %}
+                                    {% if obj.class_obj %}
+                                        <tr class="br-box">
+                                            <td class="">{{obj.class_obj.title}}</td>
+                                            <td class="name-lead-box">{{obj.paper.title}}</td>
+                                            <td class="">{{obj.marks}}</td>
+                                            <td class="">{{obj.correct_ans_qno}}</td>
+                                            <td class="">{{obj.wrong_ans_qno}}</td>
+                                            <td>{{obj.percentile}}</td>
+                                            <td>{{obj.more_score_count}}</td>
+                                        </tr>
+                                    {% endif %}
+                                  {% endfor %}                                   
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+                  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                      <div class="leaderboard-section-table  table-responsive">
+                          <table class="leader-board-table bgs-lightgrey" id="myTable">
+                              <thead class="leaderboard-head">                                 
+                                  <tr class="table-title-top ">
+                                      <th class="t-br-left bgs-blue">Exam</th>
+                                      <th class="bgs-blue"> Paper Name</th>
+                                      <th class="bgs-blue">Marks</th>
+                                      <th class="bgs-blue"> Correct answers Q.no</th>
+                                      <th class="bgs-blue"> Wrong answers Q.no</th>
+                                      <th class="t-br-right bgs-blue">Percentile</th>
+                                  </tr>
+                              </thead>
+                              <tbody>         
+                                {% for obj in attended_papers %}
+                                    {% if obj.competitive_exam %}
+                                        <tr class="br-box">
+                                            <td class="">{{obj.competitive_exam.exam_name}}</td>
+                                            <td class="name-lead-box">{{obj.paper.title}}</td>
+                                            <td class="">{{obj.marks}}</td>
+                                            <td class="">{{obj.correct_ans_qno}}</td>
+                                            <td class="">{{obj.wrong_ans_qno}}</td>
+                                            <td>{{obj.percentile}}</td>        
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+                  <div class="tab-pane fade" id="olympiad" role="tabpanel" aria-labelledby="olympiad-tab">
+                      <div class="leaderboard-section-table  table-responsive">
+                          <table class="leader-board-table bgs-lightgrey" id="myTable">
+                              <thead class="leaderboard-head">                                 
+                                  <tr class="table-title-top ">
+                                      <th class="t-br-left bgs-blue">Exam</th>
+                                      <th class="bgs-blue">Marks</th>
+                                      <th class="bgs-blue"> Correct answers Q.no</th>
+                                      <th class="bgs-blue"> Wrong answers Q.no</th>
+                                      <th class="t-br-right bgs-blue">Percentage</th>
+                                  </tr>
+                              </thead>
+                              <tbody>         
+                                {% for obj in attended_papers %}
+                                    {% if obj.olympiad_exam %}
+                                        <tr class="br-box">
+                                            <td class="">{{obj.olympiad_exam.paper.title}}</td>
+                                            <td class="">{{obj.marks}}</td>
+                                            <td class="">{{obj.correct_ans_qno}}</td>
+                                            <td class="">{{obj.wrong_ans_qno}}</td>
+                                            <!-- <td class="">{{obj.wrong_ans_qno|join:", " }}</td> -->
+                                            <td>{{obj.percentage}}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+{% endblock content %}
+
+{% block script %}
+  <script type="text/javascript" src="https://github.com/niklasvh/html2canvas/releases/download/0.5.0-alpha1/html2canvas.js"></script>
+  <script>
+    //convert table to image            
+    function convertToImage() {
+      var resultDiv = document.getElementById("result");
+      let htmlContent = document.getElementById("myTable")
+      html2canvas(htmlContent, {
+        onrendered: function(canvas) {
+          var img = canvas.toDataURL("image/png");
+          const createEl = document.createElement('a');
+          createEl.href = img;
+          createEl.download = "result";
+          createEl.click();
+          createEl.remove();
+        }
+      });
+    }        
+    //click event
+    var convertBtn = document.getElementById("convert");
+    convertBtn.addEventListener('click', convertToImage);
+  </script>
+{% endblock script %}

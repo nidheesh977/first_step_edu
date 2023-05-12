@@ -1,0 +1,255 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+{% now "Y-m-d" as today %}
+{% now "H:i:s" as current_time %}
+<div class="container-fluid">
+  <div class="card shadow mb-4">
+      <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Create Exam</h6>
+          <div>
+              <a href="{% url 'admin_dashboard:olympiad_add_exam' %}" class="d-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50 pr-1"></i> Add Exam</a>
+          </div>
+          </div>
+      <div class="card-body">
+          <div class="table-responsive">
+              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                      <tr>
+                          <th>S.No</th>
+                          <th>Title</th>
+                          <th>Total Questions</th>
+                          <th>Exam date</th>
+                          <th>Exam time</th>
+                          <th>Action</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for obj in olymp_list %}
+                          <tr>
+                              <td>{{forloop.counter}}</td>
+                              <td>{{obj.paper.title}}</td>
+                              <td>{{obj.paper.assigned_questions.count}}</td>
+                              <td>{{obj.exam_date}}</td>
+                              <td>{{obj.exam_time}}</td>
+                              <td>
+                                  <a href="{% url 'admin_dashboard:olympiad_edit_exam' obj.id %}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit fa-sm text-white-50"></i></a>
+                                  <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-danger btn-circle btn-sm deleteItem"><i class="fas fa-trash"></i></a>
+                                  <a href="{% url 'admin_dashboard:olympiad_ques_list' obj.id %}" class="btn btn-success btn-sm">View Questions</a>
+                                  <a href="{% url 'admin_dashboard:olympiad_registrations' obj.id %}" class="btn btn-success btn-sm">Registrations</a>
+                                  {% if today >= obj.exam_date|date:"Y-m-d" %}
+                                    <a href="{% url 'admin_dashboard:olympiad_result' obj.id %}" class="btn btn-success btn-sm">Result</a>
+                                  {% else %}
+                                    <a data={{obj.id}} class="btn btn-warning btn-sm sendAlert">Send Alert</a>
+                                  {% endif %}
+                              </td>
+                          </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="modal fade" id="examAdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title text-dark" id="exampleModalLabel">Create Exam</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+              </button>
+          </div>
+          <div class="modal-body">
+            <div class="p-4">
+              <form class="user row" method="POST">
+                  {% csrf_token %}
+                  <div class="form-group col-sm-6">
+                      <label>Exam Title <span class="text-danger">*</span></label>
+                      <input id="duration-input" class="form-control form-control-user" name="paper_title" type="text" required>
+                  </div>
+                  <div class="form-group col-sm-6">
+                      <label>Price<span class="text-danger">*</span></label>
+                      <input id="duration-input" class="form-control form-control-user" name="price" type="number" required>
+                  </div>
+                  <div class="form-group col-12">
+                      <label>Exam Description <span class="text-danger">*</span></label>
+                      <textarea name="paper_description" rows="2" class="form-control form-control-user" required></textarea>
+                  </div>
+                  <div class="form-group col-sm-6">
+                      <label>Exam Date <span class="text-danger">*</span></label>
+                      <input id="duration-input" class="form-control form-control-user" name="exam_date" type="date" required>
+                  </div>
+                  <div class="form-group col-sm-6">
+                      <label>Exam Time <span class="text-danger">*</span></label>
+                      <input id="duration-input" class="form-control form-control-user" name="exam_time" type="time" required>
+                  </div>
+      
+                  <div class="customer_records form-group col-12">
+                      <div class="row">
+                          <div class="form-group col-6">
+                              <label>Section Name <span class="text-danger">*</span></label>
+                              <input name="section_name" maxlength="20" type="text" class="form-control form-control-user" required>
+                          </div>
+                          <div class="form-group col-6">
+                              <label>Section Description <span class="text-danger">*</span></label>
+                              <textarea name="section_description" id="meta_keywords" rows="1" class="form-control form-control-user" required></textarea>
+                          </div>
+                      </div>
+                      <div class="form-group col-2">
+                          <a class="extra-fields-customer" href="#">Add More Section</a>
+                      </div>
+                  </div>
+                  <div class="customer_records_dynamic form-group col-12"></div>
+                  <div class="form-group col-12">
+                      <label>General Description <span class="text-danger">*</span></label>
+                      <div>
+                          <textarea class="form-control form-control-user" id="summernote"  autofocus="autofocus" name="general_instructions"></textarea>
+                      </div>
+                  </div>
+                  <div class="col-12 text-center pt-4">
+                      <input type="submit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+                  </div>
+              </form>
+          </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="modal fade" id="examEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title text-dark" id="exampleModalLabel">Create Paper</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <form class="user row" method="post" id="editForm">
+                {% csrf_token %}
+                <div class="form-group col-sm-6">
+                    <label>Exam Title <span class="text-danger">*</span></label>
+                    <input id="duration-input" class="form-control form-control-user" name="paper_title" type="text" required>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label>Price<span class="text-danger">*</span></label>
+                    <input id="duration-input" class="form-control form-control-user" name="price" type="number" required>
+                </div>
+                <div class="form-group col-12">
+                    <label>Exam Description <span class="text-danger">*</span></label>
+                    <textarea name="paper_description" rows="2" class="form-control form-control-user" required></textarea>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label>Exam Date <span class="text-danger">*</span></label>
+                    <input id="duration-input" class="form-control form-control-user" name="exam_date" type="date" required>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label>Exam Time <span class="text-danger">*</span></label>
+                    <input id="duration-input" class="form-control form-control-user" name="exam_time" type="time" required>
+                </div>
+    
+                <div class="customer_records form-group col-12">
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label>Section Name <span class="text-danger">*</span></label>
+                            <input name="section_name" maxlength="20" type="text" class="form-control form-control-user" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Section Description <span class="text-danger">*</span></label>
+                            <textarea name="section_description" id="meta_keywords" rows="1" class="form-control form-control-user" required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group col-2">
+                        <a class="extra-fields-customer" href="#">Add More Section</a>
+                    </div>
+                </div>
+                <div class="customer_records_dynamic form-group col-12"></div>
+                <div class="form-group col-12">
+                    <label>General Description <span class="text-danger">*</span></label>
+                    <div>
+                        <textarea class="form-control form-control-user" id="summernote"  autofocus="autofocus" name="general_instructions"></textarea>
+                    </div>
+                </div>
+                <div class="col-12 text-center pt-4">
+                    <input type="submit" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
+                </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                        }
+                }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+    $(".deleteItem").click(function(){
+        let text = "Do you want to delete ?";
+        var objId = $(this).attr("data");
+        if (confirm(text) == true) {
+            text = "You pressed OK!";
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action:"delete",
+                    objId:objId
+                },
+                dataType: 'json',
+                success: function (response) {
+                    location.reload();
+                },
+                error: function(response) {
+                   alert("Something Wrong");
+                }
+            });
+        }
+    });
+    $(".sendAlert").click(function(){
+        let objId = $(this).attr("data")
+        $.ajax({
+            type: 'post',
+            headers: {
+                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            data: {
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+              objId:objId,
+              action: "notification"
+            },
+            dataType: 'json',
+            success: function (response) {
+                alert("Notification send successfully")
+            },
+            error: function(response) {
+               alert("Something Wrong");
+            }
+        });
+    });
+   
+</script>
+
+{% endblock script %}

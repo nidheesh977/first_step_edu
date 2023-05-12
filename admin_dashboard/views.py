@@ -1,4 +1,3 @@
-
 import json
 from datetime import timedelta
 
@@ -11,10 +10,15 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import View
 from PIL import Image
+from django.conf import settings
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import get_template
 
 from application.models import *
 from utils.constants import EmailContents, ImageSizes
 from utils.functions import OTP_Gen, is_ajax, reterive_request_data
+import pandas as pd
+from django.core.exceptions import BadRequest
 
 
 class AdminLogin(View):
@@ -297,12 +301,49 @@ class EventsList(View):
         return render(request,"event-view.html",context)
     
     def post(self,request,*args, **kwargs):
-        Events.objects.get(id=request.POST.get("objId")).delete()
-        to_return = {
-                        "title":"Deleted",
-                        "icon":"success",
-                    }
+        method = request.POST.get("method")
+        id = request.POST.get("objId")
+        event = Events.objects.get(id=id)
+        if method == "delete":
+            event.delete()
+            to_return = {
+                            "title":"Deleted",
+                            "icon":"success",
+                        }
+        else:
+            registered_events = RegisterdEvents.objects.filter(event = event)
+            recipient_list = []
+            for i in registered_events:
+                recipient_list.append(i.student.email)
+            print(recipient_list)
+            if len(recipient_list) >= 1:
+                subject = f'Event alert'
+                email_from = settings.EMAIL_HOST_USER
+                plaintext = get_template('email_templates/event_notification.txt')
+                htmly     = get_template('email_templates/event_notification.html')
+
+                d = {
+                    'title': event.title,
+                    'date': event.event_date,
+                }
+
+                text_content = plaintext.render(d)
+                html_content = htmly.render(d)
+                msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+
+            to_return = {
+                            "title":"Notification send successfully",
+                            "icon":"success",
+                        }
         return JsonResponse(to_return,safe=True,)
+    
+class EditDetails(View):
+    def get(self, request, *args, **kwargs):
+        objs = RegisterdEvents.objects.filter(event = Events.objects.get(id = kwargs["id"]))
+        context = {"objs":objs}
+        return render(request,"event-detail.html",context)
 
 class AddEvent(View):
     def get(self,request,*args, **kwargs):
@@ -322,6 +363,7 @@ class AddEvent(View):
                 event_meeting_link = request.POST.get("meeting_link"),
                 image = request.FILES.get("upload_image"),
                 image_alt_name = request.POST.get("upload_image_alt_name"),
+                event_fee = request.POST.get("event_fee"),
             )
             return redirect("admin_dashboard:events-list")
         else:
@@ -621,6 +663,7 @@ class CMClassListView(View):
                 "id",
                 "title",
                 "price",
+                "repay_price",
                 "description",
                 "meta_title",
                 "meta_description",
@@ -637,6 +680,7 @@ class CMClassListView(View):
             obj.meta_description = request.POST.get("meta_description",obj.meta_description)
             obj.meta_keywords = request.POST.get("meta_keywords",obj.meta_keywords)
             obj.price = request.POST.get("price",obj.price)
+            obj.repay_price = request.POST.get("repay_price",obj.repay_price)
             obj.save()
             return redirect("admin_dashboard:clsm-classes-list")
         else:
@@ -644,6 +688,7 @@ class CMClassListView(View):
                 title = request.POST.get("class_title"),
                 description = request.POST.get("class_description"),
                 price = request.POST.get("price"),
+                repay_price = request.POST.get("repay_price"),
                 meta_title = request.POST.get("meta_title"),
                 meta_description = request.POST.get("meta_description"),
                 meta_keywords = request.POST.get("meta_keywords"), 
@@ -677,6 +722,7 @@ class CMSubjectsListView(View):
                 "title",
                 "description",
                 "price",
+                "repay_price",
                 "meta_title",
                 "meta_description",
                 "meta_keywords",
@@ -689,6 +735,7 @@ class CMSubjectsListView(View):
             obj.title = request.POST.get("subject_title",obj.title)
             obj.description = request.POST.get("subject_description",obj.description)
             obj.price = request.POST.get("price",obj.price)
+            obj.repay_price = request.POST.get("repay_price",obj.repay_price)
             obj.meta_title = request.POST.get("meta_title",obj.meta_title)
             obj.meta_description = request.POST.get("meta_description",obj.meta_description)
             obj.meta_keywords = request.POST.get("meta_keywords",obj.meta_keywords)
@@ -699,6 +746,7 @@ class CMSubjectsListView(View):
                 title = request.POST.get("subject_title"),
                 description = request.POST.get("subject_description"),
                 price = request.POST.get("price"),
+                repay_price = request.POST.get("repay_price"),
                 meta_title = request.POST.get("meta_title"),
                 meta_description = request.POST.get("meta_description"),
                 meta_keywords = request.POST.get("meta_keywords"),
@@ -720,7 +768,7 @@ class CMPapersListView(View):
         }
         return render(request,"class_management/papers/papers-list.html",context)
 
-    
+
     def post(self,request,*args, **kwargs):
         SUBJECT_ID = kwargs.get("subject_id")
         CLASS_ID = kwargs.get("class_id")
@@ -747,7 +795,7 @@ class CMPapersListView(View):
             return JsonResponse(to_return,safe=True,)
 
         if request.POST.get("edit_form") != None:
-            obj = get_object_or_404(Papers,id=request.POST.get("id"))       
+            obj = get_object_or_404(Papers,id=request.POST.get("id"))
             obj.title = request.POST.get("paper_title",obj.title)
             obj.description = request.POST.get("paper_description",obj.description)
             obj.instructions = request.POST.get("general_instructions",obj.instructions)
@@ -782,6 +830,7 @@ class CMQuestionsList(View):
         CLASS_ID = kwargs.get("class_id")
         SUBJECT_ID = kwargs.get("subject_id")
         paper_obj = get_object_or_404(Papers,id=PAPER_ID)
+        temp_images = TempImages.objects.filter(paper = paper_obj)
 
         if CLASS_ID and SUBJECT_ID:
             context = {
@@ -789,6 +838,7 @@ class CMQuestionsList(View):
                 "cls_id":CLASS_ID,
                 "sub_id":SUBJECT_ID,
                 "paper_id":PAPER_ID,
+                "temp_images": temp_images
             }
             return render(request,"class_management/papers/questions-list.html",context)
         else:
@@ -796,9 +846,10 @@ class CMQuestionsList(View):
                 'exm_id':kwargs.get("exm_id"),
                 "paper_id":PAPER_ID,
                 "qus_obj":paper_obj.assigned_questions.all(),
+                "temp_images": temp_images
             }
             return render(request,"competitive_management/competitve_qus_list.html",context)
-    
+
     def post(self,request,*args, **kwargs):
         get_object_or_404(Questions,id=request.POST.get("objId")).delete()
         to_return = {
@@ -836,8 +887,6 @@ class CMAddPaper(View):
         SUBJECT_OBJ.assigned_papers.add(paper_obj)
         return redirect("admin_dashboard:clsm-papers-list",class_id=CLASS_ID,subject_id=SUBJECT_ID)
 
-
-
 class CMEditPaper(View):
     def get(self,request,*args, **kwargs):
         paper_id = kwargs.get("id")
@@ -870,9 +919,10 @@ class CMEditPaper(View):
         paper_obj.description = request.POST.get("paper_description",paper_obj.description)
         paper_obj.instructions = request.POST.get("general_instructions",paper_obj.instructions)
         paper_obj.price = request.POST.get("price",paper_obj.price)
+        paper_obj.repay_price = request.POST.get("repay_price",paper_obj.repay_price)
         paper_obj.section_details=final_list
         paper_obj.save()
-        
+
         return redirect("admin_dashboard:clsm-papers-list",class_id=CLASS_ID,subject_id=SUBJECT_ID)
 
 class CMAddQuestions(View):
@@ -893,7 +943,6 @@ class CMAddQuestions(View):
                 "paper_id":PAPER_ID,
                 "paper_obj":paper_obj,
                 "section_details":SECTION_DETAILS,
-                
             }
             return render(request,"class_management/papers/questions-add.html",context)
         else:
@@ -904,7 +953,7 @@ class CMAddQuestions(View):
                 "section_details":SECTION_DETAILS,
             }
             return render(request,"competitive_management/competitive_qus_add.html",context)
-    
+
     def post(self,request,*args, **kwargs):
         PAPER_ID = kwargs.get("paper_id")
         CLASS_ID = kwargs.get("class_id")
@@ -923,16 +972,20 @@ class CMAddQuestions(View):
             option2 = request.POST.get("option2"),
             option3 = request.POST.get("option3"),
             option4 = request.POST.get("option4"),
-            correct_answer = request.POST.get("correct_option"),
+            correct_answer = request.POST.get("correct_option")
             )
+            if request.FILES.get("upload_image"):
+                qus_obj.image = request.FILES.get("upload_image")
+                qus_obj.save()
             paper_obj = get_object_or_404(Papers,id=PAPER_ID)
             paper_obj.assigned_questions.add(qus_obj)
 
             if CLASS_ID and SUBJECT_ID:
                 return redirect("admin_dashboard:clsm-questions-list", class_id=CLASS_ID, subject_id=SUBJECT_ID, paper_id=PAPER_ID)
             else:
-                return redirect("admin_dashboard:comp_ques_list", paper_id=PAPER_ID)
-            
+                Exam_ID = kwargs.get("exm_id")
+                return redirect("admin_dashboard:comp_ques_list", exm_id = Exam_ID, paper_id=PAPER_ID)
+
         else:
             messages.error(request, "Invalid Time duration format")
             da = reterive_request_data(request.POST)
@@ -943,9 +996,9 @@ class CMAddQuestions(View):
             else:
                 rr = reverse("admin_dashboard:comp_ques_add", kwargs={"paper_id":PAPER_ID})+da
                 return HttpResponseRedirect(redirect_to=rr)
-        
-        
-class CMEditQuestions(View): 
+
+
+class CMEditQuestions(View):
     def get(self,request,*args, **kwargs):
         PAPER_ID = kwargs.get("paper_id")
         CLASS_ID = kwargs.get("class_id")
@@ -975,18 +1028,21 @@ class CMEditQuestions(View):
             }
             return render(request,"class_management/papers/questions-edit.html",context)
         else:
+            Exam_ID = kwargs.get("exm_id")
             context = {
                 "paper_id":PAPER_ID,
                 "obj":qus_obj,
                 "time_limit":TIME_LIMIT,
                 "section_details":SECTION_DETAILS,
+                "exm_id": Exam_ID
             }
             return render(request,"competitive_management/competitve_qus_edit.html",context)
-    
+
     def post(self,request,*args, **kwargs):
         PAPER_ID = kwargs.get("paper_id")
         CLASS_ID = kwargs.get("class_id")
         SUBJECT_ID = kwargs.get("subject_id")
+        Exam_ID = kwargs.get("exm_id")
         qus_obj = get_object_or_404(Questions,id=kwargs.get("qus_id"))
         time_limit = str(request.POST.get("section_time_limit")).split(":")
         section_time_limit = timedelta(seconds=int(time_limit[1]), minutes=int(time_limit[0]))
@@ -1003,24 +1059,26 @@ class CMEditQuestions(View):
             qus_obj.option3 = request.POST.get("option3",qus_obj.option3)
             qus_obj.option4 = request.POST.get("option4",qus_obj.option4)
             qus_obj.correct_answer = request.POST.get("correct_option",qus_obj.correct_answer)
+            if request.FILES.get("upload_image"):
+                qus_obj.image = request.FILES.get("upload_image")
             qus_obj.save()
 
             if CLASS_ID and SUBJECT_ID:
                 return redirect("admin_dashboard:clsm-questions-list", class_id=CLASS_ID, subject_id=SUBJECT_ID, paper_id=PAPER_ID)
             else:
-                return redirect("admin_dashboard:comp_ques_list", paper_id=PAPER_ID)
+                return redirect("admin_dashboard:comp_ques_list", exm_id = Exam_ID, paper_id=PAPER_ID)
         else:
             messages.error(request, "Invalid Time duration format")
             if CLASS_ID and SUBJECT_ID:
                 return redirect("admin_dashboard:clsm-paper-qus-edit", class_id=CLASS_ID, subject_id=SUBJECT_ID, paper_id=PAPER_ID, qus_id =kwargs.get("qus_id"))
             else:
                 return redirect("admin_dashboard:comp_ques_edit", paper_id=PAPER_ID, qus_id =kwargs.get("qus_id"))
-            
+
 
 class CompetitiveManagementAddPaper(View):
     def get(self,request,*args, **kwargs):
         return render(request,"competitive_management/comp_add_paper.html")
-    
+
     def post(self, request, *args, **kwargs):
         EXAM_ID = kwargs.get("exm_id")
         section_name = request.POST.getlist("section_name")
@@ -1046,7 +1104,7 @@ class CompetitiveManagementAddPaper(View):
 
 
 class CompetitiveManagementEditPaper(View):
-    
+
     def get(self,request,*args, **kwargs):
         EXAM_ID = kwargs.get("exm_id")
         paper_id = kwargs.get("id")
@@ -1079,6 +1137,7 @@ class CompetitiveManagementEditPaper(View):
         paper_obj.description = request.POST.get("paper_description",paper_obj.description)
         paper_obj.instructions = request.POST.get("general_instructions",paper_obj.instructions)
         paper_obj.price = request.POST.get("price",paper_obj.price)
+        paper_obj.repay_price = request.POST.get("repay_price",paper_obj.repay_price)
         paper_obj.section_details=final_list
         paper_obj.save()
         
@@ -1135,7 +1194,6 @@ class CompetitiveManagementPapersList(View):
             )
             com_obj.assigned_papers.add(paper_obj)
             return redirect("admin_dashboard:competitve_papers_list",exm_id=kwargs.get("exm_id"))
-        
 
 
 class CompetitiveExamsList(View):
@@ -1145,10 +1203,208 @@ class CompetitiveExamsList(View):
             "objs":objs,
         }
         return render(request,"competitive_management/competitve_exams_list.html",context)
-    
+
     def post(self,request, *args, **kwargs):
         if request.POST.get("action") == "delete":
-            obj = get_object_or_404(CompetitiveExam,id=request.POST.get("objId")) 
+            obj = get_object_or_404(CompetitiveExam,id=request.POST.get("objId"))
+            obj.delete()
+            to_return = {
+                        "title":"Deleted",
+                        "icon":"success",
+                    }
+            return JsonResponse(to_return,safe=True,)
+
+        if request.POST.get("action") == "retrieve":
+            obj = CompetitiveExam.objects.filter(id=request.POST.get("objId")).values(
+                "id",
+                "exam_name",
+                "description",
+                "price",
+                "repay_price"
+            )
+            to_return = {"obj":list(obj)[0]}
+            return JsonResponse(to_return,safe=True,)
+
+        if request.POST.get("edit_form") != None:
+            obj = get_object_or_404(CompetitiveExam,id=request.POST.get("id"))
+            obj.exam_name = request.POST.get("exam_title",obj.exam_name)
+            obj.description = request.POST.get("exam_description",obj.description)
+            obj.price = request.POST.get("exam_price",obj.price)
+            obj.repay_price = request.POST.get("repay_price",obj.repay_price)
+            obj.save()
+            return redirect("admin_dashboard:competitve_exams_list")
+        else:
+            CompetitiveExam.objects.create(
+                exam_name = request.POST.get("exam_title"),
+                description = request.POST.get("exam_description"),
+                price = request.POST.get("exam_price"),
+                repay_price = request.POST.get("repay_price"), )
+            return redirect("admin_dashboard:competitve_exams_list")
+
+class CMBulkQuestions(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            PAPER_ID = kwargs.get("paper_id")
+            paper_obj = get_object_or_404(Papers,id=PAPER_ID)
+            to_dict = paper_obj.section_details
+            df = pd.read_csv (request.FILES["file"])
+            for i in df.iterrows():
+                if str(i[1].question) != "nan":
+                    time_limit = i[1].time_dutation.split(":")
+                    SECONDS = int(time_limit[1])
+                    MINUTES = int(time_limit[0])
+                    section_time_limit = timedelta(seconds=SECONDS, minutes=MINUTES)
+                    qus_obj = Questions.objects.create(
+                        section_description = "",
+                        section_time_limit = section_time_limit,
+                        question = i[1].question,
+                        option1 = i[1].optionA,
+                        option2 = i[1].optionB,
+                        option3 = i[1].optionC,
+                        option4 = i[1].optionD,
+                        correct_answer = i[1][i[1].answer],
+                    )
+                    if "image" in i[1] and str(i[1].image) != "nan":
+                        print(str(i[1].image))
+                        qus_obj.image_link = i[1].image
+                        qus_obj.save()
+                    if "section" in i[1] and str(i[1].section) != "nan":
+                        qus_obj.section = i[1].section,
+                        qus_obj.save()
+                    paper_obj = get_object_or_404(Papers,id=PAPER_ID)
+                    paper_obj.assigned_questions.add(qus_obj)
+                    paper_obj.save()
+
+            to_return = {"status": "Success"}
+            return JsonResponse(to_return,safe=True)
+        except:
+            raise BadRequest('Invalid file.')
+
+class CMBulkImageGenerateLink(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            PAPER_ID = kwargs.get("paper_id")
+            paper = Papers.objects.get(id = PAPER_ID)
+            image = request.FILES["file"]
+            img_obj = TempImages.objects.create(paper = paper, image = image)
+            print(image)
+            to_return = {"link": img_obj.image.url}
+            return JsonResponse(to_return,safe=True)
+        except:
+            raise BadRequest('Invalid files.')
+        
+class PaymentDetails(View):
+    def get(self, request):
+        payments = StudentPayments.objects.all()
+        return render(request, "payment_details.html", context = {"payments": payments})
+        
+class UserPaymentDetails(View):
+    def get(self, request, *args, **kwargs):
+        payments = StudentPayments.objects.filter(student = CustomUser.objects.get(id =kwargs["id"]))
+        return render(request, "user_payment_details.html", context = {"payments": payments})
+    
+# Olympiad
+
+class OlympiadManagementAddExam(View):
+    def get(self,request,*args, **kwargs):
+        return render(request,"olympiad_management/olymp_add_exam.html")
+    
+    def post(self, request, *args, **kwargs):
+        print(args)
+        print(kwargs)
+        print(request.POST)
+        section_name = request.POST.getlist("section_name")
+        section_description = request.POST.getlist("section_description")
+        final_list = []
+        for i in range(0, len(section_name)):
+            d = {
+                "name":section_name[i],
+                "description":section_description[i]
+            }
+            final_list.append(json.dumps(d))
+        paper_obj = Papers.objects.create(
+            title = request.POST.get("paper_title"),
+            description = request.POST.get("paper_description"),
+            instructions = request.POST.get("general_instructions"),
+            price = request.POST.get("price"),
+            is_competitive=False,
+            section_details = final_list
+        )
+        olymp_obj = OlympiadExam.objects.create(
+            exam_date = request.POST.get("exam_date"),
+            exam_time = request.POST.get("exam_time"),
+            paper = paper_obj
+        )
+        return redirect("admin_dashboard:olympiad_exams_list")
+
+class OlympiadManagementAddQuestion(View):
+    def get(self,request,*args, **kwargs):
+        olymp_id = kwargs["id"]
+        return render(request,"olympiad_management/olymp_add_ques.html", context = {"olymp_id": olymp_id})
+    
+    def post(self,request,*args, **kwargs):
+        olympiad_obj = OlympiadExam.objects.get(id = kwargs.get("id"))
+        time_limit = str(request.POST.get("section_time_limit")).split(":")
+        SECONDS = int(time_limit[1])
+        MINUTES = int(time_limit[0])
+        if all([SECONDS<=60,MINUTES<=60]):
+            section_time_limit = timedelta(seconds=SECONDS, minutes=MINUTES)
+            qus_obj = Questions.objects.create(
+            section = request.POST.get("section"),
+            section_description = request.POST.get("section_description"),
+            section_time_limit = section_time_limit,
+            question = request.POST.get("question"),
+            option1 = request.POST.get("option1"),
+            option2 = request.POST.get("option2"),
+            option3 = request.POST.get("option3"),
+            option4 = request.POST.get("option4"),
+            correct_answer = request.POST.get("correct_option")
+            )
+            if request.FILES.get("upload_image"):
+                qus_obj.image = request.FILES.get("upload_image")
+                qus_obj.save()
+            paper_obj = olympiad_obj.paper
+            paper_obj.assigned_questions.add(qus_obj)
+        return redirect("admin_dashboard:olympiad_ques_list", id = kwargs["id"])
+
+class OlympiadManagementEditExam(View):
+    def get(self,request,*args, **kwargs):
+        olympiad = OlympiadExam.objects.get(id = kwargs.get("id"))
+        paper_obj = olympiad.paper
+        print(paper_obj.section_details)
+        if paper_obj.section_details:
+            SECTION_DETAILS = [json.loads(i) for i in paper_obj.section_details]
+        else:
+            SECTION_DETAILS = []
+        return render(request,"olympiad_management/olymp_edit_exam.html", context = {"olympiad": olympiad, "section_details":SECTION_DETAILS})
+    def post(self, request, *args, **kwargs):
+        print(args)
+        print(kwargs)
+        print(request.POST)
+        olympiad = OlympiadExam.objects.get(id = kwargs.get("id"))
+        paper_obj = olympiad.paper
+        paper_obj.title = request.POST.get("paper_title")
+        paper_obj.description = request.POST.get("paper_description")
+        paper_obj.instructions = request.POST.get("general_instructions")
+        paper_obj.price = request.POST.get("price")
+        paper_obj.is_competitive=False
+        olympiad.exam_date = request.POST.get("exam_date")
+        olympiad.exam_time = request.POST.get("exam_time")
+        paper_obj.save()
+        olympiad.save()
+        return redirect("admin_dashboard:olympiad_exams_list")
+
+class OlympiadManagementQuestionList(View):
+    def get(self,request,*args, **kwargs):
+        olympiad = OlympiadExam.objects.get(id = kwargs.get("id"))
+        paper = olympiad.paper
+        questions = paper.assigned_questions.all()
+        return render(request,"olympiad_management/olymp_ques_list.html", context = {"qus_obj": questions, "olymp_id": olympiad.id})
+
+    def post(self,request, *args, **kwargs):
+        if request.POST.get("action") == "delete":
+            print(request.POST.get("objId"))
+            obj = Questions.objects.get(id=request.POST.get("objId"))
             obj.delete()
             to_return = {
                         "title":"Deleted",
@@ -1156,28 +1412,118 @@ class CompetitiveExamsList(View):
                     }
             return JsonResponse(to_return,safe=True,)
         
-        if request.POST.get("action") == "retrieve":
-            obj = CompetitiveExam.objects.filter(id=request.POST.get("objId")).values(
-                "id",
-                "exam_name",
-                "description",
-                "price",
-            )
-            to_return = {"obj":list(obj)[0]}
-            return JsonResponse(to_return,safe=True,)
-        
-        if request.POST.get("edit_form") != None:
-            obj = get_object_or_404(CompetitiveExam,id=request.POST.get("id"))       
-            obj.exam_name = request.POST.get("exam_title",obj.exam_name)
-            obj.description = request.POST.get("exam_description",obj.description)
-            obj.price = request.POST.get("exam_price",obj.price)
-            obj.save()
-            return redirect("admin_dashboard:competitve_exams_list")
-    
+class OlympiadManagementEditQuestion(View):
+    def get(self, request, *args, **kwargs):
+        olympiad = OlympiadExam.objects.get(id = kwargs["olymp_id"])
+        question = Questions.objects.get(id = kwargs["ques_id"])
+        paper_obj = olympiad.paper
+        seconds = question.section_time_limit
+        print(question.section)
+        if seconds != None:
+            convert = str(timedelta(seconds = seconds.total_seconds()))
+            OUTCOME = convert.split(":")
+            TIME_LIMIT= f"{OUTCOME[1]}:{OUTCOME[2]}"
         else:
-            CompetitiveExam.objects.create(
-                exam_name = request.POST.get("exam_title"),
-                description = request.POST.get("exam_description"),
-                price = request.POST.get("exam_price"),
+            TIME_LIMIT = None
+        return render(request, "olympiad_management/olymp_edit_ques.html", context = {"olymp_id": olympiad.id, "obj": question, "time_limit":TIME_LIMIT,})
+    
+    def post(self,request,*args, **kwargs):
+        olympiad_obj = OlympiadExam.objects.get(id = kwargs.get("olymp_id"))
+        time_limit = str(request.POST.get("section_time_limit")).split(":")
+        SECONDS = int(time_limit[1])
+        MINUTES = int(time_limit[0])
+        if all([SECONDS<=60,MINUTES<=60]):
+            section_time_limit = timedelta(seconds=SECONDS, minutes=MINUTES)
+            qus_obj = Questions.objects.get(id = kwargs["ques_id"])
+            qus_obj.section = request.POST.get("section",qus_obj.section)
+            qus_obj.section_description = request.POST.get("section_description",qus_obj.section_description)
+            qus_obj.section_time_limit = section_time_limit if section_time_limit else qus_obj.section_time_limit
+            qus_obj.question = request.POST.get("question",qus_obj.question)
+            qus_obj.option1 = request.POST.get("option1",qus_obj.option1)
+            qus_obj.option2 = request.POST.get("option2",qus_obj.option2)
+            qus_obj.option3 = request.POST.get("option3",qus_obj.option3)
+            qus_obj.option4 = request.POST.get("option4",qus_obj.option4)
+            qus_obj.correct_answer = request.POST.get("correct_option",qus_obj.correct_answer)
+            if request.FILES.get("upload_image"):
+                qus_obj.image = request.FILES.get("upload_image")
+            qus_obj.save()
+            if request.FILES.get("upload_image"):
+                qus_obj.image = request.FILES.get("upload_image")
+                qus_obj.save()
+        return redirect("admin_dashboard:olympiad_ques_list", id = kwargs["olymp_id"])
+
+class OlympiadManagementListExams(View):
+    def get(self,request,*args, **kwargs):
+        olymp_list = OlympiadExam.objects.all().order_by("exam_date")
+        context = {
+            "olymp_list": olymp_list
+        }
+        return render(request,"olympiad_management/olymp_exam_list.html", context)
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get("action") == "delete":
+            obj = OlympiadExam.objects.get(id=request.POST.get("objId"))
+            obj.delete()
+            to_return = {
+                        "title":"Deleted",
+                        "icon":"success",
+                    }
+            return JsonResponse(to_return,safe=True,)
+        elif request.POST.get("action") == "notification":
+            olympiad = OlympiadExam.objects.get(id = request.POST.get("objId"))
+            registrations = StudentPayments.objects.filter(olympiad_exam = olympiad)
+            registered_users = []
+            for registration in registrations:
+                registered_users.append(registration.student.email)
+
+            if len(registered_users) >= 1:
+                subject = f'Olympiad alert'
+                email_from = settings.EMAIL_HOST_USER
+                plaintext = get_template('email_templates/olympiad_notification.txt')
+                htmly     = get_template('email_templates/olympiad_notification.html')
+
+                d = {
+                    'title': olympiad.paper.title,
+                    'date': olympiad.exam_date,
+                    'time': olympiad.exam_time,
+                }
+
+                text_content = plaintext.render(d)
+                html_content = htmly.render(d)
+                msg = EmailMultiAlternatives(subject, text_content, email_from, registered_users)
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+            to_return = {
+                        "title":"Mail send successfully",
+                        "icon":"success",
+                    }
+            return JsonResponse(to_return,safe=True,)
+        else:
+            print(args)
+            print(kwargs)
+            print(request.POST)
+            paper_obj = Papers.objects.create(
+                title = request.POST.get("paper_title"),
+                description = request.POST.get("paper_description"),
+                instructions = request.POST.get("general_instructions"),
+                price = request.POST.get("price"),
+                is_competitive=False,
             )
-            return redirect("admin_dashboard:competitve_exams_list")
+            olymp_obj = OlympiadExam.objects.create(
+                exam_date = request.POST.get("exam_date"),
+                exam_time = request.POST.get("exam_time"),
+                paper = paper_obj
+            )
+            return redirect("admin_dashboard:olympiad_ques_list",id=olymp_obj.id)
+        
+class OlympiadRegistrations(View):
+    def get(self, request, *args, **kwargs):
+        olympiad = OlympiadExam.objects.get(id = kwargs["id"])
+        registrations = StudentPayments.objects.filter(olympiad_exam = olympiad)
+        return render(request, "olympiad_management/olymp_registrations.html", context = {"registrations": registrations})
+        
+class OlympiadResults(View):
+    def get(self, request, *args, **kwargs):
+        olympiad = OlympiadExam.objects.get(id = kwargs["id"])
+        results = AttendedPapers.objects.filter(olympiad_exam=olympiad)
+        return render(request, "olympiad_management/olymp_results.html", context = {"results": results})

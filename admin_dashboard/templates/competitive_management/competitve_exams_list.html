@@ -65,6 +65,10 @@
                         <label>Exam Price <span class="text-danger">*</span></label>
                         <input name="exam_price" type="number" class="form-control form-control-user" required>
                     </div>
+                    <div class="form-group col-12">
+                        <label>Repay Price <span class="text-danger">*</span></label>
+                        <input name="repay_price" type="number" class="form-control form-control-user" required>
+                    </div>
                     <!--<div class="form-group col-12">
                         <label>General Instructions <span class="text-danger">*</span></label>
                         <div>
@@ -105,7 +109,11 @@
                         <label>Exam Price <span class="text-danger">*</span></label>
                         <input name="exam_price" id="exam_price"  type="number" class="form-control form-control-user" required>
                     </div>
-                    
+                    <div class="form-group col-12">
+                        <label>Repay Price <span class="text-danger">*</span></label>
+                        <input name="repay_price" id="repay_price"  type="number" class="form-control form-control-user" required>
+                    </div>
+
                     <input type="hidden" id="idValue" name="id">
                     <div class="col-12 text-center pt-4">
                         <input type="submit" id="editFormBtn" name="edit_form" class="btn-lg btn-primary border-0 bg-primary tex-white px-4">
@@ -218,6 +226,7 @@
                 $("#exam_title").val(response["obj"]["exam_name"]);
                 $("#exam_description").text(response["obj"]["description"]);
                 $("#exam_price").val(response["obj"]["price"]);
+                $("#repay_price").val(response["obj"]["repay_price"]);
         
             
                 $("#idValue").val(response["obj"]["id"]);

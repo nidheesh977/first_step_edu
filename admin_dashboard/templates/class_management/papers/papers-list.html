@@ -65,6 +65,10 @@
                         <label>Price <span class="text-danger">*</span></label>
                         <input name="price" type="number" class="form-control form-control-user" required>
                     </div>
+                    <div class="form-group col-12">
+                        <label>Repay Price <span class="text-danger">*</span></label>
+                        <input name="repay_price" type="number" class="form-control form-control-user" required>
+                    </div>
                     <div class="customer_records form-group col-12">
                         <div class="row">
                             <div class="form-group col-5">
@@ -124,6 +128,11 @@
                     <div class="form-group col-12">
                         <label>Price <span class="text-danger">*</span></label>
                         <input name="price" id="price" type="number" class="form-control form-control-user" required>
+                    </div>
+                    
+                    <div class="form-group col-12">
+                        <label>Repay Price <span class="text-danger">*</span></label>
+                        <input name="repay_price" id="repay_price" type="number" class="form-control form-control-user" required>
                     </div>
 
                     <div class="da form-group col-12">
@@ -312,6 +321,7 @@
                 $("#paper_title").val(response["obj"]["title"]);
                 $("#paper_description").text(response["obj"]["description"]);
                 $("#price").val(response["obj"]["price"]);
+                $("#repay_price").val(response["obj"]["repay_price"]);
         
                 $('#summernoteEdit').summernote('code', response["obj"]["instructions"]);
             

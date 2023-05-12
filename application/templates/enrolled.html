@@ -1,13 +1,15 @@
 {% extends 'application_base.html' %}
 {% load static %}
 {% block content %}
+{% now "Y-m-d" as today %}
+{% now "H:i:s" as current_time %}
 
 <div class="container px-0 mx-sm-0 dash-board-main-box"> 
     {% include 'dashboard_side_menu.html' %}
     <span class="hide-box  d-lg-none"><i class="fa fa-arrow-right"></i></span>
     <span class="side-box  d-lg-none"><i class="fa fa-arrow-left"></i></span>
     <div class="dashboard-content bgs-lightgrey pt-5 pb-3"> 
-        <h1 class="test-bold fs-25 lh-27 cl-grey pb-4">Enrolled Paper</h1>   
+        <h1 class="test-bold fs-25 lh-27 cl-grey pb-4">Enrolled Paper</h1>
         <div class="section_home-olympiad-test">
             <div class="oly-tap">
                 <ul class="nav nav-pills mb-5 tab-width olympaind-tab " id="pills-tab" role="tablist">
@@ -19,10 +21,17 @@
                         <a class="nav-link olympaid fs-13 cl-black" id="pills-profile-tab" data-toggle="pill"
                             href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Competitive Exam</a>
                     </li>
+                    <li class="nav-item olympaid">
+                        <a class="nav-link olympaid fs-13 cl-black" id="olympiad-exam-tab" data-toggle="pill"
+                            href="#olympiad-exam" role="tab" aria-controls="olympiad-exam" aria-selected="false">Olympiad Exam</a>
+                    </li>
                 </ul>
             </div>
             <div class="tab-content pb-2" id="pills-tabContent">
                 <div class="tab-pane fade show active " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                    {% if board_exams|length == 0 %}
+                        <h3 class = "text-center">No enrolled board exams</h3>
+                    {% endif %}
                     <div class="row">
                         {% for obj in board_exams %}
                         
@@ -38,6 +47,7 @@
                                                 <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; {{obj.classes.price}}</p>
                                             </div>
                                             <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
+                                                
                                                 <a href="{% url 'application:enrolled_subject' obj.id %}?type=subjects" class="text-white fs-15 bgs-black decrt-none enroll-button">View Subject
                                                     <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
                                                         width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
@@ -107,9 +117,11 @@
                 </div>
                 
                 <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                    {% if competitive_exams_list|length == 0 %}
+                        <h3 class = "text-center">No enrolled competitive exams</h3>
+                    {% endif %}
                     <div class="row">
-
-                        {% for obj in competitive_exams %}
+                        {% for obj in competitive_exams_list %}
                         {% if obj.enrolled_type == "competitive-exam" %}
                         <div class="col-xl-6 pb-4 mb-md-2">
                             <div class="card card-over mb-2">
@@ -139,7 +151,6 @@
                             <div class="col-xl-6 pb-4 mb-md-2">
                                 <div class="card card-over mb-2">
                                     <div class="card-body">
-                                    
                                         <h5 class="dash-view test-semibold fs-16 cl-black">{{obj.competitive_paper.title}}</h5>
                                         <p class="fs-13 cl-dark col-xl-11 px-0">{{obj.competitive_paper.description}}</p>
                                         <div class="row align-items-center">
@@ -160,6 +171,55 @@
                                 </div>
                             </div>
                         {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="olympiad-exam" role="tabpanel" aria-labelledby="olympiad-exam-tab">
+                    <div class = "text-right">
+                        <a href="{% url 'application:dashboard_result' %}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">View Result</a>
+                    </div>
+                    {% if olympiad_exams|length == 0 %}
+                        <h3 class = "text-center">No enrolled olympiad exams</h3>
+                    {% endif %}
+                    <div class="row">
+                        {% for obj in olympiad_exams %}
+                                <div class="col-xl-6 pb-4 mb-md-2">
+                                    <div class="card card-over mb-2">
+                                        <div class="card-body">
+                                            <p class="fs-15 test-bold cl-black mb-1 mb-md-0 card-labels">{% if today == obj.olympiad_exam.exam_date|date:"Y-m-d" and current_time >= obj.olympiad_exam.exam_time|time:"H:i:s" %}Live{%else%}{{obj.olympiad_exam.exam_date}} - {{obj.olympiad_exam.exam_time}}{% endif %}</p>
+                                            <h5 class="test-semibold  fs-18 cl-black">{{obj.olympiad_exam.paper.title}}</h5>
+                                            <p class="fs-13 cl-dark col-xl-11 pl-0">{{obj.olympiad_exam.paper.description}}</p>
+                                            <div class="row align-items-center">
+                                                <div class="col-4 pr-0">
+                                                    <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; {{obj.olympiad_exam.paper.price}}</p>
+                                                </div>
+                                                {% if today == obj.olympiad_exam.exam_date|date:"Y-m-d" and current_time >= obj.olympiad_exam.exam_time|time:"H:i:s" %}
+                                                <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
+                                                    {% if obj.olympiad_exam in attended_olympiads %}
+                                                    <span class="text-white fs-15 bgs-black decrt-none enroll-button">Attended</span>
+                                                    {% else %}
+                                                    <a href="{% url 'application:exam' obj.olympiad_exam.paper.id %}?type=olympiad&&olympiad_id={{obj.olympiad_exam.id}}" class="text-white fs-15 bgs-black decrt-none enroll-button">Attend Test
+                                                        <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                                            <path id="arrow-color" data-name="Path 3"
+                                                                d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                                transform="translate(-3.278 -102.821)" fill="#fff" />
+                                                        </svg></a>
+                                                    {% endif %}
+                                                </div>
+                                                {% elif today >= obj.olympiad_exam.exam_date|date:"Y-m-d" %}
+                                                    <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
+                                                        {% if obj.olympiad_exam in attended_olympiads %}
+                                                            <span class="text-white fs-15 bgs-black decrt-none enroll-button">Attended</span>
+                                                        {% else %}
+                                                            <span class="text-white fs-15 bgs-black decrt-none enroll-button">Expired</span>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                         {% endfor %}
                     </div>
                 </div>

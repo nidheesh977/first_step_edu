@@ -1,0 +1,47 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Olympiad Results</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Username</th>
+                            <th>Email ID</th>
+                            <th class="bgs-blue">Marks</th>
+                            <th class="bgs-blue"> Correct answers Q.no</th>
+                            <th class="bgs-blue"> Wrong answers Q.no</th>
+                            <th class="bgs-blue">Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{result.student.first_name}} {% if result.student.last_name != "None" %}{{result.student.last_name}}{% endif %}</td>
+                            <td>{{result.student.email}}</td>
+                            <td class="">{{result.marks}}</td>
+                            <td class="">{{result.correct_ans_qno}}</td>
+                            <td class="">{{result.wrong_ans_qno}}</td>
+                            <td class="">{{result.percentage}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+<script>  
+
+</script>
+{% endblock script %}

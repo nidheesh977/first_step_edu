@@ -40,8 +40,11 @@
                                                     <p class="fs-15 cl-black test-bold mb-0">{{paper.title}}</p>
                                                 </div>
                                                 <div class="col-lg-4 text-center">
-                                                    
-                                                    <a href="{% url 'application:exam' paper.id %}?class={{obj.classes.id}}&subject={{sub.id}}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
+                                                    {% if paper in attended_papers %}
+                                                        <a href="{% url 'application:dashboard_result' %}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">View Result</a>
+                                                    {% else %}
+                                                        <a href="{% url 'application:exam' paper.id %}?class={{obj.classes.id}}&subject={{sub.id}}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>
@@ -72,7 +75,11 @@
                                                     <p class="fs-15 cl-black test-bold mb-0">{{paper.title}}</p>
                                                 </div>
                                                 <div class="col-lg-4 text-center">
-                                                    <a href="{% url 'application:exam' paper.id %}?subject={{obj.subjects.id}}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
+                                                    {% if paper in attended_papers %}
+                                                        <a href="{% url 'application:dashboard_result' %}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">View Result</a>
+                                                    {% else %}
+                                                        <a href="{% url 'application:exam' paper.id %}?subject={{obj.subjects.id}}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>
@@ -102,7 +109,11 @@
                                                     <p class="fs-15 cl-black test-bold mb-0">{{paper.title}}</p>
                                                 </div>
                                                 <div class="col-lg-4 text-center">
-                                                    <a href="{% url 'application:exam' paper.id %}?competitive-exam={{obj.competitive_exam.id}}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
+                                                    {% if paper in attended_papers %}
+                                                        <a href="{% url 'application:exam' paper.id %}?competitive-exam={{obj.competitive_exam.id}}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">View Result</a>
+                                                    {% else %}
+                                                        <a href="{% url 'application:exam' paper.id %}?competitive-exam={{obj.competitive_exam.id}}" class="fs-15 test-bold cl-blue view-button mr-2 mr-xl-3">Attend Test</a>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>
@@ -123,7 +134,8 @@
 </div>
 {% endblock content %}
 {% block script %}
-<script>
-    $("#id-enroll").addClass('active');
-</script>
+    <script>
+        $("#id-enroll").addClass('active');
+    </script>
 {% endblock script %}
+

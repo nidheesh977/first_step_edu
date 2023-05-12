@@ -8,3 +8,7 @@ while submit ans should save and the answers should point to the paper obj
 
 admin username = admin@gmail.com
 admin password = Admin@123
+
+
+competitive exam question edit link - <a href="{% url 'admin_dashboard:comp_ques_edit' paper_id obj.id %}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit fa-sm text-white-50"></i></a>
+competitive exam question edit page back btn - {% url 'admin_dashboard:comp_ques_list' paper_id %}

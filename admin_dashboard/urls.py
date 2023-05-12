@@ -27,6 +27,7 @@ urlpatterns = [
     path("events", views.EventsList.as_view(),name="events-list"),
     path("event/add", views.AddEvent.as_view(),name="event-add"),
     path("event/edit/<str:id>", views.EditEvent.as_view(),name="event-edit"),
+    path("event/detail/<str:id>", views.EditDetails.as_view(),name="registered-events-detail"),
 
     # News
     path("news", views.NewsList.as_view(),name="news-list"),
@@ -50,6 +51,8 @@ urlpatterns = [
     path("class-<str:class_id>/subjects", views.CMSubjectsListView.as_view(),name="clsm-subjects-list"),
     path("class-<str:class_id>/subjects-<str:subject_id>/papers", views.CMPapersListView.as_view(),name="clsm-papers-list"),
     path("class-<str:class_id>/subjects-<str:subject_id>/paper-<str:paper_id>/questions", views.CMQuestionsList.as_view(),name="clsm-questions-list"),
+    path("class-<str:class_id>/subjects-<str:subject_id>/paper-<str:paper_id>/questions/add-bulk-question", views.CMBulkQuestions.as_view(),name="clsm-bulk-questions"),
+    path("class-<str:class_id>/subjects-<str:subject_id>/paper-<str:paper_id>/questions/add-bulk-images", views.CMBulkImageGenerateLink.as_view(),name="clsm-bulk-images"),
     
     path("class-<str:class_id>/subjects-<str:subject_id>/add-paper", views.CMAddPaper.as_view(),name="clsm-add-paper"),
     path("class-<str:class_id>/subjects-<str:subject_id>/edit-paper-<str:id>", views.CMEditPaper.as_view(),name="clsm-edit-paper"),
@@ -70,9 +73,22 @@ urlpatterns = [
 
     
     path("competitive-exam-<str:exm_id>/paper-<str:paper_id>/questions", views.CMQuestionsList.as_view(),name="comp_ques_list"),
+    path("competitive-exam-<str:exm_id>/paper-<str:paper_id>/questions/add-bulk-images", views.CMBulkImageGenerateLink.as_view(),name="comp-bulk-images"),
     path("competitive-exam-<str:exm_id>/paper-<str:paper_id>/questions/add-question", views.CMAddQuestions.as_view(),name="comp_ques_add"),
+    path("competitive-exam-<str:exm_id>/paper-<str:paper_id>/questions/add-bulk-question", views.CMBulkQuestions.as_view(),name="comp-ques-bulk-questions"),
     path("competitive-exam-<str:exm_id>/paper-<str:paper_id>/edit-question/<str:qus_id>", views.CMEditQuestions.as_view(),name="comp_ques_edit"),
+    path("payment-details", views.PaymentDetails.as_view(), name = "payment-details"),
+    path("user-payment-details/user-<str:id>", views.UserPaymentDetails.as_view(), name = "user-payment-details"),
 
+    # Olympiad management
+    path("olympiad-add-exam", views.OlympiadManagementAddExam.as_view(), name = "olympiad_add_exam"),
+    path("olympiad-add-question/olympiad-<str:id>", views.OlympiadManagementAddQuestion.as_view(), name = "olympiad_add_ques"),
+    path("olympiad-edit-exam/olympiad-<str:id>", views.OlympiadManagementEditExam.as_view(), name = "olympiad_edit_exam"),
+    path("olympiad-exams-list", views.OlympiadManagementListExams.as_view(), name = "olympiad_exams_list"),
+    path("olympiad-question-list/olympiad-<str:id>", views.OlympiadManagementQuestionList.as_view(), name = "olympiad_ques_list"),
+    path("olympiad-edit-question/olympiad-<str:olymp_id>/question-<str:ques_id>", views.OlympiadManagementEditQuestion.as_view(), name = "olympiad_edit_ques"),
+    path("olympiad-registrations/olympiad-<str:id>", views.OlympiadRegistrations.as_view(), name = "olympiad_registrations"),
+    path("olympiad-result/olympiad-<str:id>", views.OlympiadResults.as_view(), name = "olympiad_result"),
 ]
 
 admin.autodiscover()

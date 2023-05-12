@@ -62,20 +62,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'first_edu.wsgi.application'
 
-
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': "firstedu",
-        'USER': 'postgres',
-        'PASSWORD': 'Nexevo@123',
-        'HOST': 'localhost',
-        'PORT': '',
-        'ATOMIC_REQUESTS': True
-    }
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': "firststepedu",
+       'USER': 'postgres',
+       'PASSWORD': 'root',
+       'PORT': '5432',
+   }
 }
-
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -123,8 +118,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = "maran.nexevo@gmail.com"
-EMAIL_HOST_PASSWORD = "tgqrbggmkofffamz"
+EMAIL_HOST_USER = "nidheesh.nexevo@gmail.com"
+EMAIL_HOST_PASSWORD = "jdvcblfpzxpiiehl"
 EMAIL_PORT = 587
 
 
@@ -144,4 +139,3 @@ RAZORPAY_KEY_SECRET = "BNVJBf3b91Y9qd6ZKkFUm6Qx"
 CSRF_TRUSTED_ORIGINS = [
     'https://api.razorpay.com',
 ]
-

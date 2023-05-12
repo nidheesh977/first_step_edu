@@ -40,7 +40,7 @@
                                 <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Price <span class="float-md-right test-bold">:</span></p>
                             </div>
                             <div class="col-md-9">
-                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">&#x20b9 {{obj.price}}</p>
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{% if is_repay %}<strike>&#x20b9 {{obj.price}}</strike> &#x20b9 {{obj.repay_price}}{% else %}&#x20b9 {{obj.price}}{% endif %}</p>
                             </div>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                                 <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Price <span class="float-md-right test-bold">:</span></p>
                             </div>
                             <div class="col-md-9">
-                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">&#x20b9 {{obj.price}}</p>
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{% if is_repay %}<strike>&#x20b9 {{obj.price}}</strike> &#x20b9 {{obj.repay_price}}{% else %}&#x20b9 {{obj.price}}{% endif %}</p>
                             </div>
                         </div>
                     </div>
@@ -94,7 +94,7 @@
                                 <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Price <span class="float-md-right test-bold">:</span></p>
                             </div>
                             <div class="col-md-9">
-                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">&#x20b9 {{obj.price}}</p>
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{% if is_repay %}<strike>&#x20b9 {{obj.price}}</strike> &#x20b9 {{obj.repay_price}}{% else %}&#x20b9 {{obj.price}}{% endif %}</p>
                             </div>
                         </div>
                     </div>
@@ -125,7 +125,7 @@
                                 <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Price <span class="float-md-right test-bold">:</span></p>
                             </div>
                             <div class="col-md-9">
-                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">&#x20b9 {{obj.price}}</p>
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{% if is_repay %}<strike>&#x20b9 {{obj.price}}</strike> &#x20b9 {{obj.repay_price}}{% else %}&#x20b9 {{obj.price}}{% endif %}</p>
                             </div>
                         </div>
                     </div>
@@ -148,14 +148,33 @@
                                 <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Price <span class="float-md-right test-bold">:</span></p>
                             </div>
                             <div class="col-md-9">
-                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">&#x20b9 {{obj.price}}</p>
+                                <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{% if is_repay %}<strike>&#x20b9 {{obj.price}}</strike> &#x20b9 {{obj.repay_price}}{% else %}&#x20b9 {{obj.price}}{% endif %}</p>
                             </div>
                         </div>
                     </div>
                 
                     {% endif %}
 
-                
+                    {% if request.GET.type == "olympiad-exam" %}
+                        <div class="bgs-lightblue p-4">
+                            <div class="row align-items-center pb-3 pb-md-2">
+                                <div class="col-md-3">
+                                    <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Olympiad Exam Name <span class="float-md-right test-bold">:</span></p> 
+                                </div>
+                                <div class="col-md-9">
+                                    <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">{{obj.paper.title}}</p>
+                                </div>
+                            </div>
+                            <div class="row align-items-center pb-3 pb-md-2">
+                                <div class="col-md-3">
+                                    <p class="fs-15 test-bold cl-black mb-1 mb-md-0">Price <span class="float-md-right test-bold">:</span></p>
+                                </div>
+                                <div class="col-md-9">
+                                    <p class="pl-xl-5 pl-md-4 fs-15 cl-black mb-0 test-bold">&#x20b9 {{obj.paper.price}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
 
 
                 <div class="py-4 py-sm-5 px-4">

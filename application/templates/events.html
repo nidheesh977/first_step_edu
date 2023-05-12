@@ -21,7 +21,7 @@
 
             {% for obj in object_list %}
             <div class="col-lg-4 col-sm-6 pb-4 mb-lg-2 blogDiv">
-                <a href="#">
+                <span>
                      <div class="events-content h-100 position-relative br-30">
                          <img src="{{obj.image.url}}" alt="{{obj.image_alt_name}}" class="w-100 br-30">
                          <div class="content-events px-4">
@@ -29,38 +29,40 @@
                                  {{obj.label}}</p>
                              <h3 class="test-semibold fs-18 lh-25 cl-white mb-2">{{obj.title}}</h3>
                             <div class="d-xl-flex justify-content-between align-items-center pt-xl-2">
-                            <p class="test-semibold cl-white mb-xl-0"><i class="fa fa-calendar pr-2" aria-hidden="true"></i>{{obj.event_date}}</p>
+                            <p class="test-semibold cl-white mb-xl-0"><i class="fa fa-calendar pr-2" aria-hidden="true"></i>{{ obj.event_date|date:"d M Y" }}</p>
                                 <a data={{obj.id}} class="decrt-none fs-15 test-semibold br-30 py-2 px-4 cl-black 
-                                {% if obj in registered_events %} 
-                                    bgs-white 
-                                {% else %}
-                                    registerEvent bgs-yellow 
-                                {% endif %}
-                                 d-inline-block" {% if obj not in registered_events %}  href="#" {% endif %}
+                                    {% if obj in registered_events %} 
+                                        bgs-white 
+                                    {% else %}
+                                        registerEvent bgs-yellow 
+                                    {% endif %}
+                                    d-inline-block" {% if obj not in registered_events %} style = "cursor: pointer;" {% endif %}
                                 >
                                     {% if obj in registered_events %}
-                                    Registered
+                                        Registered
                                     {% else %}
-                                    Register Now
+                                        Register Now
                                     {% endif %}
-                                 <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622"
-                                    class="arrow-color" viewBox="0 0 16.7 8.622">
-                                    <path id="btn-olympiad-size" data-name="Path 3"
-                                    d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
-                                    transform="translate(-3.278 -102.821)" fill="#fff"></path>
-                            </svg></a>
+                                    <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622"
+                                        class="arrow-color" viewBox="0 0 16.7 8.622">
+                                        <path id="btn-olympiad-size" data-name="Path 3"
+                                        d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                        transform="translate(-3.278 -102.821)" fill="#fff"></path>
+                                </svg></a>
                             </div>
                          </div>
                      </div>
-                 </a>
+                 </span>
             </div>
             {% endfor %}
 
         </div>
     </div>
-    <div class="col-12 text-center pt-4"> 
-    <a href="javascript:void(0);" id="loadMore" class="load-more fs-13 decrt-none cl-black-1 bgs-yellow d-inline-block py-3">LOAD MORE </a> 
-    </div>
+    {% if show_loadmore %}
+        <div class="col-12 text-center pt-4" id = "showLoadMore"> 
+            <span id="loadMore" style = "cursor: pointer" class="load-more fs-13 decrt-none cl-black-1 bgs-yellow d-inline-block py-3">LOAD MORE </span> 
+        </div>
+    {% endif %}
 </section>
 {% endblock content %}
 
@@ -84,6 +86,7 @@ $("#loadMore").click(function(){
         dataType: 'json',
         success:function(response){
             var parsedData = JSON.parse(response["data"]);
+            console.log(parsedData)
             var registerEvents = response["registerdEvents_ids"];
 
             for(var i=0;i<parsedData.length;i++){
@@ -98,7 +101,7 @@ $("#loadMore").click(function(){
 
                 if(!registerEvents.includes(id)){
                     var div = `<div class="col-lg-4 col-sm-6 pb-4 mb-lg-2 blogDiv">
-                        <a href="#">
+                        <span>
                              <div class="events-content h-100 position-relative br-30">
                                  <img src="${img}" alt="${image_alt_name}" class="w-100 br-30">
                                  <div class="content-events px-4">
@@ -107,7 +110,7 @@ $("#loadMore").click(function(){
                                      <h3 class="test-semibold fs-18 lh-25 cl-white mb-2">${title}</h3>
                                     <div class="d-xl-flex justify-content-between align-items-center pt-xl-2">
                                     <p class="test-semibold cl-white mb-xl-0"><i class="fa fa-calendar pr-2" aria-hidden="true"></i>${eventDate}</p>
-                                        <a data=${id} class="registerEvent decrt-none fs-15 test-semibold br-30 py-2 px-4 cl-black bgs-yellow d-inline-block" href="#">Register Now
+                                        <a data=${id} style = "cursor: pointer" class="decrt-none fs-15 test-semibold br-30 py-2 px-4 cl-black registerEvent bgs-yellow d-inline-block" onclick = "registerEvent(${id})">Register Now
                                          <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg" width="16.7" height="8.622"
                                             class="arrow-color" viewBox="0 0 16.7 8.622">
                                             <path id="btn-olympiad-size" data-name="Path 3"
@@ -117,15 +120,15 @@ $("#loadMore").click(function(){
                                     </div>
                                  </div> 
                              </div>
-                         </a>
+                         </span>
                     </div>`;
                 }
                 else{
                     var div = `<div class="col-lg-4 col-sm-6 pb-4 mb-lg-2 blogDiv">
-                        <a href="#">
+                        <span>
                              <div class="events-content h-100 position-relative br-30">
-                                 <img src="${img}" alt="${image_alt_name}" class="w-100 br-30">
-                                 <div class="content-events px-4">
+                                    <img src="${img}" alt="${image_alt_name}" class="w-100 br-30">
+                                <div class="content-events px-4">
                                      <p class="events-round bgs-lightgrey px-4 test-medium cl-darkblue p-1 br-30 d-inline-block">
                                          ${label}</p>
                                      <h3 class="test-semibold fs-18 lh-25 cl-white mb-2">${title}</h3>
@@ -139,14 +142,17 @@ $("#loadMore").click(function(){
                                             transform="translate(-3.278 -102.821)" fill="#fff"></path>
                                     </svg></a>
                                     </div>
-                                 </div> 
+                                </div> 
                              </div>
-                         </a>
+                         </span>
                     </div>`;
                 }
 
                 $(".blogContainer").append(div);
                 
+            }
+            if (!response["show_loadmore"]){
+                $("#showLoadMore").hide();
             }
             
         }   
@@ -155,7 +161,11 @@ $("#loadMore").click(function(){
 
 $(".registerEvent").click(function(event){
     event.preventDefault();
-    var eventId = $(this).attr("data");
+    registerEvent($(this).attr("data"));
+});
+
+function registerEvent(id){
+    var eventId = id;
     $.ajax({
         type: 'post',
         headers: {
@@ -177,14 +187,8 @@ $(".registerEvent").click(function(event){
                 });
         }   
     });
-
-
-
-});
-
-
+}
 
 </script>
-
 
 {% endblock script %}

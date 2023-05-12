@@ -1,0 +1,41 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Event Registrations</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Username</th>
+                            <th>Document</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in objs %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{obj.student.first_name}} {{obj.student.last_name}}</td>
+                            <td>
+                                {% if obj.document %}<a href = "{{obj.document.url}}" download class = "btn btn-primary">Download</a>{% else %}<span download class = "btn btn-primary disabled">No Document</span>{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+<script>  
+
+</script>
+{% endblock script %}

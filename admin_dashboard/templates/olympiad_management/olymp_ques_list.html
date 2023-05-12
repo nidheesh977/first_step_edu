@@ -1,0 +1,212 @@
+{% extends 'admin_dashboard_base.html' %}
+{% block content %}
+{% now "Y-m-d" as today %}
+<div class="container-fluid">
+    <div class="card shadow mb-4 mt-2">
+        <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Questions</h6>
+            <div>
+                {% if temp_images %}
+                    <a href="javascript:void(0);" data-toggle="modal" data-target="#generatedLinks" class="d-inline-block btn btn-sm btn-primary shadow-sm">
+                        Generated Image Links
+                    </a>
+                {% endif %}
+                <label>
+                    <input type = "file" style = "display: none;" id = "class_multi_img" accept = ".jpg, .jpeg, .png, .webp" multiple/>
+                    <span class="d-inline-block btn btn-sm btn-primary shadow-sm">Generate Image Link</span>
+                </label>
+                <label>
+                    <input type = "file" style = "display: none;" id = "class_csv" accept = ".csv"/>
+                    <span class="d-inline-block btn btn-sm btn-primary shadow-sm">Bulk upload (CSV)</span>
+                </label>
+                <a href="{% url 'admin_dashboard:olympiad_add_ques' olymp_id  %}"  class="d-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50 pr-1"></i> Add Question</a>
+                <a href="{% url 'admin_dashboard:olympiad_exams_list' %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a> 
+            </div>
+            </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th width="45%">Questions</th>
+                            <th>Correct Option</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in qus_obj %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{obj.question}}</td>
+                            <td>{{obj.correct_answer}}</td>
+                            <td>
+                                <a href="{% url 'admin_dashboard:olympiad_edit_ques' olymp_id obj.id  %}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit fa-sm text-white-50"></i></a>
+                                <a href="javascript:void(0);" data="{{obj.id}}" class="btn btn-danger btn-circle btn-sm deleteItem"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="generatedLinks" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark" id="exampleModalLabel">Generated Links:</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id = "temp-links">
+                <table style = "border: 1px solid black; border-collapse: collapse; width: 100%">
+                    <tr style = "border: 1px solid black; border-collapse: collapse;">
+                        <th style = "border: 1px solid black; border-collapse: collapse; text-align: center;">Image</th>
+                        <th style = "border: 1px solid black; border-collapse: collapse; text-align: center;">Link</th>
+                    </tr>
+                    {% for image in temp_images %}
+                        <tr style = "border: 1px solid black; border-collapse: collapse;">
+                            <td style = "border: 1px solid black; border-collapse: collapse;">
+                                <img src = "{{image.image.url}}" style = "height: 80px; width: 100%; object-fit: contain" />
+                            </td>
+                            <td style = "border: 1px solid black; border-collapse: collapse; text-align: center;">{{image.image.url}}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                        }
+                }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+    $(".deleteItem").click(function(){
+        let text = "Do you want to delete ?";
+        var objId = $(this).attr("data");
+        if (confirm(text) == true) {
+            text = "You pressed OK!";
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action:"delete",
+                    objId:objId
+                },
+                dataType: 'json',
+                success: function (response) {
+                    location.reload();
+                },
+                error: function(response) {
+                   alert("Something Wrong");
+                }
+            });
+        }
+    });
+    $("#class_csv").on("change", function(e){
+       
+        let file = e.target.files[0]
+        let ext = file.name.split(".")[1]
+        var formData = new FormData();
+        formData.append("file", file)
+        formData.append("test", "data")
+        if (ext == "csv"){
+            let origin = window.location.origin
+            let pathname = window.location.pathname
+            let url = origin + pathname + "/add-bulk-question"
+            $.ajax({
+                type: "POST",
+                url: url,
+                headers: {'X-CSRFToken': csrftoken},
+                data: formData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (response) {
+                    alert("Questions added successfully")
+                    location.reload();
+                },
+                error: function(response) {
+                   alert("Invalid file format");
+                }
+            });
+        }
+        else{
+            alert("Invalid file. Select csv file")
+        }
+    })
+    $("#class_multi_img").on("change", function(e){
+        let file = e.target.files
+        let extLst = ["jpg", "JPG", "jpeg", "JPEG", "png", "PNG", "webp", "WEBP"]
+        let allSuccess = true
+        let success_count = 0
+        let failed_count = 0
+        for (var i = 0; i < file.length; i++){
+            var ext = file[i].name.split(".")[1]
+            if (extLst.includes(ext)){
+                var formData = new FormData();
+                formData.append("file", file[i])
+                formData.append("test", "data")
+                let origin = window.location.origin
+                let pathname = window.location.pathname
+                let url = origin + pathname + "/add-bulk-images"
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    headers: {'X-CSRFToken': csrftoken},
+                    data: formData,
+                    processData: false, // tell jQuery not to process the data
+                    contentType: false, // tell jQuery not to set contentType
+                    success: function (response) {
+                        success_count=success_count+1
+                        console.log("Success")
+                        console.log(success_count + failed_count)
+                        console.log(file.length)
+                        if (success_count + failed_count == file.length){
+                            alert("Images saved successfully")
+                            location.reload()
+                        }
+                    },
+                    error: function(response) {
+                        failed_count = failed_count+1
+                        console.log("Failed")
+                        console.log(success_count + failed_count)
+                        console.log(file.length)
+                        if (success_count + failed_count == file.length){
+                            alert("Images saved successfully")
+                            location.reload()
+                        }
+                    }
+                });
+            }
+            else{
+                alert('Some files didnt saved because of invalid file extension. Select image with extension "jpg", "jpeg", "png", "webp"')
+                break
+            }
+        }
+    })
+</script>
+
+{% endblock script %}
