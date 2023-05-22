@@ -1,5 +1,5 @@
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import json
 import environ
 import razorpay
@@ -176,17 +176,20 @@ class IndexView(View):
         classesObj = Classes.objects.all().order_by("-purchase_count")[:6]
         competitiveExamObj = CompetitiveExam.objects.all().order_by("-purchase_count")[:6]
         today = date.today()
-        board_exams = StudentPayments.objects.filter(student=request.user)
-        board_exams = board_exams.exclude(enrolled_type__in=["class","subject","paper", "competitive-exam","competitive-paper"])
         olympiad_enrolled = []
-        for i in board_exams:
-            olympiad_enrolled.append(i.olympiad_exam)
+        if request.user.is_authenticated:
+            board_exams = StudentPayments.objects.filter(student=request.user)
+            board_exams = board_exams.exclude(enrolled_type__in=["class","subject","paper", "competitive-exam","competitive-paper"])
+            for i in board_exams:
+                olympiad_enrolled.append(i.olympiad_exam)
         olympiadExamObj = OlympiadExam.objects.filter(exam_date__gte=today).order_by("-purchase_count")[:6]
         results = ResultAnnouncements.objects.all()[:6]
         news=News.objects.all()[:6]
         blogs = Blogs.objects.all().order_by("created_on")[:3]
         testimonials = Testimonials.objects.all()[:6]
         events = Events.objects.all().order_by("created_on")[:3]
+        current_time = datetime.now()
+        one_hour_after = current_time + timedelta(hours=1)
         context = {
             "bannerObj":bannerObj,
             "classesObj":classesObj,
@@ -198,6 +201,7 @@ class IndexView(View):
             "blogs":blogs,
             "testimonials":testimonials,
             "events":events,
+            "one_hour_after": one_hour_after,
         }
         context["registered_events"] = []
         if request.user.is_authenticated:
@@ -386,10 +390,13 @@ class OlympiadPage(View):
         olympiad_enrolled = []
         for i in board_exams:
             olympiad_enrolled.append(i.olympiad_exam)
+        current_time = datetime.now()
+        one_hour_after = current_time + timedelta(hours=1)
         context = {
             "objs":obj,
             "testimonials": testimonials,
             "olympiad_enrolled": olympiad_enrolled,
+            "one_hour_after": one_hour_after,
         }
         return render(request, "olympiad.html",context)
     

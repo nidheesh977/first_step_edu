@@ -12,8 +12,8 @@
             <form class="user row" method="post" enctype='multipart/form-data'>
                 {% csrf_token %}
                 <div class="form-group col-sm-6">
-                    <label>Title <span class="text-danger">*</span></label>
-                    <input maxlength="200" name="title" type="text" value="{{obj.title}}" class="form-control form-control-user" required>
+                    <label>Title </label>
+                    <input maxlength="200" name="title" type="text" value="{{obj.title}}" class="form-control form-control-user">
                 </div>
                 <div class="form-group col-sm-6">
                     <label>Main Title <span class="text-danger">*</span></label>

@@ -54,7 +54,7 @@
                         <div class="col-sm-4 col-md-12 col-lg-4 pr-0">
                           <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; {{obj.paper.price}}</p>
                       </div>
-                      {% if today == obj.exam_date|date:"Y-m-d" %}
+                      {% if today == obj.exam_date|date:"Y-m-d" and one_hour_after|time:"H:i:s" >= obj.exam_time|time:"H:i:s" %}
                         <span
                             class="text-white fs-15 bgs-black decrt-none enroll-button">Live
                         </span>

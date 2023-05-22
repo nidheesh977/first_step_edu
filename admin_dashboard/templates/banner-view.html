@@ -22,7 +22,7 @@
                         {% for obj in objs %}
                         <tr>
                             <td>{{forloop.counter}}</td>
-                            <td>{{obj.title}}</td>
+                            <td>{{obj.main_title}}</td>
                             <td>
                                 <a href="{% url 'admin_dashboard:home-banner-edit' obj.id %}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a>
                                 <a href="javascript:void(0);"  data={{obj.id}} class="btn btn-danger btn-circle btn-sm deleteBanner"><i class="fas fa-trash"></i></a>
