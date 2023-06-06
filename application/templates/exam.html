@@ -301,19 +301,15 @@
                     var p = "#"+ob["ans_id"];
                     $(p)[0].checked = true;
                 }
-                
             }
-
         }
 
         function finalSubmit(){
-
             var data=[];
             for(var i=0;i<answersWithIds.length;i++){
                 var parse = JSON.stringify(answersWithIds[i]);
                 data.push(parse);
             }
-
 
             $.ajax({
                 type: 'post',
@@ -340,7 +336,6 @@
                 }
             });
         }
-        
 
         function getQuestion(id){
             $.ajax({
@@ -355,9 +350,7 @@
                 },
                 dataType: 'json',
                 success: function (response) {
-
                     var timesUp = false;
-
                     var quesText = response["question"];
                     var option1 = response["option1"];
                     var option2 = response["option2"];
@@ -427,7 +420,6 @@
                                     default:
                                     // code block
                                 }
-
 
                             }else{
                                 timesUp = true;
@@ -560,7 +552,7 @@
 
         
         $("#next_ques").click(function(){
-
+                let btn_text = $(this).text()
                 var ans = $('input[name="radiogroup"]:checked').val();
                 var ans_id = $('input[name="radiogroup"]:checked').attr("id");
                 var quesId;
@@ -571,10 +563,6 @@
                 var previousQus;
                 var totQues = $(".quesCount").length;
                 var clicked_time = $("#ten-countsec").text();
-
-               if($(this).text() == "Submit"){
-                    finalSubmit();
-                }
 
                 
                 $.each($(".quesCount"), function() {
@@ -627,10 +615,12 @@
                 if($('#prev_ques').prop('disabled')){
                     $("#prev_ques").attr("disabled",false);
                 }
-
+                if(btn_text == "Submit"){
+                    addDataToAnswersWithIds(quesId, ans, clicked_time, ans_id);
+                    finalSubmit();
+                }
                 var pendingQuestions = $("li." + "pending").find("*").length;
                 $("#pendingQuesCount").text(pendingQuestions);
-           
 
         });
 

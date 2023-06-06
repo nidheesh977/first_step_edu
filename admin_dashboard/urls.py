@@ -86,6 +86,7 @@ urlpatterns = [
     path("olympiad-edit-exam/olympiad-<str:id>", views.OlympiadManagementEditExam.as_view(), name = "olympiad_edit_exam"),
     path("olympiad-exams-list", views.OlympiadManagementListExams.as_view(), name = "olympiad_exams_list"),
     path("olympiad-question-list/olympiad-<str:id>", views.OlympiadManagementQuestionList.as_view(), name = "olympiad_ques_list"),
+    path("olympiad-question-list/olympiad-<str:id>/add-bulk-images", views.OlympiadBulkImageGenerateLink.as_view(),name="olympiad-bulk-images"),
     path("olympiad-edit-question/olympiad-<str:olymp_id>/question-<str:ques_id>", views.OlympiadManagementEditQuestion.as_view(), name = "olympiad_edit_ques"),
     path("olympiad-registrations/olympiad-<str:id>", views.OlympiadRegistrations.as_view(), name = "olympiad_registrations"),
     path("olympiad-result/olympiad-<str:id>", views.OlympiadResults.as_view(), name = "olympiad_result"),

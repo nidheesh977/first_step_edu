@@ -107,10 +107,11 @@ class Events(ImportdantDates):
     title = models.CharField(_("Title"), max_length=250, blank=False, null=True)
     label = models.CharField(_("Label"), max_length=250, blank=False, null=True)
     event_date = models.DateField(_("Event Date"), auto_now=False, auto_now_add=False,blank=False, null=True)
+    is_external = models.BooleanField(default = False)
     event_meeting_link = models.URLField(_("Event Meeting Link"), max_length=200,blank=True, null=True)
     image = models.ImageField(_("Image"), upload_to="event_images/",blank=True, null=True)
     image_alt_name = models.CharField(_("Image Alt Name"), max_length=50, blank=True, null=True)
-    event_fee = models.IntegerField(default = 100)
+    event_fee = models.IntegerField(null = True, blank = True)
 
     class Meta:
         verbose_name = _("Events")
@@ -396,7 +397,7 @@ class AttendedPapers(ImportdantDates):
         for i in self.attended_questions.all():
             if i.is_correct_answer:
                 correct_answers+=1
-        return f"{(correct_answers+1)*10}/{(len(self.attended_questions.all())+1)*10}"
+        return f"{(correct_answers)*10}/{(len(self.attended_questions.all()))*10}"
     
     @property
     def wrong_ans_qno(self):
@@ -412,7 +413,6 @@ class AttendedPapers(ImportdantDates):
         for count, i in enumerate(self.attended_questions.all()):
             if i.is_correct_answer:
                 qno.append(count+1)
-        qno.append(count+2)
         return qno
 
     @property
@@ -433,7 +433,7 @@ class AttendedPapers(ImportdantDates):
         for i in self.attended_questions.all():
             if i.is_correct_answer:
                 correct_answers+=1
-        percentage_val = ((correct_answers+1)/(len(self.attended_questions.all())+1))*100
+        percentage_val = ((correct_answers)/(len(self.attended_questions.all())))*100
         return f"{int(percentage_val)}%"
     @property
     def more_score_count(self):

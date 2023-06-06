@@ -432,8 +432,10 @@
                                 {% else %}
                                     bgs-yellow 
                                 {% endif %}
-                                d-inline-block" {% if not user.is_authenticated %}href="/signin"{% elif event in registered_events %} href="{% url 'application:events' %}" {% else %} href="#" {% endif %}>
-                                    {% if event in registered_events %}
+                                d-inline-block" {% if event.is_external %} href="{{event.event_meeting_link}}" target = "_blank" {% elif not user.is_authenticated %}href="/signin"{% elif event in registered_events %} href="{% url 'application:events' %}" {% else %} href="#" {% endif %}>
+                                    {% if event.is_external %}
+                                        External event
+                                    {% elif event in registered_events %}
                                         Registered
                                     {% else %}
                                         Register Now
@@ -478,46 +480,48 @@
 
 
     $(".registerEvent").click(function(event){
-        event.preventDefault();
-        var eventId = $(this).attr("data");
-        $.ajax({
-            type: 'post',
-            headers: {
-                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
-            },
-            data: {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                action:"register",
-                eventId:eventId,
-            },
-            dataType: 'json',
-            success:function(response){
-                console.log(response)
-                var options = {
-                    key: response.razorpay_key,
-                    amount: response.price, 
-                    currency: "INR",
-                    order_id: response.order_id,
-                    callback_url: response.callback_url,
-                    redirect: true,
-                    modal: { 
-                        escape: false,
-                    },
-                    handler: function (response){
-                        console.log(response)
-                    }
-                };
-                var rzp1 = new Razorpay(options);
-                rzp1.open();
-                //swal({
-                //        title: "Success",
-                //        text: response['msg'],
-                //        icon: "success",
-                //    }).then(function() {
-                //        window.location.reload();
-                //    });
-            }   
-        });
+        if ($(this).attr("href")=="#"){
+            event.preventDefault();
+            var eventId = $(this).attr("data");
+            $.ajax({
+                type: 'post',
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action:"register",
+                    eventId:eventId,
+                },
+                dataType: 'json',
+                success:function(response){
+                    console.log(response)
+                    var options = {
+                        key: response.razorpay_key,
+                        amount: response.price, 
+                        currency: "INR",
+                        order_id: response.order_id,
+                        callback_url: response.callback_url,
+                        redirect: true,
+                        modal: { 
+                            escape: false,
+                        },
+                        handler: function (response){
+                            console.log(response)
+                        }
+                    };
+                    var rzp1 = new Razorpay(options);
+                    rzp1.open();
+                    //swal({
+                    //        title: "Success",
+                    //        text: response['msg'],
+                    //        icon: "success",
+                    //    }).then(function() {
+                    //        window.location.reload();
+                    //    });
+                }   
+            });
+        }
 
     });
 

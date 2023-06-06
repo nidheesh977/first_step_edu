@@ -20,7 +20,7 @@
                     <span class="d-inline-block btn btn-sm btn-primary shadow-sm">Bulk upload (CSV)</span>
                 </label>
                 <a href="{% url 'admin_dashboard:olympiad_add_ques' olymp_id  %}"  class="d-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50 pr-1"></i> Add Question</a>
-                <a href="{% url 'admin_dashboard:olympiad_exams_list' %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a> 
+                <a href="{% url 'admin_dashboard:olympiad_exams_list' %}" class="d-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-caret-square-left fa-sm text-white-50 pr-1"></i> Back</a>
             </div>
             </div>
         <div class="card-body">
@@ -132,16 +132,13 @@
         let ext = file.name.split(".")[1]
         var formData = new FormData();
         formData.append("file", file)
-        formData.append("test", "data")
+        formData.append("action", "bulk-questions")
         if (ext == "csv"){
-            let origin = window.location.origin
-            let pathname = window.location.pathname
-            let url = origin + pathname + "/add-bulk-question"
             $.ajax({
                 type: "POST",
-                url: url,
                 headers: {'X-CSRFToken': csrftoken},
                 data: formData,
+                action: "bulk-questions",
                 processData: false,  // tell jQuery not to process the data
                 contentType: false,  // tell jQuery not to set contentType
                 success: function (response) {

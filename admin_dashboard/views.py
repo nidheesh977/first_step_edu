@@ -41,7 +41,7 @@ class AdminLogin(View):
         else:
             messages.error(request,"Invalid Credentials")
             return redirect("admin_dashboard:admin-login")
-
+        
 class AdminForgetPassword(View):
     def get(self,request, *args, **kwargs):
         return render(request, "admin-forgot-password.html")
@@ -355,6 +355,7 @@ class AddEvent(View):
         IMAGE = request.FILES.get("upload_image")
         imageImage = Image.open(IMAGE)
         scale = imageImage.size
+        print(request.POST.get("is_external"))
         if IMAGE_SCALE == scale:
             obj = Events.objects.create(
                 title = request.POST.get("title"),
@@ -364,6 +365,7 @@ class AddEvent(View):
                 image = request.FILES.get("upload_image"),
                 image_alt_name = request.POST.get("upload_image_alt_name"),
                 event_fee = request.POST.get("event_fee"),
+                is_external = request.POST.get("is_external")=="on"
             )
             return redirect("admin_dashboard:events-list")
         else:
@@ -1398,8 +1400,9 @@ class OlympiadManagementQuestionList(View):
     def get(self,request,*args, **kwargs):
         olympiad = OlympiadExam.objects.get(id = kwargs.get("id"))
         paper = olympiad.paper
+        temp_images = TempImages.objects.filter(paper = paper)
         questions = paper.assigned_questions.all()
-        return render(request,"olympiad_management/olymp_ques_list.html", context = {"qus_obj": questions, "olymp_id": olympiad.id})
+        return render(request,"olympiad_management/olymp_ques_list.html", context = {"qus_obj": questions, "olymp_id": olympiad.id, "temp_images": temp_images})
 
     def post(self,request, *args, **kwargs):
         if request.POST.get("action") == "delete":
@@ -1411,6 +1414,45 @@ class OlympiadManagementQuestionList(View):
                         "icon":"success",
                     }
             return JsonResponse(to_return,safe=True,)
+        
+        elif request.POST.get("action") == "bulk-questions":
+            try:
+                olympiad_id = kwargs.get("id")
+                olympiad_obj = get_object_or_404(OlympiadExam,id=olympiad_id)
+                paper_obj = olympiad_obj.paper
+                to_dict = paper_obj.section_details
+                df = pd.read_csv (request.FILES["file"])
+                for i in df.iterrows():
+                    section = i[1].section
+                    print(section)
+                    if str(i[1].question) != "nan":
+                        time_limit = i[1].time_dutation.split(":")
+                        SECONDS = int(time_limit[1])
+                        MINUTES = int(time_limit[0])
+                        section_time_limit = timedelta(seconds=SECONDS, minutes=MINUTES)
+                        qus_obj = Questions.objects.create(
+                            section = section,
+                            section_description = i[1].section_description,
+                            section_time_limit = section_time_limit,
+                            question = i[1].question,
+                            option1 = i[1].optionA,
+                            option2 = i[1].optionB,
+                            option3 = i[1].optionC,
+                            option4 = i[1].optionD,
+                            correct_answer = i[1][i[1].answer],
+                        )
+                        if "image" in i[1] and str(i[1].image) != "nan":
+                            print(str(i[1].image))
+                            qus_obj.image_link = i[1].image
+                            qus_obj.save()
+                        paper_obj.assigned_questions.add(qus_obj)
+                        paper_obj.save()
+
+                to_return = {"status": "Success"}
+                return JsonResponse(to_return,safe=True)
+            except:
+                to_return = {"status": "Success"}
+                return JsonResponse(to_return,safe=True)
         
 class OlympiadManagementEditQuestion(View):
     def get(self, request, *args, **kwargs):
@@ -1527,3 +1569,17 @@ class OlympiadResults(View):
         olympiad = OlympiadExam.objects.get(id = kwargs["id"])
         results = AttendedPapers.objects.filter(olympiad_exam=olympiad)
         return render(request, "olympiad_management/olymp_results.html", context = {"results": results})
+    
+class OlympiadBulkImageGenerateLink(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            olympiad_id = kwargs["id"]
+            olympiad = OlympiadExam.objects.get(id = olympiad_id)
+            paper = olympiad.paper
+            image = request.FILES["file"]
+            img_obj = TempImages.objects.create(paper = paper, image = image)
+            print(image)
+            to_return = {"link": img_obj.image.url}
+            return JsonResponse(to_return,safe=True)
+        except:
+            raise BadRequest('Invalid files.')

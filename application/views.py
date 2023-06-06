@@ -449,7 +449,7 @@ class EventsPage(ListView):
             for i in registerdEvents:
                 events.append(i.event)
             return events
-        except ObjectDoesNotExist as e:
+        except :
             events = []
             return events
 
@@ -463,18 +463,33 @@ class EventsPage(ListView):
 
     def post(self, request, *args, **kwargs):
         if request.POST.get("action") == "register":
-            eventId = request.POST.get("eventId")
-            evnt = Events.objects.get(id=eventId)
-            if not RegisterdEvents.objects.filter(student = request.user, event = evnt).exists():
-                obj = RegisterdEvents.objects.create(student = request.user, event = evnt)
-            res = {"msg":"Event Registered"}
+            event = Events.objects.get(id = request.POST.get("eventId"))
+            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+            resp = client.order.create(
+                {"amount": float(event.event_fee) * 100, "currency": "INR", "payment_capture": "1"}
+            )
+            callBackUrl = reverse("event-callback",kwargs={"id":request.POST.get("eventId"), "uid": request.user.id})
+            callBackUrl = request.build_absolute_uri(f"{callBackUrl}")
+            print(callBackUrl)
+            con = {
+                "razorpay_key": settings.RAZORPAY_KEY_ID,
+                "order_id": resp["id"],
+                "price":resp["amount"],
+                "callback_url":callBackUrl,
+            }
+            # eventId = request.POST.get("eventId")
+            # evnt = Events.objects.get(id=eventId)
+            # if not RegisterdEvents.objects.filter(student = request.user, event = evnt).exists():
+            #     obj = RegisterdEvents.objects.create(student = request.user, event = evnt)
+            # res = {"msg":"Event Registered"}
+            res = con
         else:
             blog_count = request.POST.get("blogCount")
             start_num = int(blog_count)
             end_num = start_num + self.paginate_by
             evnt = Events.objects.all().order_by("created_on")
             objs = evnt[start_num:end_num]
-            data = serializers.serialize('json', objs, fields=("id","title","label","event_date","image","image_alt_name"))
+            data = serializers.serialize('json', objs, fields=("id","title","label","event_date","image","image_alt_name", "is_external", "event_meeting_link"))
             registerdEvents_ids = []
             for i in self.get_registeredEvents():
                 registerdEvents_ids.append(i.id)
@@ -665,6 +680,7 @@ class ExamView(View):
         if request.POST.get("action") == "finalSubmit":
             print("Entered3")
             DATA = request.POST.getlist("data[]")
+            print(DATA)
             if competitive_exam_id:
                 competitive_exam = CompetitiveExam.objects.get(id = competitive_exam_id)
                 attend_paper_obj = AttendedPapers.objects.create(
