@@ -551,6 +551,8 @@ class EnrolledSubjectsView(LoginRequiredMixin, View):
             "attended_papers": attended_papers
         }
         return render(request,"view-paper.html",context)
+    
+
 
 class ExamView(View):
     def get(self,request, *args, **kwargs):
@@ -653,8 +655,8 @@ class ExamView(View):
         paper_id = kwargs.get("id")
         paper_obj = get_object_or_404(Papers,id=paper_id)
         questions = paper_obj.assigned_questions.all()
-        if request.GET.get("obj_id"):
-            student_payment = get_object_or_404(StudentPayments,id=request.GET.get("obj_id"))
+        # if request.GET.get("obj_id"):
+        #     student_payment = get_object_or_404(StudentPayments,id=request.GET.get("obj_id"))
         if request.POST.get("action") == "getQues":
             question_id = request.POST.get("quesId")
             question_obj = get_object_or_404(Questions,id=question_id)
@@ -712,12 +714,12 @@ class ExamView(View):
                         correct_answers = 0,
                         attend_date = datetime.now().date(),
                     )
-                if request.GET.get("obj_id"):
-                    student_payment.is_attended = True
-                    student_payment.save()
-            if request.GET.get("obj_id"):
-                student_payment.attended_papers.add(paper_obj)
-                student_payment.save()
+                # if request.GET.get("obj_id"):
+                #     student_payment.is_attended = True
+                #     student_payment.save()
+            # if request.GET.get("obj_id"):
+            #     student_payment.attended_papers.add(paper_obj)
+            #     student_payment.save()
             for i in DATA:
                 loaded_json = json.loads(i)
                 print(loaded_json)

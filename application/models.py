@@ -21,7 +21,6 @@ class MetaDetails(models.Model):
     created_on = models.DateTimeField(_("Created on"), auto_now_add=True, null=True, blank=True)
     updated_on = models.DateTimeField(_("Updated on"), auto_now=True, null=True, blank=True)
 
-
 class CustomAccountManager(BaseUserManager):
     def create_superuser(self, first_name, email, mobile_number, password, **other_fields):
         other_fields.setdefault('is_staff', True)
@@ -333,6 +332,8 @@ class StudentPayments(ImportdantDates):
     is_repay = models.BooleanField(default = False)
     subjects = models.ForeignKey("application.Subjects", verbose_name=_("Subject"), blank=True, null=True, on_delete=models.CASCADE)
     papers = models.ForeignKey("application.Papers", verbose_name=_("Paper"), blank=True, null=True, on_delete=models.CASCADE)
+    is_attended = models.BooleanField(default = False)
+    attended_papers = models.ManyToManyField("application.Papers", blank = True, related_name = "attended_papers")
     classes = models.ForeignKey("application.Classes", verbose_name=_("Classe"), blank=True, null=True, on_delete=models.CASCADE)
     competitive_exam = models.ForeignKey("application.CompetitiveExam", verbose_name=_("Competitive Exam"), blank=True, null=True, on_delete=models.CASCADE)
     competitive_paper = models.ForeignKey("application.Papers", verbose_name=_("Competitive Paper"), blank=True, null=True, on_delete=models.CASCADE, related_name="competitive_paper")

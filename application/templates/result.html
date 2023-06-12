@@ -55,6 +55,18 @@
                                             <td>{{obj.percentile}}</td>
                                             <td>{{obj.more_score_count}}</td>
                                         </tr>
+                                    {% elif obj.competitive_exam %}
+                                    {% elif obj.olympiad_exam %}
+                                    {% else %}
+                                        <tr class="br-box">
+                                            <td class="">{{obj.class_obj.title}}</td>
+                                            <td class="name-lead-box">{{obj.paper.title}}</td>
+                                            <td class="">{{obj.marks}}</td>
+                                            <td class="">{{obj.correct_ans_qno}}</td>
+                                            <td class="">{{obj.wrong_ans_qno}}</td>
+                                            <td>{{obj.percentile}}</td>
+                                            <td>{{obj.more_score_count}}</td>
+                                        </tr>
                                     {% endif %}
                                   {% endfor %}                                   
                               </tbody>

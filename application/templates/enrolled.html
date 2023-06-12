@@ -98,13 +98,25 @@
                                                 <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; {{obj.papers.price}}</p>
                                             </div>
                                             <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
-                                                <a href="{% url 'application:exam' obj.papers.id %}?type=paper" class="text-white fs-15 bgs-black decrt-none enroll-button">Attend Test
+                                                {% if obj.is_attended %}
+                                                    <a href="{% url 'application:dashboard_result' %}" class="text-white fs-15 bgs-black decrt-none enroll-button">View result
+                                                        <span class="arrow-spacing"></span>
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                                            <path id="arrow-color" data-name="Path 3"
+                                                                d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                                transform="translate(-3.278 -102.821)" fill="#fff" />
+                                                        </svg>
+                                                    </a>
+                                                {% else %}
+                                                <a href="{% url 'application:exam' obj.papers.id %}?type=paper&obj_id={{obj.id}}" class="text-white fs-15 bgs-black decrt-none enroll-button">Attend Test
                                                     <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
                                                         width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
                                                         <path id="arrow-color" data-name="Path 3"
                                                             d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
                                                             transform="translate(-3.278 -102.821)" fill="#fff" />
                                                     </svg></a>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
