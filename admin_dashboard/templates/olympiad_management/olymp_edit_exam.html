@@ -39,8 +39,12 @@
             <input id="duration-input" class="form-control form-control-user" name="exam_date" type="date" required value = "{{olympiad.exam_date|date:'Y-m-d'}}">
         </div>
         <div class="form-group col-sm-6">
-            <label>Exam Time <span class="text-danger">*</span></label>
-            <input id="duration-input" class="form-control form-control-user" name="exam_time" type="time" required value = "{{olympiad.exam_time|time:'h:i:s'}}">
+            <label>Exam Time From<span class="text-danger">*</span></label>
+            <input id="duration-input" class="form-control form-control-user" name="exam_time_from" type="time" required value = "{{olympiad.exam_time|time:'h:i:s'}}">
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Exam Time Till<span class="text-danger">*</span></label>
+            <input id="duration-input" class="form-control form-control-user" name="exam_time_till" type="time" required value = "{{olympiad.exam_time_till|time:'h:i:s'}}">
         </div>
 
         <div class="customer_records form-group col-12">

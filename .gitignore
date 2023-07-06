@@ -313,3 +313,7 @@ $RECYCLE.BIN/
 venv/
 application/migrations/
 admin_dashboard/migrations/
+static
+staticfiles
+media
+fixes.txt

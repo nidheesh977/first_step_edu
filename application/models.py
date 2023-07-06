@@ -463,6 +463,7 @@ class OlympiadExam(ImportdantDates):
     purchase_count = models.IntegerField(default = 0)
     exam_date = models.DateField()
     exam_time = models.TimeField()
+    exam_time_till = models.TimeField()
 
     def __str__(self):
         return self.paper.title

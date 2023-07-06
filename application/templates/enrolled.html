@@ -205,21 +205,29 @@
                                                 <div class="col-4 pr-0">
                                                     <p class="test-semibold mb-1 mb-sm-0 fs-18 cl-black">&#x20b9; {{obj.olympiad_exam.paper.price}}</p>
                                                 </div>
-                                                {% if today == obj.olympiad_exam.exam_date|date:"Y-m-d" and current_time >= obj.olympiad_exam.exam_time|time:"H:i:s" %}
-                                                <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
-                                                    {% if obj.olympiad_exam in attended_olympiads %}
-                                                    <span class="text-white fs-15 bgs-black decrt-none enroll-button">Attended</span>
-                                                    {% else %}
-                                                    <a href="{% url 'application:exam' obj.olympiad_exam.paper.id %}?type=olympiad&&olympiad_id={{obj.olympiad_exam.id}}" class="text-white fs-15 bgs-black decrt-none enroll-button">Attend Test
-                                                        <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
-                                                            width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
-                                                            <path id="arrow-color" data-name="Path 3"
-                                                                d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
-                                                                transform="translate(-3.278 -102.821)" fill="#fff" />
-                                                        </svg></a>
-                                                    {% endif %}
-                                                </div>
-                                                {% elif today >= obj.olympiad_exam.exam_date|date:"Y-m-d" %}
+                                                {% if today == obj.olympiad_exam.exam_date|date:"Y-m-d" and current_time >= obj.olympiad_exam.exam_time|time:"H:i:s" and current_time <= obj.olympiad_exam.exam_time_till|time:"H:i:s" %}
+                                                    <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
+                                                        {% if obj.olympiad_exam in attended_olympiads %}
+                                                        <span class="text-white fs-15 bgs-black decrt-none enroll-button">Attended</span>
+                                                        {% else %}
+                                                        <a href="{% url 'application:exam' obj.olympiad_exam.paper.id %}?type=olympiad&&olympiad_id={{obj.olympiad_exam.id}}" class="text-white fs-15 bgs-black decrt-none enroll-button">Attend Test
+                                                            <span class="arrow-spacing"></span><svg xmlns="http://www.w3.org/2000/svg"
+                                                                width="16.7" height="8.622" class="arrow-color" viewBox="0 0 16.7 8.622">
+                                                                <path id="arrow-color" data-name="Path 3"
+                                                                    d="M19.859,106.83l-4.249-3.89a.407.407,0,0,0-.576.576l3.553,3.195H3.686a.407.407,0,1,0,0,.815h14.9l-3.553,3.221a.407.407,0,1,0,.576.576l4.249-3.917A.407.407,0,0,0,19.859,106.83Z"
+                                                                    transform="translate(-3.278 -102.821)" fill="#fff" />
+                                                            </svg></a>
+                                                        {% endif %}
+                                                    </div>
+                                                {% elif today == obj.olympiad_exam.exam_date|date:"Y-m-d" and current_time > obj.olympiad_exam.exam_time_till|time:"H:i:s" %}
+                                                    <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
+                                                        {% if obj.olympiad_exam in attended_olympiads %}
+                                                            <span class="text-white fs-15 bgs-black decrt-none enroll-button">Attended</span>
+                                                        {% else %}
+                                                            <span class="text-white fs-15 bgs-black decrt-none enroll-button">Expired</span>
+                                                        {% endif %}
+                                                    </div>
+                                                {% elif today > obj.olympiad_exam.exam_date|date:"Y-m-d" %}
                                                     <div class="col-8 enroll-center pl-lg-0 d-flex justify-content-end align-items-center">
                                                         {% if obj.olympiad_exam in attended_olympiads %}
                                                             <span class="text-white fs-15 bgs-black decrt-none enroll-button">Attended</span>
