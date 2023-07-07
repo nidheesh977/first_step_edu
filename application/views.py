@@ -559,7 +559,7 @@ class ExamView(View):
         competitive_exam_id = request.GET.get("competitive-exam")
         paper_id = kwargs.get("id")
         paper_obj = get_object_or_404(Papers,id=paper_id)
-        questions = paper_obj.assigned_questions.all()
+        questions = paper_obj.assigned_questions.all().order_by("id")
 
         SECTION_DETAILS = []
         TOTAL_QUES = 0
@@ -661,6 +661,8 @@ class ExamView(View):
             time_limit = question_obj.section_time_limit.total_seconds()
             to_return = {
                 "question":question_obj.question,
+                "section_description": question_obj.section_description,
+                "mark":question_obj.mark,
                 "option1":question_obj.option1,
                 "option2":question_obj.option2,
                 "option3":question_obj.option3,
@@ -686,6 +688,7 @@ class ExamView(View):
                         competitive_exam = competitive_exam,
                         paper = paper_obj,
                         correct_answers = 0,
+                        total_mark = 0,
                         attend_date = datetime.now().date(),
                     )
             elif class_id:
@@ -694,6 +697,7 @@ class ExamView(View):
                         class_obj = Classes.objects.get(id = class_id),
                         paper = paper_obj,
                         correct_answers = 0,
+                        total_mark = 0,
                         attend_date = datetime.now().date(),
                     )
             elif olympiad_id:
@@ -703,6 +707,7 @@ class ExamView(View):
                     paper = paper_obj,
                     olympiad_exam = olympiad_exam,
                     correct_answers = 0,
+                    total_mark = 0,
                     attend_date = datetime.now().date(),
                 )
             else:
@@ -710,6 +715,7 @@ class ExamView(View):
                         student = request.user,
                         paper = paper_obj,
                         correct_answers = 0,
+                        total_mark = 0,
                         attend_date = datetime.now().date(),
                     )
                 if request.GET.get("obj_id"):
@@ -740,6 +746,7 @@ class ExamView(View):
                 attend_paper_obj.attended_questions.add(obj)
                 if is_correct_ans:
                     attend_paper_obj.correct_answers = attend_paper_obj.correct_answers+1
+                    attend_paper_obj.total_mark = attend_paper_obj.total_mark + question_obj.mark
                     attend_paper_obj.save()
             
             # BUG: -> needs to mark it that the student is completed this paper.

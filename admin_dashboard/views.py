@@ -979,6 +979,7 @@ class CMAddQuestions(AdminOnlyMixin,View):
             qus_obj = Questions.objects.create(
             section = request.POST.get("section"),
             section_description = request.POST.get("section_description"),
+            mark = request.POST.get("mark"),
             section_time_limit = section_time_limit,
             question = request.POST.get("question"),
             option1 = request.POST.get("option1"),
@@ -1067,6 +1068,7 @@ class CMEditQuestions(AdminOnlyMixin,View):
             qus_obj.section_description = request.POST.get("section_description",qus_obj.section_description)
             qus_obj.section_time_limit = section_time_limit if section_time_limit else qus_obj.section_time_limit
             qus_obj.question = request.POST.get("question",qus_obj.question)
+            qus_obj.mark = request.POST.get("mark")
             qus_obj.option1 = request.POST.get("option1",qus_obj.option1)
             qus_obj.option2 = request.POST.get("option2",qus_obj.option2)
             qus_obj.option3 = request.POST.get("option3",qus_obj.option3)
@@ -1371,6 +1373,7 @@ class OlympiadManagementAddQuestion(AdminOnlyMixin,View):
             section_description = request.POST.get("section_description"),
             section_time_limit = section_time_limit,
             question = request.POST.get("question"),
+            mark = request.POST.get("mark"),
             option1 = request.POST.get("option1"),
             option2 = request.POST.get("option2"),
             option3 = request.POST.get("option3"),
@@ -1496,6 +1499,7 @@ class OlympiadManagementEditQuestion(AdminOnlyMixin,View):
             qus_obj.section = request.POST.get("section",qus_obj.section)
             qus_obj.section_description = request.POST.get("section_description",qus_obj.section_description)
             qus_obj.section_time_limit = section_time_limit if section_time_limit else qus_obj.section_time_limit
+            qus_obj.mark = request.POST.get("mark")
             qus_obj.question = request.POST.get("question",qus_obj.question)
             qus_obj.option1 = request.POST.get("option1",qus_obj.option1)
             qus_obj.option2 = request.POST.get("option2",qus_obj.option2)

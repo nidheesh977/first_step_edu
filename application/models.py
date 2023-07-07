@@ -226,7 +226,7 @@ class MarqueeTexts(ImportdantDates):
 
 class Questions(ImportdantDates):
     section = models.CharField(_("Section"), max_length=50, blank=True, null=True)
-    section_description = models.TextField(_("Section Description"), blank=True, null=True)
+    section_description = models.TextField(_("Section Description"), blank=True, null=True, default = "Section description")
     image = models.ImageField(upload_to = "question_images/", blank=True, null=True)
     image_link = models.CharField(max_length = 300, null = True, blank = True)
     section_time_limit = models.DurationField(_("Section Duration"),default=timedelta, null=True, blank=True)
@@ -236,6 +236,7 @@ class Questions(ImportdantDates):
     option3 = models.TextField(_("Option 3"), null=True, blank=True)
     option4 = models.TextField(_("Option 4"), null=True, blank=True)
     correct_answer = models.TextField(_("Correct Answer"), null=True, blank=True)
+    mark = models.IntegerField(default = 1)
 
     class Meta:
         verbose_name = _("Questions")
@@ -389,16 +390,19 @@ class AttendedPapers(ImportdantDates):
     olympiad_exam = models.ForeignKey("application.OlympiadExam", null = True, blank = True, on_delete = models.CASCADE)
     paper = models.ForeignKey("application.Papers", verbose_name=_("Paper"), blank=True, null=True, on_delete=models.CASCADE)
     correct_answers = models.IntegerField()
+    total_mark = models.IntegerField(default = 0)
     attended_questions = models.ManyToManyField("application.StudentSubmittedAnswers", verbose_name=_("Submitted Answers"),blank=True,)
     attend_date = models.DateField(_("Attend Date"), auto_now=False, auto_now_add=False, null=True,blank=True)
 
     @property
     def marks(self):
         correct_answers = 0
+        total = 0
         for i in self.attended_questions.all():
             if i.is_correct_answer:
-                correct_answers+=1
-        return f"{(correct_answers)*10}/{(len(self.attended_questions.all()))*10}"
+                correct_answers+=i.question.mark
+            total += i.question.mark
+        return f"{(correct_answers)}/{total}"
     
     @property
     def wrong_ans_qno(self):
@@ -419,14 +423,13 @@ class AttendedPapers(ImportdantDates):
     @property
     def percentile(self):
         position = 0
-        submissions = AttendedPapers.objects.filter(paper = self.paper).order_by("correct_answers")
-        for i in submissions:
+        submissions = AttendedPapers.objects.filter(paper = self.paper).order_by("total_mark")
+        for count, i in enumerate(submissions):
             if i.student == self.student:
-                position+=1
                 break
             else:
                 position+=1
-        return int((position/len(submissions))*100)
+        return int(((len(submissions)-position)/len(submissions))*100)
 
     @property
     def percentage(self):
@@ -439,14 +442,13 @@ class AttendedPapers(ImportdantDates):
     @property
     def more_score_count(self):
         position = 0
-        submissions = AttendedPapers.objects.filter(paper = self.paper).order_by("correct_answers")
-        for i in submissions:
+        submissions = AttendedPapers.objects.filter(paper = self.paper).order_by("total_mark")
+        for count, i in enumerate(submissions):
             if i.student == self.student:
-                position+=1
                 break
-            else:
+            elif count == 0 or submissions[count-1].total_mark > i.total_mark:
                 position+=1
-        return int(len(submissions) - position)
+        return int(position)
     class Meta:
         verbose_name = _("AttendedPapers")
         verbose_name_plural = _("AttendedPapers")

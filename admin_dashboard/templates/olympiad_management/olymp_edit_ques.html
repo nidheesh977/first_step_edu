@@ -43,6 +43,10 @@
                 <label>Upload Image <span class="text-danger">Maximum image size is 2MB *</span>{% if obj.image %}<a target="_blank" href="{{obj.image.url}}">{{obj.image.url}}</a>{% endif %}</label>
                 <input class="form-control form-control-lg" id="uploadImage" type="file" accept="image/png, image/jpeg" name="upload_image">
             </div>
+            <div class="form-group col-12 col-md-6">
+                <label>Mark <span class="text-danger">*</span></label>
+                <input class="form-control form-control-lg" name="mark" type="number" value = "{{obj.mark}}" >
+            </div>
             <label class="pl-3">Options <span class="text-danger">*</span></label>
             <div class="form-group col-12 row mx-0 px-0">
                 <div class="form-check pb-2 col-lg-6">

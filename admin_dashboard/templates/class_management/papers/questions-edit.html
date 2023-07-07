@@ -34,6 +34,10 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="form-group col-6">
+                <label>Section Description <span class="text-danger">*</span></label>
+                <input {% if request.GET.section_description %} value="{{obj.section_description}}" {% endif %} name="section_description" maxlength="250" type="text" class="form-control form-control-user" required>
+            </div>
             <div class="form-group col-sm-6">
                 <label>Time Duration <span class="text-danger">*</span></label>
                 <input id="duration-input" class="form-control form-control-user" name="section_time_limit" type="text" required pattern="[0-9]{2}:[0-9]{2}" placeholder="00:00" {% if time_limit %} value="{{time_limit}}"{% endif %}>
@@ -45,6 +49,10 @@
             <div class="form-group col-12 col-md-6">
                 <label>Upload Image <span class="text-danger">Maximum image size is 2MB *</span>{% if obj.image %}<a target="_blank" href="{{obj.image.url}}">{{obj.image.url}}</a>{% endif %}</label>
                 <input class="form-control form-control-lg" id="uploadImage" type="file" accept="image/png, image/jpeg" name="upload_image">
+            </div>
+            <div class="form-group col-12 col-md-6">
+                <label>Mark <span class="text-danger">*</span></label>
+                <input class="form-control form-control-lg" name="mark" type="number" value = "{{obj.mark}}" >
             </div>
             <label class="pl-3">Options <span class="text-danger">*</span></label>
             <div class="form-group col-12 row mx-0 px-0">

@@ -48,9 +48,9 @@
                                 <label>Section Name <span class="text-danger">*</span></label>
                                 <input name="section_name" value="{{data.name}}" maxlength="20" type="text" class="form-control form-control-user" required>
                             </div>
-                            <div class="form-group col-5">
+                            <div class="form-group col-5" style = "visibility: hidden; height: 10px">
                                 <label>Section Description <span class="text-danger">*</span></label>
-                                <textarea name="section_description" id="meta_keywords" rows="1" class="form-control form-control-user" required>{{data.description}}</textarea>
+                                <textarea name="section_description" id="meta_keywords" rows="1" class="form-control form-control-user" required>Section description</textarea>
                             </div>
                             {% if forloop.counter == 1 %}
                                 <a href="#" class="addmore">Add More</a>

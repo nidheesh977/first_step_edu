@@ -124,13 +124,14 @@
 
                             <div class="d-sm-flex align-items-center justify-content-end">
                                 <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Current Question : <span id="currentQuesCount">1</span></button>
-                                <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Pending Question : <span id="pendingQuesCount">0</span></button>
+                                <button class="bgs-yellow border-0 cl-black test-bold px-4 py-2 br-30 mr-1 mr-sm-3">Mark : <span id="markForQuestion">1</span></button>
                                 <div class="count-down-box d-inline-flex align-items-center br-10 mt-3 mt-sm-0">
                                     <span class="cl-white">Time Left :</span>
                                     <p class="fs-20 mb-0 cl-white pl-2" id="ten-countdown"></p>
                                 </div>
                             </div>
                         </div>
+                        <p id = "sectionDescription"></p>
                         <div class="row part-1-attend-test">
                             
                             <div class="col-12 setup-content" id="step-1">
@@ -352,12 +353,14 @@
                 success: function (response) {
                     var timesUp = false;
                     var quesText = response["question"];
+                    var mark = response["mark"];
                     var option1 = response["option1"];
                     var option2 = response["option2"];
                     var option3 = response["option3"];
                     var option4 = response["option4"];
                     var timeLimit = response["time_limit"];
                     var sectionName = response["section_name"];
+                    var section_description = response["section_description"];
                     var time = parseFloat(timeLimit);
 
                     var checkBox = $('input[name="radiogroup"]:checked')[0];
@@ -370,7 +373,9 @@
                     $("#option4").attr("disabled", false);
 
                     $("#quesText").text(quesText);
+                    $("#markForQuestion").text(mark);
                     $("#sectionName").text(sectionName);
+                    $("#sectionDescription").text(section_description);
 
                     $("#option1Value").text(option1);
                     $("#option2Value").text(option2);
@@ -543,7 +548,7 @@
                 $("#next_ques").text("Next Question");
             }
 
-            $("#pendingQuesCount").text(pendingQuestions-1);
+            // $("#pendingQuesCount").text(pendingQuestions-1);
             
 
         });
@@ -620,7 +625,7 @@
                     finalSubmit();
                 }
                 var pendingQuestions = $("li." + "pending").find("*").length;
-                $("#pendingQuesCount").text(pendingQuestions);
+                // $("#pendingQuesCount").text(pendingQuestions);
 
         });
 
